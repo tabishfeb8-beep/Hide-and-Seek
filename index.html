@@ -180,13 +180,13 @@ const cardDefinitions = [
     { qty: 3, title: "7 Minute Time Bonus", type: "time", value: 7 },
     { qty: 2, title: "10 Minute Time Bonus", type: "time", value: 10 },
     { qty: 2, title: "12 Minute Time Bonus", type: "time", value: 12 },
-    { qty: 1, title: "Time Trap", type: "time", desc: "Place this at any Bus Stop in the Map, notify the seekers of its Location. Every 12 minutes it remains on the map it gains 4 minutes in value. If the Seekers board a bus, pass by on bus, or exit at this bus stop, the Hider is awarded the value of the Time Trap, and the Trap disappears." },
-    { qty: 1, title: "Randomise", type: "powerup", desc: "Randomise a Seeker’s question. Use this card and it will randomly generate a number, the Seeker automatically asks the question associated with the number generated, you answer and get the reward. The Seeker can ask the original question again but for double the cost regardless of what the random question was." },
-    { qty: 1, title: "Duplicate", type: "powerup", desc: "Duplicate a card in your hand, if it has a casting cost, they are still paid separately." },
-    { qty: 1, title: "Veto", type: "powerup", desc: "Block a Seeker's question, they cannot ask that Question for the rest of the game, you do not draw from this Question." },
-    { qty: 1, title: "Discard 1 Draw 3 Pick 1", type: "powerup", desc: "Discard 1 card from your hand to go directly to a special picking interface." },
-    { qty: 1, title: "Discard 1 Draw 2", type: "powerup", desc: "Discard 1 card from your hand to draw 2 directly to your choices." },
-    { qty: 1, title: "Discard 1, Draw 1, increase Hand Size by 1", type: "powerup", desc: "Permanently grants +1 Hand Size after picking your choice." },
+    { qty: 2, title: "Time Trap", type: "time", desc: "Place this at any Bus Stop in the Map, notify the seekers of its Location. Every 12 minutes it remains on the map it gains 4 minutes in value. If the Seekers board a bus, pass by on bus, or exit at this bus stop, the Hider is awarded the value of the Time Trap, and the Trap disappears." },
+    { qty: 2, title: "Randomise", type: "powerup", desc: "Randomise a Seeker’s question. Use this card and it will randomly generate a number, the Seeker automatically asks the question associated with the number generated, you answer and get the reward. The Seeker can ask the original question again but for double the cost regardless of what the random question was." },
+    { qty: 2, title: "Duplicate", type: "powerup", desc: "Duplicate a card in your hand, if it has a casting cost, they are still paid separately." },
+    { qty: 2, title: "Veto", type: "powerup", desc: "Block a Seeker's question, they cannot ask that Question for the rest of the game, you do not draw from this Question." },
+    { qty: 2, title: "Discard 1 Draw 3 Pick 1", type: "powerup", desc: "Discard 1 card from your hand to go directly to a special picking interface." },
+    { qty: 2, title: "Discard 1 Draw 2", type: "powerup", desc: "Discard 1 card from your hand to draw 2 directly to your choices." },
+    { qty: 2, title: "Discard 1, Draw 1, increase Hand Size by 1", type: "powerup", desc: "Permanently grants +1 Hand Size after picking your choice." },
     { qty: 1, title: "Discard 2, Draw 3, Pick 2", type: "powerup", desc: "Discard 2 cards to setup a custom draw pool." },
     { qty: 1, title: "Freeze", type: "powerup", desc: "Inform the Seekers, they must stay in place for 5 minutes. If on transit, they may get off, but are immobile until the 5 minutes are up. If they receive the notification for the freeze before boarding a bus but board regardless, they must immediately request a stop and get off." },
     { qty: 1, title: "Curse of the Gifted Express", type: "curse", cast: "Discard a Power up. Can only use while the Seekers are on transit", desc: "The Seekers must stay on their Bus until the end of the route or the last stop before it exits the Game Boundary." },
@@ -330,4 +330,273 @@ function renderHandViews() {
     document.getElementById('hand-count').innerText = hand.length;
     document.getElementById('pick-hand-count').innerText = hand.length;
     
-    if(hand.length >= currentHandLimit)
+    if(hand.length >= currentHandLimit) {
+        document.getElementById('hand-limit-warning').style.display = 'block';
+    } else {
+        document.getElementById('hand-limit-warning').style.display = 'none';
+    }
+
+    hand.forEach((card, idx) => {
+        mainHandContainer.appendChild(createCardElement(card, idx, 'hand'));
+        pickHandContainer.appendChild(createCardElement(card, idx, 'hand'));
+    });
+}
+
+function renderPickPool() {
+    const poolContainer = document.getElementById('pick-pool');
+    poolContainer.innerHTML = '';
+    
+    drawnPool.forEach((card, idx) => {
+        poolContainer.appendChild(createCardElement(card, idx, 'pool'));
+    });
+    
+    const btn = document.getElementById('confirm-selection-btn');
+    btn.innerText = `Confirm Selection (${selectedIndices.length}/${pickTargetCount})`;
+}
+
+// Core Operations Workflow
+function startPickPhase(drawAmount, pickAmount) {
+    if (deck.length < drawAmount) {
+        alert("The deck does not have enough remaining cards to fulfill this action!");
+        return;
+    }
+    
+    pickTargetCount = pickAmount;
+    selectedIndices = [];
+    drawnPool = [];
+    
+    for (let i = 0; i < drawAmount; i++) {
+        let card = deck.pop();
+        card.isFlipped = true; // resets card state face-down
+        drawnPool.push(card);
+    }
+    updateDeckCounter();
+    
+    document.getElementById('pick-instruction').innerText = `Drawn ${drawAmount} Cards: Flip and select exactly ${pickAmount}`;
+    
+    document.getElementById('main-screen').classList.add('hidden');
+    document.getElementById('picking-screen').classList.remove('hidden');
+    
+    renderHandViews();
+    renderPickPool();
+}
+
+// Restoring cards safely to the bottom of the deck if picking is canceled
+function abortPickingPhase() {
+    while(drawnPool.length > 0) {
+        deck.unshift(drawnPool.pop());
+    }
+    updateDeckCounter();
+    
+    document.getElementById('picking-screen').classList.add('hidden');
+    document.getElementById('main-screen').classList.remove('hidden');
+    renderHandViews();
+    ongoingSpecialAction = null;
+}
+
+function commitPickedCards() {
+    if (selectedIndices.length !== pickTargetCount) {
+        alert(`You must select exactly ${pickTargetCount} card(s) before confirming.`);
+        return;
+    }
+    
+    let hasUnflipped = drawnPool.some(c => c.isFlipped);
+    if(hasUnflipped) {
+        alert("Please flip all cards over to check them before committing your choice!");
+        return;
+    }
+
+    let keptCards = [];
+    let bottomDeckCards = [];
+    
+    drawnPool.forEach((card, idx) => {
+        if (selectedIndices.includes(idx)) {
+            keptCards.push(card);
+        } else {
+            bottomDeckCards.push(card);
+        }
+    });
+
+    deck.unshift(...bottomDeckCards);
+    updateDeckCounter();
+
+    let projectedHandCount = hand.length + keptCards.length;
+    if (projectedHandCount > currentHandLimit) {
+        let totalOverflow = projectedHandCount - currentHandLimit;
+        alert(`Warning: Hand limit threshold error! Your choices will put you over the limit by ${totalOverflow}. Please use the right panel actions on your dashboard or discard extra cards to free space.`);
+    }
+
+    hand.push(...keptCards);
+    
+    if(ongoingSpecialAction === 'sizePlus') {
+        currentHandLimit += 1;
+        ongoingSpecialAction = null;
+    } else {
+        ongoingSpecialAction = null;
+    }
+
+    document.getElementById('picking-screen').classList.add('hidden');
+    document.getElementById('main-screen').classList.remove('hidden');
+    
+    renderHandViews();
+}
+
+// Enlarged Inspection Details & Action Interface
+function openOverlay(card, handIndex = null) {
+    const oCard = document.getElementById('overlay-card');
+    oCard.className = `big-card ${card.type}`;
+    
+    document.getElementById('overlay-title').innerText = card.title;
+    document.getElementById('overlay-desc').innerText = card.desc;
+    
+    const iconContainer = document.getElementById('overlay-icon');
+    if(card.type === 'time' && card.value) {
+        iconContainer.innerHTML = getClockSvg(card.value);
+    } else if(card.type === 'curse') {
+        iconContainer.innerHTML = '☠️';
+    } else {
+        iconContainer.innerHTML = '⚡';
+    }
+
+    const castEl = document.getElementById('overlay-cast');
+    if (card.cast) {
+        castEl.innerHTML = `<strong>Casting Rule:</strong> ${card.cast}`;
+        castEl.style.display = 'block';
+    } else {
+        castEl.style.display = 'none';
+    }
+
+    const oldPanel = document.getElementById('overlay-action-panel');
+    if(oldPanel) oldPanel.remove();
+
+    if(handIndex !== null) {
+        const actionPanel = document.createElement('div');
+        actionPanel.id = 'overlay-action-panel';
+        actionPanel.style.width = '100%';
+        actionPanel.style.marginTop = '15px';
+        
+        const useBtn = document.createElement('button');
+        useBtn.className = 'action-btn';
+        useBtn.innerText = 'Use Card';
+        useBtn.onclick = () => {
+            closeOverlay();
+            executeCardPlay(card, handIndex);
+        };
+        
+        const discardBtn = document.createElement('button');
+        discardBtn.className = 'back-btn';
+        discardBtn.innerText = 'Discard From Hand';
+        discardBtn.style.background = '#e84118';
+        discardBtn.onclick = () => {
+            if(confirm("Confirm permanent removal of this card from your current hand?")) {
+                hand.splice(handIndex, 1);
+                closeOverlay();
+                renderHandViews();
+            }
+        };
+
+        actionPanel.appendChild(useBtn);
+        actionPanel.appendChild(discardBtn);
+        oCard.appendChild(actionPanel);
+    }
+
+    document.getElementById('card-overlay').style.display = 'flex';
+}
+
+function closeOverlay() {
+    document.getElementById('card-overlay').style.display = 'none';
+}
+
+// Custom Unique Active Scripts for Special Operations
+function executeCardPlay(card, index) {
+    hand.splice(index, 1);
+    renderHandViews();
+
+    if (card.title.includes("Time Bonus")) {
+        alert(`Applied: ${card.title} played! Time assets logged.`);
+        return;
+    }
+
+    switch(card.title) {
+        case "Randomise":
+            let roll = Math.floor(Math.random() * 31) + 1;
+            setTimeout(() => {
+                alert(`🎲 Randomised Value Generated: [ ${roll} ]\n\nAsk Tabish what this Number means!`);
+            }, 300);
+            break;
+            
+        case "Duplicate":
+            if (hand.length === 0) {
+                alert("Your hand is completely empty! Duplicate target assignment failed.");
+                hand.push(card);
+                renderHandViews();
+                break;
+            }
+            let options = hand.map((c, idx) => `${idx + 1}: ${c.title}`).join('\n');
+            let choice = prompt(`Select target card index number to copy:\n${options}`);
+            let chosenIdx = parseInt(choice) - 1;
+            if(!isNaN(chosenIdx) && hand[chosenIdx]) {
+                hand.push({...hand[chosenIdx]});
+                alert(`Successfully duplicated: ${hand[chosenIdx].title}`);
+                renderHandViews();
+            } else {
+                alert("Invalid selection index. Action aborted.");
+                hand.push(card);
+                renderHandViews();
+            }
+            break;
+            
+        case "Discard 1 Draw 3 Pick 1":
+            runCustomDiscardDraw(1, 3, 1);
+            break;
+        case "Discard 1 Draw 2":
+            runCustomDiscardDraw(1, 2, 2);
+            break;
+        case "Discard 1, Draw 1, increase Hand Size by 1":
+            ongoingSpecialAction = 'sizePlus';
+            runCustomDiscardDraw(1, 1, 1);
+            break;
+        case "Discard 2, Draw 3, Pick 2":
+            runCustomDiscardDraw(2, 3, 2);
+            break;
+
+        case "Curse of the Gifted Express":
+            alert("Requirements active: You must choose and discard a Power up item from your hand layout to cast this curse.");
+            break;
+
+        default:
+            alert(`Activated: "${card.title}" conditions are now live! Communicate requirements to seekers immediately.`);
+            break;
+    }
+}
+
+function runCustomDiscardDraw(discardReq, drawAmt, pickAmt) {
+    if(hand.length < discardReq) {
+        alert(`You need at least ${discardReq} other card(s) in hand to execute this operation.`);
+        return;
+    }
+    
+    for(let i=0; i < discardReq; i++) {
+        let targets = hand.map((c, idx) => `${idx + 1}: ${c.title}`).join('\n');
+        let choice = prompt(`Discard Phase (${i+1}/${discardReq}). Pick index to discard:\n${targets}`);
+        let targetIdx = parseInt(choice) - 1;
+        if(!isNaN(targetIdx) && hand[targetIdx]) {
+            hand.splice(targetIdx, 1);
+        } else {
+            alert("Invalid drop target. Aborting full routine cascade.");
+            return;
+        }
+    }
+    
+    renderHandViews();
+    startPickPhase(drawAmt, pickAmt);
+}
+
+// INITIAL RUNTIME STARTUP TRIGGER
+window.addEventListener('DOMContentLoaded', () => {
+    initDeck();
+    renderHandViews();
+});
+</script>
+</body>
+</html>
