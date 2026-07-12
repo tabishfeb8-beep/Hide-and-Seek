@@ -5,165 +5,329 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jet Lag: Hide & Seek Tracker</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #1e272e; color: white; text-align: center; padding: 20px; }
-        .container { max-width: 600px; margin: 0 auto; background: #2f3640; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        h1 { color: #fbc531; margin-bottom: 5px; }
-        .subtitle { color: #a4b0be; font-style: italic; margin-bottom: 20px; }
-        button { background: #353b48; color: white; border: 2px solid #718093; padding: 12px 18px; margin: 8px; font-size: 15px; border-radius: 6px; cursor: pointer; transition: 0.2s; }
+        * { box-sizing: border-box; }
+        body { 
+            font-family: Arial, sans-serif; 
+            background: #1e272e; 
+            color: white; 
+            margin: 0; 
+            padding: 0; 
+            height: 100vh; 
+            overflow: hidden; 
+        }
+        
+        /* Layout Structure */
+        .screen { display: flex; width: 100vw; height: 100vh; }
+        .left-panel { width: 50%; height: 100%; padding: 20px; border-right: 3px solid #718093; display: flex; flex-direction: column; justify-content: flex-start; overflow-y: auto; }
+        .right-panel { width: 50%; height: 100%; padding: 20px; display: flex; flex-direction: column; justify-content: flex-start; overflow-y: auto; }
+        
+        .picking-left { width: 60%; border-right: 3px solid #718093; }
+        .picking-right { width: 40%; }
+
+        h1 { color: #fbc531; margin: 0 0 5px 0; font-size: 28px; }
+        .subtitle { color: #a4b0be; font-style: italic; margin-bottom: 20px; font-size: 16px; }
+        .deck-status { font-size: 18px; color: #fbc531; font-weight: bold; margin-bottom: 20px; }
+        .warning-bar { background: #e84118; color: white; padding: 6px; font-size: 13px; font-weight: bold; border-radius: 4px; margin-bottom: 15px; display: none; text-align: center; }
+
+        /* Button Styling */
+        .btn-grid { display: flex; flex-direction: column; gap: 12px; max-width: 400px; margin: 0 auto; width: 100%; }
+        button { background: #353b48; color: white; border: 2px solid #718093; padding: 15px; font-size: 16px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-weight: bold; width: 100%; }
         button:hover { background: #718093; }
-        .draw-btn { background: #e84118; border: none; font-weight: bold; font-size: 18px; }
-        .draw-btn:hover { background: #c23616; }
-        .confirm-btn { background: #4cd137; border: none; font-weight: bold; }
+        .action-btn { background: #2f3640; border-color: #fbc531; color: #fbc531; margin-top: 10px; }
+        .action-btn:hover { background: #fbc531; color: black; }
+        .confirm-btn { background: #4cd137; border: none; font-size: 18px; margin-top: 15px; }
         .confirm-btn:hover { background: #44bd32; }
-        .card-container { display: flex; justify-content: center; gap: 10px; margin: 20px 0; min-height: 110px; flex-wrap: wrap; }
-        .card { background: white; color: black; width: 75px; height: 110px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: bold; border: 3px solid #dcdde1; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.3); user-select: none; }
-        .card.red { color: #e84118; }
-        .card.selected { border: 3px solid #4cd137; box-shadow: 0 0 15px #4cd137; transform: translateY(-5px); }
-        .deck-status { font-size: 18px; color: #fbc531; font-weight: bold; }
-        .phase-box { background: #3d4451; padding: 15px; border-radius: 8px; margin-top: 15px; }
+        .back-btn { background: #718093; border: none; margin-top: 10px; }
+        .back-btn:hover { background: #57606f; }
+
+        /* Card Mechanics */
+        .card-container { display: flex; justify-content: center; gap: 15px; margin-top: 20px; flex-wrap: wrap; }
+        
+        /* 150% Larger Base Sizing */
+        .card { 
+            background: #ffffff; color: #000000; 
+            width: 112px; height: 165px; 
+            border-radius: 12px; border: 4px solid #dcdde1; 
+            box-shadow: 0 6px 12px rgba(0,0,0,0.4); 
+            cursor: pointer; user-select: none; 
+            position: relative; display: flex; flex-direction: column; 
+            align-items: center; justify-content: space-between; 
+            padding: 10px; text-align: center; font-weight: bold;
+        }
+        .card:hover { transform: translateY(-3px); }
+        .card.selected { border: 4px solid #4cd137; box-shadow: 0 0 20px #4cd137; }
+        
+        /* Card Types & Graphics */
+        .card-title { font-size: 12px; line-height: 1.2; word-wrap: break-word; }
+        .card-icon { font-size: 28px; margin: auto 0; position: relative; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; }
+        
+        /* Clock SVG Visuals */
+        .clock-svg { width: 40px; height: 40px; transform: rotate(-90deg); }
+        .clock-bg { fill: #f5f6fa; stroke: #2f3640; stroke-width: 3; }
+        .clock-fill { fill: #fbc531; stroke: #2f3640; stroke-width: 1; }
+        
+        .card.curse { background: #2f3640; color: #e84118; border-color: #e84118; }
+        .card.powerup { background: #f5f6fa; color: #1e272e; border-color: #27ae60; }
+        .card.time { background: #fff; color: #2f3640; border-color: #fbc531; }
+
+        /* Card Back (Jet Lag Style) */
+        .card.flipped { 
+            background: linear-gradient(135deg, #ff793f 0%, #cd6133 100%); 
+            color: white; border: 4px solid white; 
+        }
+        .card.flipped .card-content { display: none; }
+        .card.flipped::before { 
+            content: "JET\a LAG"; white-space: pre; font-size: 18px; 
+            letter-spacing: 2px; color: white; margin: auto; font-style: italic; 
+        }
+
+        /* Zoom Buttons inside cards during Pick phase */
+        .zoom-badge { 
+            position: absolute; bottom: 5px; right: 5px; 
+            background: #353b48; color: white; border-radius: 50%; 
+            width: 20px; height: 20px; font-size: 12px; 
+            display: flex; align-items: center; justify-content: center; z-index: 5;
+        }
+
+        /* Overlay Enlarge View */
+        .overlay { 
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
+            background: rgba(0,0,0,0.85); display: none; 
+            align-items: center; justify-content: center; z-index: 999; 
+        }
+        .big-card { 
+            background: white; color: black; width: 320px; min-height: 460px; 
+            border-radius: 20px; padding: 25px; box-shadow: 0 0 30px rgba(255,255,255,0.2);
+            display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+            text-align: center; position: relative;
+        }
+        .big-card.curse { background: #2f3640; color: #e84118; border: 5px solid #e84118; }
+        .big-card.powerup { background: #f5f6fa; color: #1e272e; border: 5px solid #27ae60; }
+        .big-card.time { background: #fff; color: #2f3640; border: 5px solid #fbc531; }
+        .big-title { font-size: 22px; font-weight: bold; margin-bottom: 15px; }
+        .big-desc { font-size: 15px; margin-top: 15px; color: #2f3640; font-weight: normal; line-height: 1.4; text-align: left; background: rgba(0,0,0,0.05); padding: 12px; border-radius: 8px; width: 100%; }
+        .big-card.curse .big-desc { color: #dcdde1; background: rgba(255,255,255,0.05); }
+        .big-cast { font-weight: bold; font-size: 14px; color: #e84118; margin-top: 10px; width: 100%; }
+        
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>Hider's Dashboard</h1>
-    <div class="subtitle">Jet Lag: Hide & Seek Edition</div>
-    
-    <p class="deck-status">Deck: <span id="deck-count">52</span> cards left</p>
-
-    <div id="action-phase">
-        <h3>What did the Seeker ask/do?</h3>
-        <button onclick="prepareDraw(1, 1, 'Basic Question')">Basic Question (Draw 1, Keep 1)</button>
-        <button onclick="prepareDraw(2, 1, 'Medium Question')">Medium Question (Draw 2, Pick 1)</button>
-        <button onclick="prepareDraw(3, 1, 'Hard Question')">Hard Question (Draw 3, Pick 1)</button>
-        <button onclick="prepareDraw(4, 2, 'Curse / Special')">Curse / Radius (Draw 4, Pick 2)</button>
-    </div>
-
-    <div id="draw-phase" class="phase-box hidden">
-        <h3 id="draw-instruction"></h3>
-        <button id="actual-draw-btn" class="draw-btn" onclick="executeDraw()">Pull Cards from Deck</button>
+    <div id="main-screen" class="screen">
+        <div class="left-panel">
+            <h1>Hider's Deck</h1>
+            <div class="subtitle">Hide and Seek</div>
+            <p class="deck-status">Deck: <span id="deck-count">0</span> cards left</p>
+            
+            <div class="btn-grid">
+                <button onclick="startPickPhase(1, 1)">Draw 1</button>
+                <button onclick="startPickPhase(2, 1)">Draw 2 Pick 1</button>
+                <button onclick="startPickPhase(3, 1)">Draw 3 Pick 1</button>
+                <button onclick="startPickPhase(4, 1)">Draw 4 Pick 1</button>
+            </div>
+        </div>
         
-        <div id="drawn-pool" class="card-container"></div>
-        <button id="confirm-btn" class="confirm-btn hidden" onclick="confirmPick()">Confirm Selection</button>
+        <div class="right-panel">
+            <h1>Hider Hand (<span id="hand-count">0</span>/5)</h1>
+            <div class="warning-bar" id="hand-limit-warning">WARNING: Hand limit reached (5)! Play or discard cards to fit new items.</div>
+            <div id="main-hand" class="card-container"></div>
+        </div>
     </div>
 
-    <div class="phase-box" style="margin-top: 25px;">
-        <h3>Your Current Hand</h3>
-        <div id="player-hand" class="card-container"></div>
+    <div id="picking-screen" class="screen hidden">
+        <div class="left-panel picking-left">
+            <h1 id="pick-instruction">Pick Cards</h1>
+            <div class="warning-bar" id="picking-warning" style="display: block;">You cannot 'use' cards here. You can only view details or confirm selections.</div>
+            
+            <div id="pick-pool" class="card-container"></div>
+            
+            <div style="max-width: 400px; margin: 20px auto; width: 100%;">
+                <button id="confirm-selection-btn" class="confirm-btn" onclick="commitPickedCards()">Confirm Selection</button>
+                <button class="back-btn" onclick="abortPickingPhase()">Back to Dashboard</button>
+            </div>
+        </div>
+        
+        <div class="right-panel picking-right">
+            <h1>Hider Hand (<span id="pick-hand-count">0</span>/5)</h1>
+            <div id="pick-hand" class="card-container"></div>
+        </div>
     </div>
-</div>
+
+    <div id="card-overlay" class="overlay" onclick="closeOverlay()">
+        <div class="big-card" id="overlay-card" onclick="event.stopPropagation()">
+            <div class="big-title" id="overlay-title">Card Title</div>
+            <div id="overlay-icon"></div>
+            <div class="big-desc" id="overlay-desc">Card Description</div>
+            <div class="big-cast" id="overlay-cast"></div>
+        </div>
+    </div>
 
 <script>
-let deck = [], hand = [], drawnCards = [], selectedIndices = [];
-let currentDrawNum = 0, currentPickNum = 0;
+// State Engine Variables
+let deck = [];
+let hand = [];
+let drawnPool = [];
+let selectedIndices = [];
+let pickTargetCount = 0;
+let currentHandLimit = 5;
+let ongoingSpecialAction = null; 
 
-// Initialize standard 52-card deck
-function createDeck() {
-    const suits = [{s:'♠', c:'black'}, {s:'♥', c:'red'}, {s:'♦', c:'red'}, {s:'♣', c:'black'}];
-    const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
-    let newDeck = [];
-    for (let suit of suits) {
-        for (let rank of ranks) {
-            newDeck.push({ text: rank + suit.s, color: suit.c });
+// Card Pool Database Configuration
+const cardDefinitions = [
+    { qty: 4, title: "2 Minute Time Bonus", type: "time", value: 2 },
+    { qty: 3, title: "5 Minute Time Bonus", type: "time", value: 5 },
+    { qty: 3, title: "7 Minute Time Bonus", type: "time", value: 7 },
+    { qty: 2, title: "10 Minute Time Bonus", type: "time", value: 10 },
+    { qty: 2, title: "12 Minute Time Bonus", type: "time", value: 12 },
+    { qty: 1, title: "Time Trap", type: "time", desc: "Place this at any Bus Stop in the Map, notify the seekers of its Location. Every 12 minutes it remains on the map it gains 4 minutes in value. If the Seekers board a bus, pass by on bus, or exit at this bus stop, the Hider is awarded the value of the Time Trap, and the Trap disappears." },
+    { qty: 1, title: "Randomise", type: "powerup", desc: "Randomise a Seeker’s question. Use this card and it will randomly generate a number, the Seeker automatically asks the question associated with the number generated, you answer and get the reward. The Seeker can ask the original question again but for double the cost regardless of what the random question was." },
+    { qty: 1, title: "Duplicate", type: "powerup", desc: "Duplicate a card in your hand, if it has a casting cost, they are still paid separately." },
+    { qty: 1, title: "Veto", type: "powerup", desc: "Block a Seeker's question, they cannot ask that Question for the rest of the game, you do not draw from this Question." },
+    { qty: 1, title: "Discard 1 Draw 3 Pick 1", type: "powerup", desc: "Discard 1 card from your hand to go directly to a special picking interface." },
+    { qty: 1, title: "Discard 1 Draw 2", type: "powerup", desc: "Discard 1 card from your hand to draw 2 directly to your choices." },
+    { qty: 1, title: "Discard 1, Draw 1, increase Hand Size by 1", type: "powerup", desc: "Permanently grants +1 Hand Size after picking your choice." },
+    { qty: 1, title: "Discard 2, Draw 3, Pick 2", type: "powerup", desc: "Discard 2 cards to setup a custom draw pool." },
+    { qty: 1, title: "Freeze", type: "powerup", desc: "Inform the Seekers, they must stay in place for 5 minutes. If on transit, they may get off, but are immobile until the 5 minutes are up. If they receive the notification for the freeze before boarding a bus but board regardless, they must immediately request a stop and get off." },
+    { qty: 1, title: "Curse of the Gifted Express", type: "curse", cast: "Discard a Power up. Can only use while the Seekers are on transit", desc: "The Seekers must stay on their Bus until the end of the route or the last stop before it exits the Game Boundary." },
+    { qty: 1, title: "Curse of the Itinerary", type: "curse", desc: "The Seekers must, before boarding their next bus, inform the Hider which stop they will get off at, and must get off at that stop unless a curse forces them otherwise." },
+    { qty: 1, title: "Curse of Marco Muzammil", type: "curse", cast: "Discard 15+ Minutes of Time Bonuses if used in the Endgame", desc: "The Seekers must go to a playground and send a video of them going down a slide before asking another Question." },
+    { qty: 1, title: "Curse of the Gamble", type: "curse", cast: "Reveal a Card in your hand to the Seekers.", desc: "Predict the next Category (Photo (Zone)/Oddball, Video/Measuring, Radar, Matching, Precision, Photo (You), Photo (Bus Stop)) the Seekers will ask a Question from. If correct, Draw the Reward 3 times, if wrong draw nothing. Inform the Seekers before they ask." },
+    { qty: 1, title: "Curse of the Dead Phone", type: "curse", cast: "The Hider cannot use their phone for the next 15 minutes except to answer Questions/communicate/use Maps", desc: "The Seekers cannot use their Phones for the next 25 Minutes except to ask Questions/communicate with the Hider." },
+    { qty: 1, title: "Curse of the Mobile Bus", type: "curse", cast: "The Seeker’s next question on the Bus is free. Cannot be used in the Endgame", desc: "The Seekers must ask their next 3 questions while on Bus." },
+    { qty: 1, title: "Curse of the Short Stop", type: "curse", cast: "The Seekers must be on transit", desc: "The Seekers must get off at the next stop and request a stop if not already requested." },
+    { qty: 1, title: "Curse of the Drained Brain", type: "curse", cast: "Discard a card. The Seeker’s next Question only Draws 1", desc: "Choose any 3 Questions, they cannot be asked for the rest of the Game." },
+    { qty: 1, title: "Curse of the Unguided Tourist", type: "curse", cast: "Take a picture of a place in your Zone", desc: "Take a picture of a place/building/business and send it to the Seekers, then inform them of its Google Maps rating (min 5 reviews). The Seekers may not ask another Question until they find a place with a higher rating." },
+    { qty: 1, title: "Curse of the Nosey Looker", type: "curse", cast: "Do the same before sending the Question", desc: "The Seekers must find, take a picture, and send 3 items to the Hider before asking a Question: A dog, a sports ball, someone wearing a helmet, misplaced litter, or a fast food chain." },
+    { qty: 1, title: "Curse of the Nomad", type: "curse", cast: "Inform the Seeker of how far this image is from the Hider’s Bus Stop", desc: "Send a Google Streetview image within 300m of the Seekers. The Seeker must send a matching real life picture to confirm location. The Seeker cannot ask questions until this Curse is cleared." }
+];
+
+// Load & Construct standard game setup
+function initDeck() {
+    deck = [];
+    cardDefinitions.forEach(card => {
+        for(let i=0; i<card.qty; i++){
+            deck.push({
+                title: card.title,
+                type: card.type,
+                desc: card.desc || `Grants a continuous advantage of ${card.value} minutes directly applied to Hider clock runtime metrics.`,
+                cast: card.cast || null,
+                value: card.value || null,
+                isFlipped: true
+            });
         }
+    });
+    // Fisher-Yates Shuffle
+    for (let i = deck.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [deck[i], deck[j]] = [deck[j], deck[i]];
     }
-    // Shuffle
-    return newDeck.sort(() => Math.random() - 0.5);
+    updateDeckCounter();
 }
 
-// Start game automatically on load
-deck = createDeck();
-document.getElementById('deck-count').innerText = deck.length;
-
-function prepareDraw(draw, pick, type) {
-    if (deck.length < draw) {
-        alert("Not enough cards left in the deck!");
-        return;
-    }
-    currentDrawNum = draw;
-    currentPickNum = pick;
-    
-    document.getElementById('draw-instruction').innerText = `${type}: Prepare to draw ${draw}, pick ${pick}.`;
-    document.getElementById('action-phase').classList.add('hidden');
-    document.getElementById('draw-phase').classList.remove('hidden');
-    document.getElementById('actual-draw-btn').classList.remove('hidden');
-    document.getElementById('drawn-pool').innerHTML = '';
-    document.getElementById('confirm-btn').classList.add('hidden');
-    selectedIndices = [];
-}
-
-function executeDraw() {
-    drawnCards = [];
-    for (let i = 0; i < currentDrawNum; i++) {
-        drawnCards.push(deck.pop());
-    }
+function updateDeckCounter() {
     document.getElementById('deck-count').innerText = deck.length;
-    document.getElementById('actual-draw-btn').classList.add('hidden');
+}
 
-    if (currentDrawNum === currentPickNum) {
-        // Auto-include
-        hand.push(...drawnCards);
-        renderHand();
-        resetToMainPhase();
-    } else {
-        document.getElementById('draw-instruction').innerText = `Tap ${currentPickNum} card(s) to keep:`;
-        document.getElementById('confirm-btn').classList.remove('hidden');
-        renderDrawnPool();
+// SVG Render Helper for Clock Face Visualizations
+function getClockSvg(minutes) {
+    const fraction = Math.min(minutes / 15, 1);
+    const radius = 18;
+    const circumference = 2 * Math.PI * radius;
+    const strokeDashoffset = circumference - (fraction * circumference);
+    
+    return `
+        <svg class="clock-svg" viewBox="0 0 40 40">
+            <circle class="clock-bg" cx="20" cy="20" r="${radius}" />
+            <circle class="clock-fill" cx="20" cy="20" r="${radius}" 
+                    stroke-dasharray="${circumference}" 
+                    stroke-dashoffset="${strokeDashoffset}" />
+        </svg>
+    `;
+}
+
+// Generate DOM cards natively
+function createCardElement(card, index, context) {
+    const cardEl = document.createElement('div');
+    cardEl.className = `card ${card.type}`;
+    
+    if (context === 'pool' && card.isFlipped) {
+        cardEl.classList.add('flipped');
+        cardEl.onclick = () => {
+            card.isFlipped = false;
+            renderPickPool();
+        };
+        return cardEl;
     }
-}
 
-function renderDrawnPool() {
-    const pool = document.getElementById('drawn-pool');
-    pool.innerHTML = '';
-    drawnCards.forEach((card, index) => {
-        const cardDiv = document.createElement('div');
-        cardDiv.className = `card ${card.color}`;
-        cardDiv.innerText = card.text;
-        cardDiv.onclick = () => toggleSelectCard(index, cardDiv);
-        pool.appendChild(cardDiv);
-    });
-}
+    // Inside Container Elements
+    const contentDiv = document.createElement('div');
+    contentDiv.className = "card-content";
+    contentDiv.style.display = "flex";
+    contentDiv.style.flexDirection = "column";
+    contentDiv.style.height = "100%";
+    contentDiv.style.justifyContent = "space-between";
+    contentDiv.style.width = "100%";
 
-function toggleSelectCard(index, element) {
-    if (selectedIndices.includes(index)) {
-        selectedIndices = selectedIndices.filter(i => i !== index);
-        element.classList.remove('selected');
+    const titleEl = document.createElement('div');
+    titleEl.className = 'card-title';
+    titleEl.innerText = card.title;
+    contentDiv.appendChild(titleEl);
+
+    const iconEl = document.createElement('div');
+    iconEl.className = 'card-icon';
+    if(card.type === 'curse') {
+        iconEl.innerHTML = '☠️';
+    } else if(card.type === 'powerup') {
+        iconEl.innerHTML = '⚡';
+    } else if(card.type === 'time' && card.value) {
+        iconEl.innerHTML = getClockSvg(card.value);
     } else {
-        if (selectedIndices.length < currentPickNum) {
-            selectedIndices.push(index);
-            element.classList.add('selected');
+        iconEl.innerHTML = '⏳';
+    }
+    contentDiv.appendChild(iconEl);
+    cardEl.appendChild(contentDiv);
+
+    // Conditional behaviors based on phase placement
+    if (context === 'pool') {
+        if (selectedIndices.includes(index)) {
+            cardEl.classList.add('selected');
         }
+        cardEl.onclick = () => {
+            if (selectedIndices.includes(index)) {
+                selectedIndices = selectedIndices.filter(i => i !== index);
+            } else if (selectedIndices.length < pickTargetCount) {
+                selectedIndices.push(index);
+            }
+            renderPickPool();
+        };
+
+        // Zoom button to see info without picking immediately
+        const zoomBadge = document.createElement('div');
+        zoomBadge.className = 'zoom-badge';
+        zoomBadge.innerHTML = '🔍';
+        zoomBadge.onclick = (e) => {
+            e.stopPropagation();
+            openOverlay(card);
+        };
+        cardEl.appendChild(zoomBadge);
+    } 
+    else if (context === 'hand') {
+        cardEl.onclick = () => openOverlay(card, index);
     }
+
+    return cardEl;
 }
 
-function confirmPick() {
-    if (selectedIndices.length !== currentPickNum) {
-        alert(`Please select exactly ${currentPickNum} card(s) before confirming.`);
-        return;
-    }
-    selectedIndices.forEach(index => {
-        hand.push(drawnCards[index]);
-    });
-    renderHand();
-    resetToMainPhase();
-}
-
-function renderHand() {
-    const handDiv = document.getElementById('player-hand');
-    handDiv.innerHTML = '';
-    hand.forEach(card => {
-        const cardDiv = document.createElement('div');
-        cardDiv.className = `card ${card.color}`;
-        cardDiv.innerText = card.text;
-        handDiv.appendChild(cardDiv);
-    });
-}
-
-function resetToMainPhase() {
-    document.getElementById('draw-phase').classList.add('hidden');
-    document.getElementById('action-phase').classList.remove('hidden');
-}
-</script>
-</body>
-</html>
+// Render Loops
+function renderHandViews() {
+    const mainHandContainer = document.getElementById('main-hand');
+    const pickHandContainer = document.getElementById('pick-hand');
+    
+    mainHandContainer.innerHTML = '';
+    pickHandContainer.innerHTML = '';
+    
+    document.getElementById('hand-count').innerText = hand.length;
+    document.getElementById('pick-hand-count').innerText = hand.length;
+    
+    if(hand.length >= currentHandLimit)
