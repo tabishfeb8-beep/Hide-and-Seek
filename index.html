@@ -316,7 +316,7 @@
 
   <script>
     // ==========================================
-    // PARSED MASTER SYSTEM DATABASE OBJECTS (47 Cards Total)
+    // PARSED MASTER SYSTEM DATABASE OBJECTS (40 Cards Total)
     // ==========================================
     const CORE_CARDS_CATALOG = [
       { id: 'tb_2', name: '2 Minute Time Bonus', description: '4:2 Minute Time Bonus', isTimeBonus: true, value: 2, count: 4 },
@@ -436,9 +436,6 @@
       }
     ];
 
-    // ==========================================
-    // SYSTEM APPLICATION STATE STATE SCHEMA
-    // ==========================================
     let gameState = {
       hand: [],
       deck: [],
@@ -448,9 +445,6 @@
       endgameToggle: false
     };
 
-    // ==========================================
-    // LOCAL STORAGE SYNCHRONIZATION HANDLERS
-    // ==========================================
     function saveStateToCache() {
       localStorage.setItem('hider_game_engine_active_state', JSON.stringify(gameState));
     }
@@ -462,19 +456,15 @@
           gameState = JSON.parse(payload);
           return true;
         } catch(e) {
-          console.error("Local storage corruption detected. Creating new instance.");
+          console.error("Local storage corruption detected.");
           return false;
         }
       }
       return false;
     }
 
-    // ==========================================
-    // DECK GENERATION ENGINE
-    // ==========================================
     function buildActiveDeckInstance() {
       let freshDeck = [];
-      
       CORE_CARDS_CATALOG.forEach(catalogItem => {
         for (let i = 0; i < catalogItem.count; i++) {
           freshDeck.push({
@@ -489,7 +479,6 @@
         }
       });
 
-      // Fisher-Yates Complete Array Shuffle
       for (let i = freshDeck.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [freshDeck[i], freshDeck[j]] = [freshDeck[j], freshDeck[i]];
@@ -503,21 +492,16 @@
       renderActiveInterface();
     }
 
-    // ==========================================
-    // ACTIVE CORE CARD INTERACTION RULES
-    // ==========================================
     function drawCardFromDeck() {
       if (gameState.hand.length >= gameState.handSizeMax) {
-        alert("Execution Terminated: Maximum permitted hand ceiling constraint reached.");
+        alert("Maximum hand size reached.");
         return;
       }
       if (gameState.deck.length === 0) {
-        alert("Execution Terminated: The draw deck container is completely exhausted.");
+        alert("The deck is empty.");
         return;
       }
-
-      const poppedCard = gameState.deck.pop();
-      gameState.hand.push(poppedCard);
+      gameState.hand.push(gameState.deck.pop());
       saveStateToCache();
       renderActiveInterface();
     }
@@ -527,27 +511,22 @@
       if (idx === -1) return;
       const targetCard = gameState.hand[idx];
 
-      // Structural Constraints Check: Mobile Bus Rule
       if (targetCard.id === 'c_mobile_bus' && gameState.endgameToggle) {
-        alert("Action Blocked: Curse of the Mobile Bus cannot be deployed while Endgame toggle state is active.");
+        alert("Action Blocked: Curse of the Mobile Bus cannot be deployed in the Endgame.");
         return;
       }
 
-      // Structural Constraints Check: Marco Muzammil 15m Rule
       if (targetCard.id === 'c_marco_muzammil' && gameState.endgameToggle) {
         const structuralTimeBonuses = gameState.hand.filter(c => c.isTimeBonus);
         const aggregatedMinutesValue = structuralTimeBonuses.reduce((acc, c) => acc + c.value, 0);
-
         if (aggregatedMinutesValue < 15) {
-          alert(`Action Intercepted: You do not meet the operational requirement. Active total time values in hand: (${aggregatedMinutesValue}m). Requires 15+ minutes of continuous time bonuses to cast in the Endgame.`);
+          alert(`Requires 15+ minutes of continuous time bonuses to cast in the Endgame. Current: (${aggregatedMinutesValue}m)`);
           return;
         }
-
         initializeTimeDiscardSequenceOverlay(instanceId, 15);
         return;
       }
 
-      // Contextual UI Injectors
       if (targetCard.id === 'c_randomise') {
         launchRandomiseModule(instanceId);
         return;
@@ -572,13 +551,11 @@
 
     function executeResolutionSequence(cardIndex) {
       const resolvingCard = gameState.hand[cardIndex];
-
       if (resolvingCard.seekerSummary) {
         navigator.clipboard.writeText(resolvingCard.seekerSummary)
-          .then(() => console.log("Seeker operation summary automatically bound to system clipboard."))
-          .catch(err => console.error("Clipboard operational warning:", err));
+          .then(() => console.log("Summary copied to clipboard."))
+          .catch(err => console.error("Clipboard warning:", err));
       }
-
       gameState.ledger.used.push(resolvingCard);
       gameState.hand.splice(cardIndex, 1);
       saveStateToCache();
@@ -589,7 +566,7 @@
       if (gameState.instaPick) {
         executeDirectDiscardMutation(instanceId);
       } else {
-        if (confirm("Confirm Command Execution: Discard card from active play container?")) {
+        if (confirm("Discard this card?")) {
           executeDirectDiscardMutation(instanceId);
         }
       }
@@ -605,13 +582,9 @@
       }
     }
 
-    // ==========================================
-    // SPECIAL CARD SELECTION SUB-OVERLAYS
-    // ==========================================
     function launchRandomiseModule(instanceId) {
       const layoutContainer = document.getElementById('app-container');
       layoutContainer.classList.add('dimmed');
-
       const randomValue = Math.floor(Math.random() * 31) + 1;
       const modalNode = document.createElement('div');
       modalNode.className = 'fullscreen-modal-overlay';
@@ -622,7 +595,6 @@
         <button id="modal-rand-confirm-btn" style="background-color: var(--accent-green); border-color: var(--accent-green);">Resolve & Close Action</button>
       `;
       document.body.appendChild(modalNode);
-
       document.getElementById('modal-rand-confirm-btn').onclick = () => {
         layoutContainer.classList.remove('dimmed');
         modalNode.remove();
@@ -632,8 +604,7 @@
     }
 
     function launchDuplicateModule(instanceId) {
-      alert("Application Notice: Click any card directly inside your hand layout to complete cloning duplication mapping loop.");
-      
+      alert("Duplication Active: Click any card in your hand layout to copy it.");
       const DOMCards = document.querySelectorAll('.hand-card');
       DOMCards.forEach(cardNode => {
         const nodeTargetId = cardNode.getAttribute('data-id');
@@ -646,7 +617,6 @@
                 ...indexTargetCard,
                 instanceId: `${indexTargetCard.id}_dupe_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`
               });
-              
               const currentSelfIdx = gameState.hand.findIndex(c => c.instanceId === instanceId);
               if (currentSelfIdx !== -1) executeResolutionSequence(currentSelfIdx);
             }
@@ -667,7 +637,7 @@
       const finalPickCount = (cardTypeString === 'c_d2_dr3_p2') ? 2 : 1;
 
       selectModal.innerHTML = `
-        <h3>Operational Interface Split: ${gameState.hand.find(c => c.instanceId === parentInstanceId).name}</h3>
+        <h3>${gameState.hand.find(c => c.instanceId === parentInstanceId).name}</h3>
         <p id="adv-modal-instructions">Step 1: Choose ${requiredDiscardCount} card(s) from your hand to discard.</p>
         <div id="adv-modal-hand-selections" style="display:flex; gap:0.5rem; flex-wrap:wrap; justify-content:center; margin:1rem 0;"></div>
         <div id="adv-modal-deck-draws" style="display:none; gap:1rem; justify-content:center; margin:1.5rem 0;"></div>
@@ -705,7 +675,6 @@
 
       document.getElementById('adv-modal-action-step-btn').onclick = () => {
         if (stepTracker === 1) {
-          // Commit Discard Mutations
           targetedDiscardIds.forEach(id => {
             const discIdx = gameState.hand.findIndex(c => c.instanceId === id);
             if (discIdx !== -1) {
@@ -714,11 +683,8 @@
             }
           });
 
-          // Draw 3 internal reference options
           for (let i = 0; i < 3; i++) {
-            if (gameState.deck.length > 0) {
-              drawnOptions.push(gameState.deck.pop());
-            }
+            if (gameState.deck.length > 0) drawnOptions.push(gameState.deck.pop());
           }
 
           stepTracker = 2;
@@ -726,12 +692,12 @@
           const deckWrapper = document.getElementById('adv-modal-deck-draws');
           deckWrapper.style.display = 'flex';
           
-          document.getElementById('adv-modal-instructions').innerText = `Step 2: Flip and select exactly ${finalPickCount} card(s) to add into your Hand Pool.`;
+          document.getElementById('adv-modal-instructions').innerText = `Step 2: Flip and select exactly ${finalPickCount} card(s) to add to your hand.`;
           const stepBtn = document.getElementById('adv-modal-action-step-btn');
-          stepBtn.innerText = "Commit Picks & Finalize Action";
+          stepBtn.innerText = "Commit Picks & Finalize";
           stepBtn.disabled = true;
 
-          drawnOptions.forEach((dCard, dIdx) => {
+          drawnOptions.forEach((dCard) => {
             const faceDownNode = document.createElement('div');
             faceDownNode.style.width = '120px';
             faceDownNode.style.height = '160px';
@@ -744,7 +710,7 @@
             faceDownNode.style.cursor = 'pointer';
             faceDownNode.style.fontSize = '0.85rem';
             faceDownNode.style.padding = '0.5rem';
-            faceDownNode.innerText = "[ Hidden Deck Card ]";
+            faceDownNode.innerText = "[ Locked ]";
 
             faceDownNode.onclick = () => {
               if (faceDownNode.getAttribute('data-flipped') !== 'true') {
@@ -768,14 +734,10 @@
             deckWrapper.appendChild(faceDownNode);
           });
         } else {
-          // Resolve Final Picks to hand
           drawnOptions.forEach(opt => {
             if (targetedPickIds.includes(opt.instanceId)) {
-              if (gameState.hand.length < gameState.handSizeMax) {
-                gameState.hand.push(opt);
-              } else {
-                gameState.ledger.discarded.push(opt); // Automated fallback protection if hand overflows
-              }
+              if (gameState.hand.length < gameState.handSizeMax) gameState.hand.push(opt);
+              else gameState.ledger.discarded.push(opt);
             } else {
               gameState.ledger.skipped.push(opt);
             }
@@ -783,7 +745,6 @@
 
           nestedContainer.classList.remove('dimmed');
           selectModal.remove();
-
           const baseParentIdx = gameState.hand.findIndex(c => c.instanceId === parentInstanceId);
           if (baseParentIdx !== -1) executeResolutionSequence(baseParentIdx);
         }
@@ -793,8 +754,7 @@
     function initializeTimeDiscardSequenceOverlay(curseInstanceId, requiredValue) {
       let runtimeAccumulatorValue = 0;
       let transactionTargetIds = [];
-
-      alert(`Casting Engine Notice: Select combinations of your available Time Bonus elements totaling to equal or greater than ${requiredValue} minutes to fulfill casting cost requirement values.`);
+      alert(`Select combinations of Time Bonuses totaling ${requiredValue}+ minutes to cast this curse.`);
 
       const dynamicCards = document.querySelectorAll('.hand-card');
       dynamicCards.forEach(cardEl => {
@@ -818,7 +778,6 @@
                     gameState.hand.splice(subDiscardTargetIdx, 1);
                   }
                 });
-
                 const structuralCurseIndex = gameState.hand.findIndex(c => c.instanceId === curseInstanceId);
                 if (structuralCurseIndex !== -1) executeResolutionSequence(structuralCurseIndex);
               }
@@ -832,9 +791,6 @@
       document.getElementById('action-ledger-panel').classList.toggle('maximized');
     }
 
-    // ==========================================
-    // UI CORE RENDERING SYNCHRONIZATION 
-    // ==========================================
     function renderActiveInterface() {
       document.getElementById('insta-pick-status').innerText = gameState.instaPick ? "ON" : "OFF";
       document.getElementById('insta-pick-status').parentElement.className = gameState.instaPick ? "active-toggle" : "";
@@ -872,9 +828,6 @@
       document.getElementById('ledger-discarded-box').innerHTML = gameState.ledger.discarded.map(c => `<li><b>${c.name}</b><br><small style="color:var(--text-secondary);">${c.description}</small></li>`).join('');
     }
 
-    // ==========================================
-    // MAIN LIFECYCLE DOM MOUNT HOOKS
-    // ==========================================
     window.onload = () => {
       if (!readStateFromCache()) {
         buildActiveDeckInstance();
@@ -899,7 +852,7 @@
       document.getElementById('close-ledger-btn').onclick = toggleLedgerPanelLayout;
       
       document.getElementById('reset-game-btn').onclick = () => {
-        if (confirm("Reset application environment state database completely?")) {
+        if (confirm("Reset layout environment completely?")) {
           buildActiveDeckInstance();
         }
       };
