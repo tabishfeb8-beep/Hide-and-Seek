@@ -369,7 +369,7 @@
             <div id="eg-stats-used" class="stats-grid" style="margin-bottom: 15px;"></div>
 
             <div style="display: flex; flex-direction: column; gap: 10px; max-width: 300px; margin: 0 auto;">
-                <button class="confirm-btn" style="background: #e84118; margin: 0;" onclick="resetWholeGameTracker()">🔄 Reset Tracker & New Deck</button>
+                <button class="confirm-btn" style="background: #e84118; margin: 0;" onclick="resetWholeGameTracker()">🏁 End Game</button>
                 <button class="back-btn" style="margin: 0;" onclick="closeOverlay()">Dismiss Summary</button>
             </div>
         </div>
@@ -422,7 +422,7 @@ const cardDefinitions = [
     { qty: 2, title: "Discard 1<br>Draw 1<br>Increase Hand Size by 1", type: "powerup", symbol: "➕", desc: "Discard 1 card, then draw 1 face-down card to choose from, and permanently expand your Hand Size limit by 1." },
     { qty: 1, title: "Discard 2<br>Draw 3<br>Pick 2", type: "powerup", symbol: "🎴", desc: "Discard 2 cards to setup a custom draw pool choice module." },
     { qty: 1, title: "Freeze", type: "powerup", symbol: "❄️", seekerPov: "❄️ FREEZE RUNNING!\nYou have been frozen for the next 5 minutes. Stay exactly where you are.", desc: "Inform the Seekers, they must stay in place completely for 5 minutes." },
-    { qty: 1, title: "Curse of the<br>Gifted Express", type: "curse", cast: "Discard a Power up. Can only use while the Seekers are on transit", seekerPov: "☠️ CURSE OF THE GIFTED EXPRESS!\nYou must stay on your current bus until it reaches the absolute end of its route!", desc: "The Seekers must stay on their Bus until the end of the route layout." },
+    { qty: 1, title: "Curse of the<br>Gifted Express", type: "curse", cast: "Discard a Power up. Can only use while the Seekers are on transit", seekerPov: "☠️ CURSE OF THE GIFTED EXPRESS!\nYou must stay on your current bus until it reaches the absolute end of its route!", desc: "The Seekers must stay on your current bus until it reaches the absolute end of its route." },
     { qty: 1, title: "Curse of the<br>Itinerary", type: "curse", seekerPov: "☠️ CURSE OF THE ITINERARY!\nBefore boarding your next transit vehicle, you must explicitly state the exact destination stop!", desc: "The Seekers must state their explicit departure stops before moving." },
     { qty: 1, title: "Curse of<br>Marco Muzammil", type: "curse", cast: "Discard 15+ Minutes of Time Bonuses if used in the Endgame", seekerPov: "☠️ CURSE OF MARCO MUZAMMIL!\nYou cannot ask any further questions until you record yourself going down a slide!", desc: "The Seekers must run down a playground slide before continuing." },
     { qty: 1, title: "Curse of the<br>Gamble", type: "curse", cast: "Reveal a Card in your hand.", seekerPov: "☠️ CURSE OF THE GAMBLE!\nI am predicting the category of the next question you are about to ask.", desc: "Predict next Category to try and multiply drawn questionnaire awards." },
@@ -431,7 +431,7 @@ const cardDefinitions = [
     { qty: 1, title: "Curse of the<br>Short Stop", type: "curse", cast: "The Seekers must be on transit", seekerPov: "☠️ CURSE OF THE SHORT STOP!\nYou must request a stop and get off your current transit vehicle at the very next stop!", desc: "Forces seekers to immediately depart their current transport line." },
     { qty: 1, title: "Curse of the<br>Drained Brain", type: "curse", cast: "Discard a card.", seekerPov: "I have picked 3 questions. Those 3 specific questions are locked out and cannot be asked for the rest of the game!", desc: "Choose any 3 Questions, they cannot be asked for the rest of the Game." },
     { qty: 1, title: "Curse of the<br>Unguided Tourist", type: "curse", cast: "Take a picture of a place in your Zone", seekerPov: "☠️ CURSE OF THE UNGUIDED TOURIST!\nLocate an area or business with a higher public review rating!", desc: "Block questions until seekers match maps rating barriers." },
-    { qty: 1, title: "Curse of the<br>Nosey Looker", type: "curse", cast: "Do the same before sending", seekerPov: "☠️ CURSE OF THE NOSEY LOOKER!\nFind, photograph, and send me 3 distinct specified street assets!", desc: "Requires real world photo-scavenging collection tasks to clear locks." },
+    { qty: 1, title: "Curse of the<br>Nosey Looker", type: "curse", cast: "Do the same before sending", seekerPov: "☠️ CURSE OF THE NOSEY LOOKER!\nFind, photograph, and send me 3 distinct specified street assets!", desc: "The Seekers must find, take a picture, and send 3 of the following to the Hider before asking a Question: A dog, a sports ball, someone wearing a helmet, litter not in the proper place(and you must throw it away after taking a picture), or a fast food chain (without searching one up" },
     { qty: 1, title: "Curse of the<br>Nomad", type: "curse", cast: "Inform Seeker of image distance from hider stop", seekerPov: "☠️ CURSE OF THE NOMAD!\nFind this exact Streetview spot and send me a matching real-life photo!", desc: "Forces pinpoint location identification based on visual fragments." }
 ];
 
@@ -749,18 +749,6 @@ function handleDrawClick(drawAmount, pickAmount) {
         return;
     }
 
-    // Draw 1 option instant logic bypass
-    if (drawAmount === 1 && pickAmount === 1) {
-        if(deck.length < 1) return;
-        let drawnCard = deck.pop();
-        globalHistory.drawnCounts[drawnCard.type]++;
-        globalHistory.pickedCounts[drawnCard.type]++;
-        hand.push(drawnCard);
-        document.getElementById('deck-count').innerText = deck.length;
-        renderHandViews();
-        return;
-    }
-
     startPickPhase(drawAmount, pickAmount);
 }
 
@@ -852,8 +840,14 @@ function commitPickedCards() {
     if (hand.length > currentHandLimit) {
         let overflow = hand.length - currentHandLimit;
         forceHandTrimmingRoutineActive = true;
-        showCustomAlert("Hand Limit Exceeded", `Discard ${overflow} card(s) from hand to fit.`);
-        renderHandViews();
+        
+        // Skip confirmation popup if Insta-Pick is enabled
+        if (document.getElementById('toggle-instapick').checked) {
+            renderHandViews();
+        } else {
+            showCustomAlert("Hand Limit Exceeded", `Discard ${overflow} card(s) from hand to fit.`);
+            renderHandViews();
+        }
         return;
     }
 
@@ -903,20 +897,33 @@ function startVisualDiscardSequence(count, underlyingCard, underlyingIndex) {
 }
 
 function handleVisualDiscardSelection(index) {
-    // Insta Pick checking
-    if(document.getElementById('toggle-instapick').checked && discardTargetCount === 1) {
-        selectedIndices = [index];
-        executeDiscardPaymentCommitment();
-        return;
-    }
-
-    if(selectedIndices.includes(index)) {
-        selectedIndices = selectedIndices.filter(i => i !== index);
+    // Insta Pick discard logic stream
+    if (document.getElementById('toggle-instapick').checked) {
+        if (selectedIndices.includes(index)) {
+            selectedIndices = selectedIndices.filter(i => i !== index);
+        } else {
+            if (discardTargetCount === 1) {
+                selectedIndices = [index];
+                executeDiscardPaymentCommitment();
+                return;
+            } else if (selectedIndices.length < discardTargetCount) {
+                selectedIndices.push(index);
+                if (selectedIndices.length === discardTargetCount) {
+                    executeDiscardPaymentCommitment();
+                    return;
+                }
+            }
+        }
     } else {
-        if(discardTargetCount === 1) {
-            selectedIndices = [index];
-        } else if (selectedIndices.length < discardTargetCount) {
-            selectedIndices.push(index);
+        // Standard confirmation required flow
+        if (selectedIndices.includes(index)) {
+            selectedIndices = selectedIndices.filter(i => i !== index);
+        } else {
+            if (discardTargetCount === 1) {
+                selectedIndices = [index];
+            } else if (selectedIndices.length < discardTargetCount) {
+                selectedIndices.push(index);
+            }
         }
     }
     renderPickPool();
@@ -1148,7 +1155,7 @@ function executePostDiscardResolution() {
 
     if(title.includes("Draw 3<br>Pick 1")) { startPickPhase(3, 1); }
     else if(title.includes("Discard 1<br>Draw 2")) { 
-        // Force direct draw bypass without menus since it's a direct draw 2 action line
+        // Direct draw bypass logic
         for(let i=0; i<2; i++){
             if(deck.length > 0) {
                 let c = deck.pop();
