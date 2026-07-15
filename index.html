@@ -74,6 +74,1221 @@
         .btn-grid { display: flex; flex-direction: column; gap: 12px; max-width: 380px; width: 100%; margin: 0 auto; }
         button { background: #353b48; color: white; border: 2px solid #718093; padding: 14px; font-size: 15px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-weight: bold; width: 100%; }
         button:hover { background: #57606f; border-color: #dcdde1; }
+        button:disabled { background: #2f3640; border-color: #485460; color: #7f8c8d; cursor: not-allowed; }
+        .action-btn { background: #2f3640; border-color: #fbc531; color: #fbc531; margin-top: 10px; }
+        .action-btn:hover { background: #fbc531; color: black; }
+        .confirm-btn { background: #4cd137; border: none; font-size: 17px; margin-top: 15px; }
+        .confirm-btn:hover { background: #44bd32; }
+        .back-btn { background: #718093; border: none; margin-top: 10px; }
+        .back-btn:hover { background: #57606f; }
+        .utility-btn { background: #2f3640; border: 2px dashed #fbc531; color: #fbc531; padding: 8px; font-size: 13px; border-radius: 6px; margin-bottom: 15px; }
+        .finish-btn { background: #e84118; border: none; margin-top: 20px; font-size: 16px; box-shadow: 0 4px 10px rgba(232,65,24,0.3); }
+        .finish-btn:hover { background: #c23616; }
+
+        /* Card Mechanics */
+        .card-container { display: flex; justify-content: center; gap: 12px; margin-top: 15px; flex-wrap: wrap; }
+        
+        .card { 
+            background: #ffffff; color: #000000; 
+            width: 120px; height: 175px; 
+            border-radius: 12px; border: 4px solid #dcdde1; 
+            box-shadow: 0 5px 10px rgba(0,0,0,0.4); 
+            cursor: pointer; user-select: none; 
+            position: relative; display: flex; flex-direction: column; 
+            align-items: center; justify-content: space-between; 
+            padding: 10px; text-align: center; font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card:hover { transform: translateY(-4px); box-shadow: 0 8px 15px rgba(0,0,0,0.5); }
+        .card.selected { border: 4px solid #4cd137; box-shadow: 0 0 18px #4cd137; }
+        .card.selectable-discard { border: 4px solid #fbc531; animation: pulse 1.5s infinite; }
+        
+        /* Selection and Discard Overlay Labels */
+        .card-badge-overlay {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            background: #fbc531;
+            color: black;
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 10;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(251, 197, 49, 0.7); }
+            70% { box-shadow: 0 0 0 8px rgba(251, 197, 49, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(251, 197, 49, 0); }
+        }
+        
+        /* Card Interiors */
+        .card-title { font-size: 10.5px; line-height: 1.25; word-wrap: break-word; width: 100%; flex-grow: 0; min-height: 42px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .card-icon-container { flex-grow: 1; display: flex; align-items: center; justify-content: center; width: 100%; }
+        .card-icon { font-size: 32px; display: flex; align-items: center; justify-content: center; }
+        
+        /* Digital Clock Display inside Card */
+        .digital-clock {
+            background: #222; color: #00ff66; font-family: 'Courier New', Courier, monospace;
+            padding: 4px 8px; border-radius: 6px; font-size: 14px; border: 2px solid #444;
+            box-shadow: inset 0 0 6px rgba(0,255,102,0.5); letter-spacing: 0.5px;
+        }
+        
+        .card.curse { background: #2f3640; color: #e84118; border-color: #e84118; }
+        .card.powerup { background: #f5f6fa; color: #1e272e; border-color: #27ae60; }
+        .card.time { background: #fff; color: #2f3640; border-color: #fbc531; }
+
+        /* Card Back: Cat in Circle Graphics */
+        .card.flipped { 
+            background: linear-gradient(135deg, #2c3e50 0%, #0f171e 100%) !important; 
+            color: white !important; border: 4px solid #fbc531 !important; 
+            display: flex !important; align-items: center !important; justify-content: center !important;
+        }
+        .card.flipped .card-content { display: none !important; }
+        
+        .cat-badge {
+            width: 70px; height: 70px; border-radius: 50%;
+            background: #fbc531; border: 3px double #ffffff;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 36px; box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+            position: relative;
+        }
+
+        .zoom-badge { 
+            position: absolute; bottom: 5px; right: 5px; 
+            background: #353b48; color: white; border-radius: 50%; 
+            width: 22px; height: 22px; font-size: 11px; 
+            display: flex; align-items: center; justify-content: center; z-index: 5; border: 1px solid #718093;
+        }
+
+        /* Overlays & Modals */
+        .overlay { 
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
+            background: rgba(0,0,0,0.85); display: none; 
+            align-items: center; justify-content: center; z-index: 999; 
+            backdrop-filter: blur(4px);
+        }
+        .big-card { 
+            background: white; color: black; width: 330px; min-height: 460px; 
+            border-radius: 20px; padding: 25px; box-shadow: 0 0 35px rgba(0,0,0,0.6);
+            display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+            text-align: center; position: relative;
+        }
+        .big-card.curse { background: #2f3640; color: #e84118; border: 5px solid #e84118; }
+        .big-card.powerup { background: #f5f6fa; color: #1e272e; border: 5px solid #27ae60; }
+        .big-card.time { background: #fff; color: #2f3640; border: 5px solid #fbc531; }
+        .big-title { font-size: 22px; font-weight: bold; margin-bottom: 15px; }
+        .big-desc { font-size: 14px; margin-top: 15px; color: #2f3640; font-weight: normal; line-height: 1.4; text-align: left; background: rgba(0,0,0,0.05); padding: 15px; border-radius: 8px; width: 100%; flex-grow: 1; display: flex; align-items: center; }
+        .big-card.curse .big-desc { color: #dcdde1; background: rgba(255,255,255,0.05); }
+        .big-cast { font-weight: bold; font-size: 13px; color: #e84118; margin-top: 12px; width: 100%; text-align: left; border-top: 1px solid rgba(113, 128, 147, 0.3); padding-top: 10px; }
+        
+        .custom-modal {
+            background: #2f3640; border: 3px solid #fbc531; border-radius: 16px;
+            padding: 25px; max-width: 500px; width: 95%; text-align: center;
+            box-shadow: 0 12px 25px rgba(0,0,0,0.7); color: white; max-height: 85vh; overflow-y: auto;
+        }
+        .custom-modal h2 { color: #fbc531; margin-top: 0; margin-bottom: 12px; font-size: 22px; }
+        .custom-modal p { font-size: 15px; line-height: 1.5; color: #dcdde1; margin-bottom: 20px; }
+        .modal-btn-row { display: flex; gap: 15px; justify-content: center; }
+        .modal-btn-row button { max-width: 180px; }
+
+        /* Copy Container */
+        .seeker-text-container {
+            width: 100%; background: #1e272e; border: 2px solid #718093;
+            border-radius: 8px; padding: 12px; font-size: 14px; font-family: monospace;
+            text-align: left; color: #fbc531; max-height: 110px; overflow-y: auto;
+            margin-bottom: 15px; white-space: pre-wrap;
+        }
+
+        /* Ledger Reports */
+        .ledger-section-title { font-weight: bold; text-align: left; border-bottom: 2px solid #718093; padding-bottom: 4px; margin: 14px 0 6px 0; color: #fbc531; font-size: 13px; text-transform: uppercase; }
+        .ledger-box { background: #1e272e; border-radius: 6px; padding: 10px; max-height: 100px; overflow-y: auto; text-align: left; font-size: 12.5px; font-family: monospace; color: #fff; margin-bottom: 10px; }
+        .ledger-box div { border-bottom: 1px dashed rgba(255,255,255,0.1); padding: 4px 0; }
+        
+        /* Stats Display Grid */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; text-align: left; font-size: 12.5px; font-family: monospace; background: #1e272e; padding: 10px; border-radius: 6px; }
+        .stat-label { color: #a4b0be; }
+        .stat-val { color: #4cd137; text-align: right; font-weight: bold; }
+
+        .hidden { display: none !important; }
+    </style></head><body>
+
+    <div id="start-screen">
+        <div class="start-logo">HIDE AND SEEK</div>
+        <div style="font-size: 16px; color: #a4b0be; font-style: italic; margin-bottom: 10px;">Hider Deck & Match Infrastructure Engine</div>
+        <button style="max-width: 260px; background: #4cd137; border: none; font-size: 18px;" onclick="bootGameSession()">🚀 Start Live Tracker</button>
+    </div>
+
+    <div class="top-navbar">
+        <div class="header-title">
+            <button class="ledger-trigger" onclick="openLedgerReport()" title="Open Ledger Logs">📖</button>
+        </div>
+
+        <div class="navbar-session-timer" id="live-session-timer">00:00:00</div>
+
+        <div class="controls-cluster">
+            <div class="toggle-container">
+                <span>Auto Flip-Up</span>
+                <label class="switch">
+                    <input type="checkbox" id="toggle-autoflip" onchange="saveState()">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="toggle-container">
+                <span>Insta-Pick</span>
+                <label class="switch">
+                    <input type="checkbox" id="toggle-instapick" onchange="saveState()">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="toggle-container">
+                <span>Mute Popups</span>
+                <label class="switch">
+                    <input type="checkbox" id="toggle-mutepopups" onchange="saveState()">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="toggle-container" style="border-left: 1px solid #718093; padding-left: 10px;">
+                <span>🔴 ENDGAME</span>
+                <label class="switch">
+                    <input type="checkbox" id="global-endgame-toggle" onchange="syncEndgameToggle(this.checked); saveState();">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div id="main-screen" class="screen">
+        <div class="left-panel centered-content">
+            <h1>Hider's Deck</h1>
+            <div class="subtitle">Hide and Seek Options</div>
+            <p class="deck-status">Deck: <span id="deck-count">0</span> cards remaining</p>
+            
+            <div class="btn-grid">
+                <button id="draw-btn-1" onclick="handleDrawClick(1, 1)">Draw 1</button>
+                <button id="draw-btn-2" onclick="handleDrawClick(2, 1)">Draw 2 Pick 1</button>
+                <button id="draw-btn-3" onclick="handleDrawClick(3, 1)">Draw 3 Pick 1</button>
+                <button id="draw-btn-4" onclick="handleDrawClick(4, 1)">Draw 4 Pick 1</button>
+                
+                <button class="finish-btn" onclick="triggerEndGameSummation()">🏁 End Game (Compile Summary)</button>
+            </div>
+        </div>
+        
+        <div class="right-panel">
+            <h1>Hider Hand (<span id="hand-count">0</span>/<span id="max-hand-count">5</span>)</h1>
+            <div class="warning-bar" id="hand-limit-warning">WARNING: Hand limit reached! Play or discard cards to fit new items.</div>
+            <div id="main-hand" class="card-container"></div>
+        </div>
+    </div>
+
+    <div id="picking-screen" class="screen hidden">
+        <div class="left-panel picking-left">
+            <h1 id="pick-instruction">Pick Cards</h1>
+            <div class="info-bar" id="picking-warning">Discard or pick options are highlighted below based on active flows.</div>
+            
+            <button class="utility-btn" id="flip-pool-btn" onclick="flipAllCardsInPool()">🔓 Flip All Cards Face Up</button>
+            <div id="pick-pool" class="card-container"></div>
+            
+            <div style="max-width: 400px; margin: 20px auto; width: 100%;">
+                <button id="confirm-selection-btn" class="confirm-btn" onclick="commitPickedCards()">Confirm Selection</button>
+                <button id="abort-pick-btn" class="back-btn" onclick="abortPickingPhase()">Back to Dashboard</button>
+            </div>
+        </div>
+        
+        <div class="right-panel picking-right">
+            <h1>Hider Hand (<span id="pick-hand-count">0</span>/<span id="pick-max-hand-count">5</span>)</h1>
+            <div id="pick-hand" class="card-container"></div>
+        </div>
+    </div>
+
+    <div id="master-overlay" class="overlay" onclick="closeOverlay()">
+        <div class="big-card hidden" id="overlay-card" onclick="event.stopPropagation()">
+            <div class="big-title" id="overlay-title">Card Title</div>
+            <div id="overlay-icon-container" style="flex-grow: 1; display: flex; align-items: center; justify-content: center;"></div>
+            <div class="big-desc" id="overlay-desc">Card Description</div>
+            <div class="big-cast" id="overlay-cast"></div>
+            <div style="display: flex; gap: 10px; width: 100%; margin-top: 15px;">
+                <button id="overlay-play-btn" class="confirm-btn" style="margin:0; flex: 1;">Play Card</button>
+                <button id="overlay-discard-btn" class="back-btn" style="margin:0; background: #e84118; flex: 1;">Discard</button>
+            </div>
+        </div>
+
+        <div class="custom-modal hidden" id="overlay-alert" onclick="event.stopPropagation()">
+            <h2 id="alert-title">Notification</h2>
+            <p id="alert-text">Message details content...</p>
+            <button class="confirm-btn" style="margin: 0 auto; max-width: 200px;" onclick="closeOverlay()">OK</button>
+        </div>
+
+        <div class="custom-modal hidden" id="overlay-seeker-broadcast" onclick="event.stopPropagation()">
+            <h2>🚨 Send to Seekers</h2>
+            <p>Copy text below and paste into the chat channel:</p>
+            <div class="seeker-text-container" id="seeker-text-box">Copy container</div>
+            <button class="confirm-btn" style="margin: 0 auto 10px auto; max-width: 200px; background: #27ae60;" onclick="copySeekerMessageText()">Copy Text</button>
+            <button class="back-btn" style="margin: 0 auto; max-width: 200px;" onclick="closeOverlay()">Done</button>
+        </div>
+
+        <div class="custom-modal hidden" id="overlay-choice" onclick="event.stopPropagation()">
+            <h2 id="choice-title">Make Choice</h2>
+            <p id="choice-text">Question prompt information...</p>
+            <div class="modal-btn-row">
+                <button id="choice-btn-yes" class="confirm-btn" style="margin:0;">Yes</button>
+                <button id="choice-btn-no" class="back-btn" style="margin:0; background: #e84118;">No</button>
+            </div>
+        </div>
+
+        <div class="custom-modal hidden" id="overlay-ledger" onclick="event.stopPropagation()">
+            <h2>📖 Ledger Action Book</h2>
+            <div class="ledger-section-title">Cards Used</div>
+            <div id="log-used" class="ledger-box"></div>
+            <div class="ledger-section-title">Cards Discarded</div>
+            <div id="log-discarded" class="ledger-box"></div>
+            <div class="ledger-section-title">Cards Skipped</div>
+            <div id="log-skipped" class="ledger-box"></div>
+            <div class="ledger-section-title">% Selected From Draws</div>
+            <div id="stats-picked" class="stats-grid"></div>
+            <div class="ledger-section-title">% Hand Cards Used</div>
+            <div id="stats-used" class="stats-grid"></div>
+            <button class="back-btn" style="margin-top: 15px; max-width: 180px;" onclick="closeOverlay()">Close Ledger</button>
+        </div>
+
+        <div class="custom-modal hidden" id="overlay-endgame-summary" onclick="event.stopPropagation()">
+            <h2 style="color: #4cd137;">🏁 Final Match Summary</h2>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+                <div style="background: #1e272e; padding: 12px; border-radius: 8px; border: 1px dashed #718093;">
+                    <div style="font-size: 11px; color: #a4b0be; text-transform: uppercase;">Real Session Elapsed</div>
+                    <div id="eg-elapsed-time" style="font-size: 20px; font-weight: bold; color: #fbc531; font-family: monospace; margin-top: 5px;">00:00:00</div>
+                </div>
+                <div style="background: #1e272e; padding: 12px; border-radius: 8px; border: 1px dashed #718093;">
+                    <div style="font-size: 11px; color: #a4b0be; text-transform: uppercase;">Retained Bonuses</div>
+                    <div id="eg-bonus-minutes" style="font-size: 20px; font-weight: bold; color: #4cd137; font-family: monospace; margin-top: 5px;">0 Min</div>
+                </div>
+            </div>
+
+            <div style="background: #1e272e; padding: 15px; border-radius: 12px; border: 2px solid #4cd137; margin-bottom: 15px;">
+                <div style="font-size: 13px; color: #a4b0be; text-transform: uppercase; font-weight: bold;">Calculated Total Survival Record</div>
+                <div id="endgame-calculated-tally" style="font-size: 34px; font-weight: bold; color: #00ff66; font-family: monospace; margin-top: 5px;">00:00:00</div>
+            </div>
+
+            <div class="ledger-section-title">Historical Cards Used Log</div>
+            <div id="eg-log-used" class="ledger-box" style="max-height: 80px;"></div>
+            <div class="ledger-section-title">Historical Cards Discarded Log</div>
+            <div id="eg-log-discarded" class="ledger-box" style="max-height: 80px;"></div>
+            <div class="ledger-section-title">Historical Cards Skipped Log</div>
+            <div id="eg-log-skipped" class="ledger-box" style="max-height: 80px;"></div>
+            <div class="ledger-section-title">% Selected From Draws By Category</div>
+            <div id="eg-stats-picked" class="stats-grid" style="margin-bottom: 6px;"></div>
+            <div class="ledger-section-title">% Hand Cards Used By Category</div>
+            <div id="eg-stats-used" class="stats-grid" style="margin-bottom: 15px;"></div>
+
+            <div style="display: flex; flex-direction: column; gap: 10px; max-width: 300px; margin: 0 auto;">
+                <button class="confirm-btn" style="background: #e84118; margin: 0;" onclick="resetWholeGameTracker()">🏁 End Game</button>
+                <button class="back-btn" style="margin: 0;" onclick="closeOverlay()">Dismiss Summary</button>
+            </div>
+        </div>
+    </div><script>
+// State Configuration Engine
+let deck = [];
+let hand = [];
+let drawnPool = [];
+let selectedIndices = [];
+let pickTargetCount = 0;
+let currentHandLimit = 5;
+let isGlobalEndgameActive = false;
+
+// Time Tracking State Variables
+let matchStartTimestamp = null;
+let liveTimerIntervalId = null;
+let computedTotalSessionSeconds = 0;
+
+// Dynamic Discard Workflow Parameters
+let discardTargetCount = 0;
+let discardedCardsThisTurn = [];
+let isDiscardingActive = false;
+let forceHandTrimmingRoutineActive = false;
+let afterDiscardSuccessCallback = null;
+
+// Global Ledger Statistics Database
+let globalHistory = {
+    used: [], discarded: [], skipped: [],
+    pickedCounts: { time: 0, powerup: 0, curse: 0 },
+    drawnCounts: { time: 0, powerup: 0, curse: 0 },
+    usedCounts: { time: 0, powerup: 0, curse: 0 },
+    totalUsedEver: 0
+};
+
+const cardDefinitions = [
+    { qty: 4, title: "2 Minute<br>Time Bonus", type: "time", value: 2, desc: "Hold this in your Hand until the End of the Game to gain 2 Minutes" },
+    { qty: 3, title: "5 Minute<br>Time Bonus", type: "time", value: 5, desc: "Hold this in your Hand until the End of the Game to gain 5 Minutes" },
+    { qty: 3, title: "7 Minute<br>Time Bonus", type: "time", value: 7, desc: "Hold this in your Hand until the End of the Game to gain 7 Minutes" },
+    { qty: 2, title: "10 Minute<br>Time Bonus", type: "time", value: 10, desc: "Hold this in your Hand until the End of the Game to gain 10 Minutes" },
+    { qty: 2, title: "12 Minute<br>Time Bonus", type: "time", value: 12, desc: "Hold this in your Hand until the End of the Game to gain 12 Minutes" },
+    { qty: 2, title: "Time Trap", type: "time", symbol: "🪤", seekerPov: "🚨 TIME TRAP ACTIVATED!\nI have placed a Time Trap at a bus stop on the map. Every 12 minutes it remains unvisited, it gains 4 minutes in value.", desc: "Place this at any Bus Stop on the Map, notify the seekers of its Location." },
+    { qty: 2, title: "Randomise", type: "powerup", symbol: "🎲", seekerPov: "🎲 RANDOMISE ACTIVATED!\nYour next question is being randomized.", desc: "Randomise a Seeker’s question parameters." },
+    { qty: 2, title: "Duplicate", type: "powerup", symbol: "🃏", desc: "Duplicate a card in your hand." },
+    { qty: 2, title: "Veto", type: "powerup", symbol: "🚫", seekerPov: "🚫 VETO PLAYED!\nI am permanently blocking the question you just tried to ask.", desc: "Block a Seeker's question permanently." },
+    { qty: 2, title: "Discard 1<br>Draw 3<br>Pick 1", type: "powerup", symbol: "🔄", desc: "Discard 1 card from your hand to pick 1 from 3 newly drawn items." },
+    { qty: 1, title: "Discard 1<br>Draw 2", type: "powerup", symbol: "🃏", desc: "Discard 1 card to immediately pull 2 fresh cards into your hand selection." },
+    { qty: 2, title: "Discard 1<br>Draw 1<br>Increase Hand Size by 1", type: "powerup", symbol: "➕", desc: "Discard 1 card, then draw 1 face-down card to choose from, and permanently expand your Hand Size limit by 1." },
+    { qty: 1, title: "Discard 2<br>Draw 3<br>Pick 2", type: "powerup", symbol: "🎴", desc: "Discard 2 cards to setup a custom draw pool choice module." },
+    { qty: 1, title: "Freeze", type: "powerup", symbol: "❄️", seekerPov: "❄️ FREEZE RUNNING!\nYou have been frozen for the next 5 minutes. Stay exactly where you are.", desc: "Inform the Seekers, they must stay in place completely for 5 minutes." },
+    { qty: 1, title: "Curse of the<br>Gifted Express", type: "curse", cast: "Discard a Power up. Can only use while the Seekers are on transit", seekerPov: "☠️ CURSE OF THE GIFTED EXPRESS!\nYou must stay on your current bus until it reaches the absolute end of its route!", desc: "The Seekers must stay on your current bus until it reaches the absolute end of its route." },
+    { qty: 1, title: "Curse of the<br>Itinerary", type: "curse", seekerPov: "☠️ CURSE OF THE ITINERARY!\nBefore boarding your next transit vehicle, you must explicitly state the exact destination stop!", desc: "The Seekers must state their explicit departure stops before moving." },
+    { qty: 1, title: "Curse of<br>Marco Muzammil", type: "curse", cast: "Discard 15+ Minutes of Time Bonuses if used in the Endgame", seekerPov: "☠️ CURSE OF MARCO MUZAMMIL!\nYou cannot ask any further questions until you record yourself going down a slide!", desc: "The Seekers must run down a playground slide before continuing." },
+    { qty: 1, title: "Curse of the<br>Gamble", type: "curse", cast: "Reveal a Card in your hand.", seekerPov: "☠️ CURSE OF THE GAMBLE!\nI am predicting the category of the next question you are about to ask.", desc: "Predict next Category to try and multiply drawn questionnaire awards." },
+    { qty: 1, title: "Curse of the<br>Dead Phone", type: "curse", cast: "The Hider cannot use phone for 15 mins except for maps/comms", seekerPov: "☠️ CURSE OF THE DEAD PHONE!\nYour team cannot look at or use your phones for the next 25 minutes!", desc: "The Seekers lose phone privileges for 25 mins with narrow exceptions." },
+    { qty: 1, title: "Curse of the<br>Mobile Bus", type: "curse", cast: "The Seeker’s next question on the Bus is free.", seekerPov: "☠️ CURSE OF THE MOBILE BUS!\nYou must ask your next 3 consecutive questions while actively riding inside a bus!", desc: "Forces seekers to query only while moving on transit lines." },
+    { qty: 1, title: "Curse of the<br>Short Stop", type: "curse", cast: "The Seekers must be on transit", seekerPov: "☠️ CURSE OF THE SHORT STOP!\nYou must request a stop and get off your current transit vehicle at the very next stop!", desc: "Forces seekers to immediately depart their current transport line." },
+    { qty: 1, title: "Curse of the<br>Drained Brain", type: "curse", cast: "Discard a card.", seekerPov: "I have picked 3 questions. Those 3 specific questions are locked out and cannot be asked for the rest of the game!", desc: "Choose any 3 Questions, they cannot be asked for the rest of the Game." },
+    { qty: 1, title: "Curse of the<br>Unguided Tourist", type: "curse", cast: "Take a picture of a place in your Zone", seekerPov: "☠️ CURSE OF THE UNGUIDED TOURIST!\nLocate an area or business with a higher public review rating!", desc: "Block questions until seekers match maps rating barriers." },
+    { qty: 1, title: "Curse of the<br>Nosey Looker", type: "curse", cast: "Do the same before sending", seekerPov: "☠️ CURSE OF THE NOSEY LOOKER!\nFind, photograph, and send me 3 distinct specified street assets!", desc: "The Seekers must find, take a picture, and send 3 of the following to the Hider before asking a Question: A dog, a sports ball, someone wearing a helmet, litter not in the proper place (and you must throw it away after taking a picture), or a fast food chain (without searching one up)" },
+    { qty: 1, title: "Curse of the<br>Nomad", type: "curse", cast: "Inform Seeker of image distance from hider stop", seekerPov: "☠️ CURSE OF THE NOMAD!\nFind this exact Streetview spot and send me a matching real-life photo!", desc: "Forces pinpoint location identification based on visual fragments." }
+];
+
+// LocalStorage State Management
+function saveState() {
+    const state = {
+        deck,
+        hand,
+        drawnPool,
+        selectedIndices,
+        pickTargetCount,
+        currentHandLimit,
+        isGlobalEndgameActive,
+        matchStartTimestamp,
+        computedTotalSessionSeconds,
+        discardTargetCount,
+        discardedCardsThisTurn,
+        isDiscardingActive,
+        globalHistory,
+        autoFlip: document.getElementById('toggle-autoflip').checked,
+        instaPick: document.getElementById('toggle-instapick').checked,
+        mutePopups: document.getElementById('toggle-mutepopups').checked
+    };
+    localStorage.setItem('hide_and_seek_state', JSON.stringify(state));
+}
+
+function loadState() {
+    const saved = localStorage.getItem('hide_and_seek_state');
+    if (!saved) return false;
+    try {
+        const state = JSON.parse(saved);
+        deck = state.deck || [];
+        hand = state.hand || [];
+        drawnPool = state.drawnPool || [];
+        selectedIndices = state.selectedIndices || [];
+        pickTargetCount = state.pickTargetCount || 0;
+        currentHandLimit = state.currentHandLimit || 5;
+        isGlobalEndgameActive = state.isGlobalEndgameActive || false;
+        matchStartTimestamp = state.matchStartTimestamp;
+        computedTotalSessionSeconds = state.computedTotalSessionSeconds || 0;
+        discardTargetCount = state.discardTargetCount || 0;
+        discardedCardsThisTurn = state.discardedCardsThisTurn || [];
+        isDiscardingActive = state.isDiscardingActive || false;
+        globalHistory = state.globalHistory || globalHistory;
+
+        document.getElementById('toggle-autoflip').checked = !!state.autoFlip;
+        document.getElementById('toggle-instapick').checked = !!state.instaPick;
+        document.getElementById('toggle-mutepopups').checked = !!state.mutePopups;
+        document.getElementById('global-endgame-toggle').checked = isGlobalEndgameActive;
+
+        syncEndgameToggle(isGlobalEndgameActive);
+        
+        if (matchStartTimestamp) {
+            if(liveTimerIntervalId) clearInterval(liveTimerIntervalId);
+            liveTimerIntervalId = setInterval(updateLiveSessionTimer, 1000);
+        }
+
+        if (drawnPool.length > 0) {
+            document.getElementById('start-screen').style.display = 'none';
+            enterPickingPhase(pickTargetCount);
+        } else if (matchStartTimestamp) {
+            document.getElementById('start-screen').style.display = 'none';
+        }
+        
+        updateDeckCounter();
+        renderHandViews();
+        return true;
+    } catch(e) {
+        console.error("Error loading saved state:", e);
+        return false;
+    }
+}
+
+function bootGameSession() {
+    if (loadState()) return;
+    document.getElementById('start-screen').style.display = 'none';
+    matchStartTimestamp = Date.now();
+    if(liveTimerIntervalId) clearInterval(liveTimerIntervalId);
+    liveTimerIntervalId = setInterval(updateLiveSessionTimer, 1000);
+    initDeck();
+    renderHandViews();
+    saveState();
+}
+
+function updateLiveSessionTimer() {
+    if(!matchStartTimestamp) return;
+    let diff = Math.floor((Date.now() - matchStartTimestamp) / 1000);
+    computedTotalSessionSeconds = diff;
+    document.getElementById('live-session-timer').innerText = formatSecondsToDigital(diff);
+}
+
+function formatSecondsToDigital(totalSecs) {
+    let hrs = Math.floor(totalSecs / 3600);
+    let mins = Math.floor((totalSecs % 3600) / 60);
+    let secs = totalSecs % 60;
+    return [hrs, mins, secs].map(x => String(x).padStart(2, '0')).join(':');
+}
+
+function initDeck() {
+    deck = [];
+    cardDefinitions.forEach(card => {
+        for(let i = 0; i < card.qty; i++) {
+            deck.push({ ...card, id: Math.random().toString(36).substr(2, 9) });
+        }
+    });
+    shuffle(deck);
+    updateDeckCounter();
+    saveState();
+}
+
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
+function updateDeckCounter() {
+    document.getElementById('deck-count').innerText = deck.length;
+}
+
+function renderHandViews() {
+    const mainHandDiv = document.getElementById('main-hand');
+    const pickHandDiv = document.getElementById('pick-hand');
+    
+    mainHandDiv.innerHTML = '';
+    pickHandDiv.innerHTML = '';
+    
+    // Render hand cards
+    hand.forEach((card, index) => {
+        const cCard = createCardElement(card, index, false);
+        mainHandDiv.appendChild(cCard);
+        
+        const pCard = createCardElement(card, index, false);
+        pCard.classList.add('disabled-hand-card');
+        pCard.style.opacity = '0.6';
+        pCard.style.cursor = 'not-allowed';
+        pickHandDiv.appendChild(pCard);
+    });
+    
+    document.getElementById('hand-count').innerText = hand.length;
+    document.getElementById('max-hand-count').innerText = currentHandLimit;
+    document.getElementById('pick-hand-count').innerText = hand.length;
+    document.getElementById('pick-max-hand-count').innerText = currentHandLimit;
+    
+    // Disable/Enable Draw Buttons based on hand limit
+    const handFull = hand.length >= currentHandLimit;
+    document.getElementById('draw-btn-1').disabled = handFull;
+    document.getElementById('draw-btn-2').disabled = handFull;
+    document.getElementById('draw-btn-3').disabled = handFull;
+    document.getElementById('draw-btn-4').disabled = handFull;
+
+    const warningBar = document.getElementById('hand-limit-warning');
+    if (handFull) {
+        warningBar.style.display = 'block';
+    } else {
+        warningBar.style.display = 'none';
+    }
+}
+
+function createCardElement(card, index, isInPickPool) {
+    const div = document.createElement('div');
+    div.className = `card ${card.type}`;
+    
+    // Determine face-down display state
+    let isFacedDown = false;
+    if (isInPickPool && card.isFlipped) {
+        isFacedDown = true;
+    }
+    
+    if (isFacedDown) {
+        div.classList.add('flipped');
+    }
+    
+    const isSelected = selectedIndices.includes(index);
+    if (isSelected && isInPickPool) div.classList.add('selected');
+    
+    // Discard active highlighting
+    const isBeingSelectedForDiscard = isDiscardingActive && discardedCardsThisTurn.includes(index);
+    if (isDiscardingActive && !isInPickPool) {
+        div.classList.add('selectable-discard');
+        if (isBeingSelectedForDiscard) {
+            div.classList.add('selected');
+            
+            // Highlight selected with fractional symbol indicator
+            const badge = document.createElement('div');
+            badge.className = 'card-badge-overlay';
+            badge.innerText = `${discardedCardsThisTurn.indexOf(index) + 1}/${discardTargetCount}`;
+            div.appendChild(badge);
+        }
+    }
+
+    const content = document.createElement('div');
+    content.className = 'card-content';
+    content.style.height = '100%';
+    content.style.display = 'flex';
+    content.style.flexDirection = 'column';
+    content.style.justifyContent = 'space-between';
+    content.style.width = '100%';
+    
+    const title = document.createElement('div');
+    title.className = 'card-title';
+    title.innerHTML = card.title;
+    content.appendChild(title);
+    
+    const iconCont = document.createElement('div');
+    iconCont.className = 'card-icon-container';
+    const icon = document.createElement('div');
+    icon.className = 'card-icon';
+    
+    if (card.type === 'time' && card.value) {
+        icon.className = 'digital-clock';
+        icon.innerText = `+${card.value}M`;
+    } else {
+        icon.innerText = card.symbol || "🃏";
+    }
+    iconCont.appendChild(icon);
+    content.appendChild(iconCont);
+    
+    div.appendChild(content);
+    
+    // Back structure (Flipped State)
+    const back = document.createElement('div');
+    back.className = 'cat-badge';
+    back.innerHTML = '😺';
+    
+    // Lens button is ONLY visible on non-pick-pool cards or flipped-up cards
+    if (!isInPickPool) {
+        const zoom = document.createElement('div');
+        zoom.className = 'zoom-badge';
+        zoom.innerText = '🔍';
+        zoom.onclick = (e) => {
+            e.stopPropagation();
+            triggerZoomView(card, index, false);
+        };
+        back.appendChild(zoom);
+    }
+    div.appendChild(back);
+    
+    div.onclick = () => {
+        if (isInPickPool) {
+            handlePoolCardClick(index);
+        } else {
+            handleHandCardClick(index);
+        }
+    };
+    
+    return div;
+}
+
+function triggerZoomView(card, index, isPickingPhase) {
+    document.getElementById('overlay-title').innerHTML = card.title;
+    const iconCont = document.getElementById('overlay-icon-container');
+    iconCont.innerHTML = '';
+    
+    const bigIcon = document.createElement('div');
+    if (card.type === 'time' && card.value) {
+        bigIcon.className = 'digital-clock';
+        bigIcon.style.fontSize = '28px';
+        bigIcon.innerText = `+${card.value} Min`;
+    } else {
+        bigIcon.style.fontSize = '80px';
+        bigIcon.innerText = card.symbol || "🃏";
+    }
+    iconCont.appendChild(bigIcon);
+    
+    document.getElementById('overlay-desc').innerText = card.desc;
+    
+    const cast = document.getElementById('overlay-cast');
+    if (card.cast) {
+        cast.style.display = 'block';
+        cast.innerText = `Cast Condition: ${card.cast}`;
+    } else {
+        cast.style.display = 'none';
+    }
+
+    // Dynamic Options on Clicked Card
+    const playBtn = document.getElementById('overlay-play-btn');
+    const discardBtn = document.getElementById('overlay-discard-btn');
+    
+    if (isPickingPhase || isDiscardingActive) {
+        // Disallow playing cards entirely during picking phase/mandatory discards
+        playBtn.style.display = 'none';
+    } else {
+        playBtn.style.display = 'block';
+        playBtn.onclick = () => {
+            closeOverlay();
+            executeCardPlay(index);
+        };
+    }
+
+    discardBtn.onclick = () => {
+        closeOverlay();
+        triggerChoiceModal(
+            "Discard Card?",
+            `Are you sure you want to permanently discard "${card.title.replace('<br>', ' ')}"?`,
+            () => {
+                globalHistory.discarded.push(hand[index]);
+                hand.splice(index, 1);
+                renderHandViews();
+                saveState();
+            }
+        );
+    };
+    
+    const overlayCard = document.getElementById('overlay-card');
+    overlayCard.className = `big-card ${card.type}`;
+    overlayCard.classList.remove('hidden');
+    
+    document.getElementById('overlay-alert').classList.add('hidden');
+    document.getElementById('overlay-seeker-broadcast').classList.add('hidden');
+    document.getElementById('overlay-choice').classList.add('hidden');
+    document.getElementById('overlay-ledger').classList.add('hidden');
+    document.getElementById('overlay-endgame-summary').classList.add('hidden');
+    
+    document.getElementById('master-overlay').style.display = 'flex';
+}
+
+function closeOverlay() {
+    document.getElementById('master-overlay').style.display = 'none';
+}
+
+function handleHandCardClick(index) {
+    const isPickingActive = !document.getElementById('picking-screen').classList.contains('hidden');
+    
+    if (isDiscardingActive) {
+        const existingIdx = discardedCardsThisTurn.indexOf(index);
+        if (existingIdx > -1) {
+            discardedCardsThisTurn.splice(existingIdx, 1);
+        } else {
+            if (discardedCardsThisTurn.length < discardTargetCount) {
+                discardedCardsThisTurn.push(index);
+            }
+        }
+        renderHandViews();
+
+        const instaPickEnabled = document.getElementById('toggle-instapick').checked;
+        if (instaPickEnabled && discardedCardsThisTurn.length === discardTargetCount) {
+            executeConfirmedDiscard();
+        }
+        return;
+    }
+    
+    // Zoom/Inspect instead of insta-playing
+    triggerZoomView(hand[index], index, isPickingActive);
+}
+
+function executeCardPlay(index) {
+    const card = hand[index];
+
+    // Enforce Marco Muzammil Casting Costs
+    if (card.title.includes("Curse of<br>Marco Muzammil") && isGlobalEndgameActive) {
+        // Find time bonuses
+        let targetBonusIndices = [];
+        let totalValFound = 0;
+        hand.forEach((c, idx) => {
+            if (idx !== index && c.type === 'time' && c.value) {
+                targetBonusIndices.push(idx);
+                totalValFound += c.value;
+            }
+        });
+
+        if (totalValFound < 15) {
+            triggerAlertModal("Cannot Cast", "Marco Muzammil requires discarding 15+ minutes of Time Bonuses when played in the Endgame. You do not have enough.");
+            return;
+        }
+
+        // Force discard bonuses
+        targetBonusIndices.sort((a,b) => b-a).forEach(idx => {
+            globalHistory.discarded.push(hand[idx]);
+            hand.splice(idx, 1);
+        });
+        
+        // Correct original card's index offset after modifications
+        index = hand.indexOf(card);
+    }
+    
+    // Log play stats
+    globalHistory.used.push(card);
+    globalHistory.usedCounts[card.type]++;
+    globalHistory.totalUsedEver++;
+    
+    // Process Card Abilities
+    if (card.title.includes("Discard 1<br>Draw 3<br>Pick 1")) {
+        hand.splice(index, 1);
+        setupDiscardRequirements(1, () => handleDrawClick(3, 1));
+    } else if (card.title.includes("Discard 1<br>Draw 2")) {
+        hand.splice(index, 1);
+        setupDiscardRequirements(1, () => {
+            const pullQty = Math.min(deck.length, 2);
+            for(let i = 0; i < pullQty; i++) {
+                hand.push(deck.pop());
+            }
+            updateDeckCounter();
+            renderHandViews();
+            saveState();
+        });
+    } else if (card.title.includes("Discard 1<br>Draw 1<br>Increase Hand Size by 1")) {
+        hand.splice(index, 1);
+        setupDiscardRequirements(1, () => {
+            currentHandLimit++;
+            handleDrawClick(1, 1);
+        });
+    } else if (card.title.includes("Discard 2<br>Draw 3<br>Pick 2")) {
+        hand.splice(index, 1);
+        setupDiscardRequirements(2, () => handleDrawClick(3, 2));
+    } else if (card.title.includes("Curse of the<br>Drained Brain")) {
+        hand.splice(index, 1);
+        // Force discard a card directly
+        setupDiscardRequirements(1, () => {
+            if (card.seekerPov) {
+                triggerSeekerBroadcastModal(card.seekerPov);
+            }
+        });
+    } else {
+        if (card.seekerPov) {
+            triggerSeekerBroadcastModal(card.seekerPov);
+        }
+        hand.splice(index, 1);
+    }
+    
+    renderHandViews();
+    saveState();
+}
+
+function setupDiscardRequirements(count, onSuccess) {
+    if (hand.length < count) {
+        triggerAlertModal("Cannot Cast", "You do not have enough cards in hand to satisfy the discard requirements.");
+        return;
+    }
+    isDiscardingActive = true;
+    discardTargetCount = count;
+    discardedCardsThisTurn = [];
+    afterDiscardSuccessCallback = onSuccess;
+    
+    // Show instruction prompt
+    const warn = document.getElementById('hand-limit-warning');
+    warn.style.display = 'block';
+    warn.className = "info-bar";
+    warn.innerText = `Choose ${count} card(s) from your hand to discard to pay casting cost.`;
+    
+    // Create non-duplicated confirmation button on dashboard
+    let discardBtn = document.getElementById("temporary-discard-confirm-btn");
+    if(!discardBtn) {
+        discardBtn = document.createElement('button');
+        discardBtn.id = "temporary-discard-confirm-btn";
+        discardBtn.className = "confirm-btn";
+        discardBtn.innerText = "Confirm Discard Choice";
+        document.querySelector('.right-panel').appendChild(discardBtn);
+    }
+    
+    discardBtn.onclick = executeConfirmedDiscard;
+    renderHandViews();
+    saveState();
+}
+
+function executeConfirmedDiscard() {
+    if (discardedCardsThisTurn.length !== discardTargetCount) {
+        triggerAlertModal("Incomplete Choice", `Please select exactly ${discardTargetCount} card(s).`);
+        return;
+    }
+    
+    // Execute discard
+    discardedCardsThisTurn.sort((a,b) => b-a).forEach(idx => {
+        globalHistory.discarded.push(hand[idx]);
+        hand.splice(idx, 1);
+    });
+    
+    // Reset states
+    isDiscardingActive = false;
+    const discardBtn = document.getElementById("temporary-discard-confirm-btn");
+    if (discardBtn) discardBtn.remove();
+    
+    const warn = document.getElementById('hand-limit-warning');
+    warn.className = "warning-bar";
+    warn.style.display = 'none';
+    
+    if (afterDiscardSuccessCallback) {
+        const callback = afterDiscardSuccessCallback;
+        afterDiscardSuccessCallback = null;
+        callback();
+    }
+    
+    renderHandViews();
+    saveState();
+}
+
+function handleDrawClick(drawCount, pickCount) {
+    if (hand.length >= currentHandLimit) {
+        triggerAlertModal("Hand Full", "You must play or discard cards before drawing more!");
+        return;
+    }
+    if (deck.length < drawCount) {
+        triggerAlertModal("Deck Exhausted", "There are not enough cards remaining in the deck!");
+        return;
+    }
+    
+    drawnPool = [];
+    for(let i = 0; i < drawCount; i++) {
+        const c = deck.pop();
+        c.isFlipped = !document.getElementById('toggle-autoflip').checked;
+        drawnPool.push(c);
+        globalHistory.drawnCounts[c.type]++;
+    }
+    
+    updateDeckCounter();
+    enterPickingPhase(pickCount);
+    saveState();
+}
+
+function enterPickingPhase(pickCount) {
+    selectedIndices = [];
+    pickTargetCount = pickCount;
+    
+    document.getElementById('main-screen').classList.add('hidden');
+    document.getElementById('picking-screen').classList.remove('hidden');
+    
+    document.getElementById('pick-instruction').innerText = `Pick ${pickCount} Card(s)`;
+    
+    renderPickingViews();
+}
+
+function renderPickingViews() {
+    const poolDiv = document.getElementById('pick-pool');
+    poolDiv.innerHTML = '';
+    
+    drawnPool.forEach((card, index) => {
+        const cardEl = createCardElement(card, index, true);
+        poolDiv.appendChild(cardEl);
+    });
+    
+    renderHandViews();
+}
+
+function flipAllCardsInPool() {
+    drawnPool.forEach(c => c.isFlipped = false);
+    renderPickingViews();
+    saveState();
+}
+
+function handlePoolCardClick(index) {
+    const card = drawnPool[index];
+    
+    if (card.isFlipped) {
+        card.isFlipped = false;
+        renderPickingViews();
+        saveState();
+        return;
+    }
+    
+    const existingIdx = selectedIndices.indexOf(index);
+    if (existingIdx > -1) {
+        selectedIndices.splice(existingIdx, 1);
+    } else {
+        if (selectedIndices.length < pickTargetCount) {
+            selectedIndices.push(index);
+        }
+    }
+    
+    // Auto-commit if Insta-Pick is enabled AND selection requirements are fully met
+    const instaPickEnabled = document.getElementById('toggle-instapick').checked;
+    if (instaPickEnabled && selectedIndices.length === pickTargetCount) {
+        commitPickedCards();
+        return;
+    }
+    
+    renderPickingViews();
+    saveState();
+}
+
+function commitPickedCards() {
+    if (selectedIndices.length !== pickTargetCount) {
+        triggerAlertModal("Selection Incomplete", `Please pick exactly ${pickTargetCount} card(s) to add to your Hand.`);
+        return;
+    }
+    
+    // Add chosen to hand
+    selectedIndices.forEach(idx => {
+        const card = drawnPool[idx];
+        hand.push(card);
+        globalHistory.pickedCounts[card.type]++;
+    });
+    
+    // Shuffle unselected cards to the bottom of the deck (skipped cards)
+    const returnedToBottom = [];
+    drawnPool.forEach((card, idx) => {
+        if (!selectedIndices.includes(idx)) {
+            returnedToBottom.push(card);
+        }
+    });
+    
+    if (returnedToBottom.length > 0) {
+        shuffle(returnedToBottom);
+        deck.unshift(...returnedToBottom); // unshift adds to bottom of the tracker logic array
+    }
+    
+    exitPickingPhase();
+}
+
+function abortPickingPhase() {
+    triggerChoiceModal(
+        "Abort Draft?", 
+        "Aborting will return all drawn cards back to the bottom of the deck. Continue?", 
+        () => {
+            while(drawnPool.length) {
+                deck.unshift(drawnPool.pop());
+            }
+            updateDeckCounter();
+            exitPickingPhase();
+        }, 
+        null
+    );
+}
+
+function exitPickingPhase() {
+    drawnPool = [];
+    selectedIndices = [];
+    document.getElementById('picking-screen').classList.add('hidden');
+    document.getElementById('main-screen').classList.remove('hidden');
+    updateDeckCounter();
+    renderHandViews();
+    saveState();
+}
+
+function triggerAlertModal(title, text) {
+    if (document.getElementById('toggle-mutepopups').checked) return;
+    
+    document.getElementById('alert-title').innerText = title;
+    document.getElementById('alert-text').innerText = text;
+    
+    document.getElementById('overlay-alert').classList.remove('hidden');
+    document.getElementById('overlay-card').classList.add('hidden');
+    document.getElementById('overlay-seeker-broadcast').classList.add('hidden');
+    document.getElementById('overlay-choice').classList.add('hidden');
+    document.getElementById('overlay-ledger').classList.add('hidden');
+    document.getElementById('overlay-endgame-summary').classList.add('hidden');
+    
+    document.getElementById('master-overlay').style.display = 'flex';
+}
+
+function triggerChoiceModal(title, text, onYes, onNo) {
+    document.getElementById('choice-title').innerText = title;
+    document.getElementById('choice-text').innerText = text;
+    
+    const yesBtn = document.getElementById('choice-btn-yes');
+    const noBtn = document.getElementById('choice-btn-no');
+    
+    yesBtn.onclick = () => {
+        closeOverlay();
+        if (onYes) onYes();
+    };
+    
+    noBtn.onclick = () => {
+        closeOverlay();
+        if (onNo) onNo();
+    };
+    
+    document.getElementById('overlay-choice').classList.remove('hidden');
+    document.getElementById('overlay-card').classList.add('hidden');
+    document.getElementById('overlay-alert').classList.add('hidden');
+    document.getElementById('overlay-seeker-broadcast').classList.add('hidden');
+    document.getElementById('overlay-ledger').classList.add('hidden');
+    document.getElementById('overlay-endgame-summary').classList.add('hidden');
+    
+    document.getElementById('master-overlay').style.display = 'flex';
+}
+
+function triggerSeekerBroadcastModal(text) {
+    document.getElementById('seeker-text-box').innerText = text;
+    
+    document.getElementById('overlay-seeker-broadcast').classList.remove('hidden');
+    document.getElementById('overlay-card').classList.add('hidden');
+    document.getElementById('overlay-alert').classList.add('hidden');
+    document.getElementById('overlay-choice').classList.add('hidden');
+    document.getElementById('overlay-ledger').classList.add('hidden');
+    document.getElementById('overlay-endgame-summary').classList.add('hidden');
+    
+    document.getElementById('master-overlay').style.display = 'flex';
+}
+
+function copySeekerMessageText() {
+    const textVal = document.getElementById('seeker-text-box').innerText;
+    navigator.clipboard.writeText(textVal).then(() => {
+        alert("Text copied successfully to clipboard!");
+    });
+}
+
+function openLedgerReport() {
+    populateLedgerMarkup('log-used', 'log-discarded', 'log-skipped', 'stats-picked', 'stats-used');
+    
+    document.getElementById('overlay-ledger').classList.remove('hidden');
+    document.getElementById('overlay-card').classList.add('hidden');
+    document.getElementById('overlay-alert').classList.add('hidden');
+    document.getElementById('overlay-seeker-broadcast').classList.add('hidden');
+    document.getElementById('overlay-choice').classList.add('hidden');
+    document.getElementById('overlay-endgame-summary').classList.add('hidden');
+    
+    document.getElementById('master-overlay').style.display = 'flex';
+}
+
+function populateLedgerMarkup(uLog, dLog, sLog, statsP, statsU) {
+    const renderLogs = (elemId, source) => {
+        const el = document.getElementById(elemId);
+        el.innerHTML = '';
+        if(!source.length) {
+            el.innerHTML = '<div>No events recorded yet.</div>';
+            return;
+        }
+        source.forEach(c => {
+            const row = document.createElement('div');
+            row.innerHTML = `[${c.type.toUpperCase()}] ${c.title.replace('<br>', ' ')}`;
+            el.appendChild(row);
+        });
+    };
+    
+    renderLogs(uLog, globalHistory.used);
+    renderLogs(dLog, globalHistory.discarded);
+    renderLogs(sLog, globalHistory.skipped);
+    
+    // Math stats
+    const createStatGrid = (id, label, fraction, pct) => {
+        const container = document.getElementById(id);
+        if(!container) return;
+        container.innerHTML = `
+            <span class="stat-label">${label} (Time):</span><span class="stat-val">${fraction.time} (${pct.time}%)</span>
+            <span class="stat-label">${label} (Powerup):</span><span class="stat-val">${fraction.powerup} (${pct.powerup}%)</span>
+            <span class="stat-label">${label} (Curse):</span><span class="stat-val">${fraction.curse} (${pct.curse}%)</span>
+        `;
+    };
+    
+    const calcStats = (numerator, denominator) => {
+        const out = { time: 0, powerup: 0, curse: 0 };
+        ['time', 'powerup', 'curse'].forEach(cat => {
+            const num = numerator[cat] || 0;
+            const den = denominator[cat] || 0;
+            out[cat] = den > 0 ? Math.round((num / den) * 100) : 0;
+        });
+        return out;
+    };
+    
+    const pickPct = calcStats(globalHistory.pickedCounts, globalHistory.drawnCounts);
+    const pickFrac = {
+        time: `${globalHistory.pickedCounts.time}/${globalHistory.drawnCounts.time}`,
+        powerup: `${globalHistory.pickedCounts.powerup}/${globalHistory.drawnCounts.powerup}`,
+        curse: `${globalHistory.pickedCounts.curse}/${globalHistory.drawnCounts.curse}`
+    };
+    createStatGrid(statsP, 'Picked', pickFrac, pickPct);
+    
+    const usedPct = calcStats(globalHistory.usedCounts, globalHistory.pickedCounts);
+    const usedFrac = {
+        time: `${globalHistory.usedCounts.time}/${globalHistory.pickedCounts.time}`,
+        powerup: `${globalHistory.usedCounts.powerup}/${globalHistory.pickedCounts.powerup}`,
+        curse: `${globalHistory.usedCounts.curse}/${globalHistory.pickedCounts.curse}`
+    };
+    createStatGrid(statsU, 'Used', usedFrac, usedPct);
+}
+
+function syncEndgameToggle(checked) {
+    isGlobalEndgameActive = checked;
+    if (checked) {
+        document.body.style.boxShadow = "inset 0 0 100px rgba(232, 65, 24, 0.4)";
+    } else {
+        document.body.style.boxShadow = "none";
+    }
+}
+
+function triggerEndGameSummation() {
+    clearInterval(liveTimerIntervalId);
+    
+    document.getElementById('eg-elapsed-time').innerText = formatSecondsToDigital(computedTotalSessionSeconds);
+    
+    // Accumulate total bonuses
+    let bonusMins = 0;
+    hand.forEach(c => {
+        if (c.type === 'time' && c.value) {
+            bonusMins += c.value;
+        }
+    });
+    document.getElementById('eg-bonus-minutes').innerText = `+${bonusMins} Min`;
+    
+    // Sum final score
+    const totalSurvivedSecs = computedTotalSessionSeconds + (bonusMins * 60);
+    document.getElementById('endgame-calculated-tally').innerText = formatSecondsToDigital(totalSurvivedSecs);
+    
+    populateLedgerMarkup('eg-log-used', 'eg-log-discarded', 'eg-log-skipped', 'eg-stats-picked', 'eg-stats-used');
+    
+    document.getElementById('overlay-endgame-summary').classList.remove('hidden');
+    document.getElementById('overlay-card').classList.add('hidden');
+    document.getElementById('overlay-alert').classList.add('hidden');
+    document.getElementById('overlay-seeker-broadcast').classList.add('hidden');
+    document.getElementById('overlay-choice').classList.add('hidden');
+    document.getElementById('overlay-ledger').classList.add('hidden');
+    
+    document.getElementById('master-overlay').style.display = 'flex';
+}
+
+function resetWholeGameTracker() {
+    localStorage.removeItem('hide_and_seek_state');
+    location.reload();
+}
+
+// Initial session check
+window.onload = () => {
+    loadState();
+};
+</script></body></html>        /* Top Header Utilities */
+        .top-navbar {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 60px;
+            background: #2f3640; border-bottom: 3px solid #718093;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 20px; z-index: 900;
+        }
+        .header-title { font-size: 16px; font-weight: bold; color: #fbc531; letter-spacing: 1px; display: flex; align-items: center; gap: 10px; }
+        
+        /* Ledger Button */
+        .ledger-trigger { font-size: 22px; cursor: pointer; background: none; border: none; padding: 5px; width: auto; transition: transform 0.2s; }
+        .ledger-trigger:hover { transform: scale(1.2); }
+
+        /* Toggles Styling Area */
+        .controls-cluster { display: flex; align-items: center; gap: 15px; }
+        .toggle-container { display: flex; align-items: center; gap: 6px; font-weight: bold; font-size: 11px; color: #dcdde1; }
+        .switch { position: relative; display: inline-block; width: 40px; height: 22px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #718093; transition: .3s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 4px; bottom: 4px; background-color: white; transition: .3s; border-radius: 50%; }
+        input:checked + .slider { background-color: #e84118; box-shadow: 0 0 8px #e84118; }
+        input:checked + .slider:before { transform: translateX(18px); }
+        
+        /* System Session Timer styling */
+        .navbar-session-timer {
+            font-family: 'Courier New', Courier, monospace; background: #1e272e;
+            color: #fbc531; border: 2px solid #718093; padding: 4px 12px;
+            border-radius: 4px; font-size: 16px; font-weight: bold; box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
+        }
+
+        h1 { color: #fbc531; margin: 0 0 5px 0; font-size: 26px; text-transform: uppercase; letter-spacing: 1px; }
+        .subtitle { color: #a4b0be; font-style: italic; margin-bottom: 20px; font-size: 15px; }
+        .deck-status { font-size: 16px; color: #fbc531; font-weight: bold; margin-bottom: 20px; background: rgba(251, 197, 49, 0.1); padding: 8px 14px; border-radius: 6px; display: inline-block; }
+        .warning-bar { background: #e84118; color: white; padding: 10px; font-size: 14px; font-weight: bold; border-radius: 6px; margin-bottom: 15px; display: none; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
+        .info-bar { background: #27ae60; color: white; padding: 10px; font-size: 14px; font-weight: bold; border-radius: 6px; margin-bottom: 15px; text-align: center; }
+
+        /* Button Styling */
+        .btn-grid { display: flex; flex-direction: column; gap: 12px; max-width: 380px; width: 100%; margin: 0 auto; }
+        button { background: #353b48; color: white; border: 2px solid #718093; padding: 14px; font-size: 15px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-weight: bold; width: 100%; }
+        button:hover { background: #57606f; border-color: #dcdde1; }
         .action-btn { background: #2f3640; border-color: #fbc531; color: #fbc531; margin-top: 10px; }
         .action-btn:hover { background: #fbc531; color: black; }
         .confirm-btn { background: #4cd137; border: none; font-size: 17px; margin-top: 15px; }
