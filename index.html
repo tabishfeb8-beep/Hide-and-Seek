@@ -1,19 +1,7 @@
-Here is your updated single-file app with all the modifications for **Patch 7** applied directly to the main tracker code.
-
-### Patch 7 Changes Implemented:
-
-1. **Insta-Pick Discard Streamlining:** When **Insta-Pick** is enabled, clicking cards during any discard phase (whether for hand-trimming or casting costs) will now instantly commit them without requiring you to hit a confirmation button.
-2. **Draw 1 Reworked:** Clicking the **Draw 1** button now sends you to the selection screen pool just like the other draw options. If both **Insta-Pick** and **Auto Flip-up** are active, you can simply click the single face-up card to claim it instantly.
-3. **End Game Reset Button:** The button at the bottom of the Endgame Summary overlay has been renamed from *"Reset Tracker & New Deck"* to exactly **🏁 End Game**.
-4. **Curse of the Nosey Looker Description Updated:** The description for this card has been modified to exactly match your revised prompt requirements.
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
+<!DOCTYPE html><html lang="en"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jet Lag: Hide & Seek Tracker</title>
+    <title>Hide and Seek Tracker</title>
     <style>
         * { box-sizing: border-box; }
         body { 
@@ -114,6 +102,21 @@ Here is your updated single-file app with all the modifications for **Patch 7** 
         .card.selected { border: 4px solid #4cd137; box-shadow: 0 0 18px #4cd137; }
         .card.selectable-discard { border: 4px solid #fbc531; animation: pulse 1.5s infinite; }
         
+        /* Selection and Discard Overlay Labels */
+        .card-badge-overlay {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            background: #fbc531;
+            color: black;
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 10;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
         @keyframes pulse {
             0% { box-shadow: 0 0 0 0 rgba(251, 197, 49, 0.7); }
             70% { box-shadow: 0 0 0 8px rgba(251, 197, 49, 0); }
@@ -209,19 +212,16 @@ Here is your updated single-file app with all the modifications for **Patch 7** 
         .stat-val { color: #4cd137; text-align: right; font-weight: bold; }
 
         .hidden { display: none !important; }
-    </style>
-</head>
-<body>
+    </style></head><body>
 
     <div id="start-screen">
-        <div class="start-logo">JET LAG: HIDE & SEEK</div>
+        <div class="start-logo">HIDE AND SEEK</div>
         <div style="font-size: 16px; color: #a4b0be; font-style: italic; margin-bottom: 10px;">Hider Deck & Match Infrastructure Engine</div>
         <button style="max-width: 260px; background: #4cd137; border: none; font-size: 18px;" onclick="bootGameSession()">🚀 Start Live Tracker</button>
     </div>
 
     <div class="top-navbar">
         <div class="header-title">
-            <span>JET LAG SYSTEM</span>
             <button class="ledger-trigger" onclick="openLedgerReport()" title="Open Ledger Logs">📖</button>
         </div>
 
@@ -383,9 +383,7 @@ Here is your updated single-file app with all the modifications for **Patch 7** 
                 <button class="back-btn" style="margin: 0;" onclick="closeOverlay()">Dismiss Summary</button>
             </div>
         </div>
-    </div>
-
-<script>
+    </div><script>
 // State Configuration Engine
 let deck = [];
 let hand = [];
@@ -441,7 +439,7 @@ const cardDefinitions = [
     { qty: 1, title: "Curse of the<br>Short Stop", type: "curse", cast: "The Seekers must be on transit", seekerPov: "☠️ CURSE OF THE SHORT STOP!\nYou must request a stop and get off your current transit vehicle at the very next stop!", desc: "Forces seekers to immediately depart their current transport line." },
     { qty: 1, title: "Curse of the<br>Drained Brain", type: "curse", cast: "Discard a card.", seekerPov: "I have picked 3 questions. Those 3 specific questions are locked out and cannot be asked for the rest of the game!", desc: "Choose any 3 Questions, they cannot be asked for the rest of the Game." },
     { qty: 1, title: "Curse of the<br>Unguided Tourist", type: "curse", cast: "Take a picture of a place in your Zone", seekerPov: "☠️ CURSE OF THE UNGUIDED TOURIST!\nLocate an area or business with a higher public review rating!", desc: "Block questions until seekers match maps rating barriers." },
-    { qty: 1, title: "Curse of the<br>Nosey Looker", type: "curse", cast: "Do the same before sending", seekerPov: "☠️ CURSE OF THE NOSEY LOOKER!\nFind, photograph, and send me 3 distinct specified street assets!", desc: "The Seekers must find, take a picture, and send 3 of the following to the Hider before asking a Question: A dog, a sports ball, someone wearing a helmet, litter not in the proper place(and you must throw it away after taking a picture), or a fast food chain (without searching one up" },
+    { qty: 1, title: "Curse of the<br>Nosey Looker", type: "curse", cast: "Do the same before sending", seekerPov: "☠️ CURSE OF THE NOSEY LOOKER!\nFind, photograph, and send me 3 distinct specified street assets!", desc: "The Seekers must find, take a picture, and send 3 of the following to the Hider before asking a Question: A dog, a sports ball, someone wearing a helmet, litter not in the proper place (and you must throw it away after taking a picture), or a fast food chain (without searching one up)" },
     { qty: 1, title: "Curse of the<br>Nomad", type: "curse", cast: "Inform Seeker of image distance from hider stop", seekerPov: "☠️ CURSE OF THE NOMAD!\nFind this exact Streetview spot and send me a matching real-life photo!", desc: "Forces pinpoint location identification based on visual fragments." }
 ];
 
@@ -465,286 +463,176 @@ function formatSecondsToDigital(totalSecs) {
     let hrs = Math.floor(totalSecs / 3600);
     let mins = Math.floor((totalSecs % 3600) / 60);
     let secs = totalSecs % 60;
-    return `${hrs < 10 ? '0'+hrs : hrs}:${mins < 10 ? '0'+mins : mins}:${secs < 10 ? '0'+secs : secs}`;
-}
-
-function syncEndgameToggle(checked) {
-    isGlobalEndgameActive = checked;
-    document.getElementById('global-endgame-toggle').checked = checked;
+    return [hrs, mins, secs].map(x => String(x).padStart(2, '0')).join(':');
 }
 
 function initDeck() {
     deck = [];
     cardDefinitions.forEach(card => {
-        for(let i=0; i<card.qty; i++){
-            deck.push({...card, isFlipped: true});
+        for(let i = 0; i < card.qty; i++) {
+            deck.push({ ...card, id: Math.random().toString(36).substr(2, 9) });
         }
     });
-    for (let i = deck.length - 1; i > 0; i--) {
+    shuffle(deck);
+    updateDeckCounter();
+}
+
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [deck[i], deck[j]] = [deck[j], deck[i]];
+        [array[i], array[j]] = [array[j], array[i]];
     }
+}
+
+function updateDeckCounter() {
     document.getElementById('deck-count').innerText = deck.length;
 }
 
-function createCardElement(card, index, context) {
-    const cardEl = document.createElement('div');
-    cardEl.className = `card ${card.type}`;
-    
-    // Auto Flip logic overrides check
-    const shouldBeFlipped = card.isFlipped && !document.getElementById('toggle-autoflip').checked;
-
-    if (context === 'pool' && shouldBeFlipped) {
-        cardEl.classList.add('flipped');
-        const catBadge = document.createElement('div');
-        catBadge.className = 'cat-badge';
-        catBadge.innerText = '🐱';
-        cardEl.appendChild(catBadge);
-        
-        cardEl.onclick = () => {
-            card.isFlipped = false;
-            renderPickPool();
-        };
-        return cardEl;
-    }
-
-    const contentDiv = document.createElement('div');
-    contentDiv.className = "card-content";
-    contentDiv.style.cssText = "display:flex; flex-direction:column; height:100%; width:100%; justify-content:space-between;";
-
-    const titleEl = document.createElement('div');
-    titleEl.className = 'card-title';
-    titleEl.innerHTML = card.title;
-    contentDiv.appendChild(titleEl);
-
-    const iconContainer = document.createElement('div');
-    iconContainer.className = 'card-icon-container';
-    const iconEl = document.createElement('div');
-    
-    if(card.type === 'time' && card.value) {
-        iconEl.className = 'digital-clock';
-        iconEl.innerText = `00:${card.value < 10 ? '0' + card.value : card.value}`;
-    } else if(card.symbol) {
-        iconEl.innerText = card.symbol;
-    } else {
-        iconEl.innerText = card.type === 'curse' ? '☠️' : '⏳';
-    }
-    iconContainer.appendChild(iconEl);
-    contentDiv.appendChild(iconContainer);
-    cardEl.appendChild(contentDiv);
-
-    // active discarding phase
-    if ((isDiscardingActive || forceHandTrimmingRoutineActive) && context === 'hand') {
-        cardEl.classList.add('selectable-discard');
-        if (selectedIndices.includes(index)) {
-            cardEl.classList.add('selected');
-        }
-        
-        cardEl.onclick = () => {
-            if(forceHandTrimmingRoutineActive) {
-                handleTrimmingDiscardClick(index);
-            } else {
-                handleVisualDiscardSelection(index);
-            }
-        };
-
-        // Magnifying glass inspector added during discard phase
-        const zoomBadge = document.createElement('div');
-        zoomBadge.className = 'zoom-badge';
-        zoomBadge.innerHTML = '🔍';
-        zoomBadge.onclick = (e) => {
-            e.stopPropagation();
-            openOverlayCard(card);
-        };
-        cardEl.appendChild(zoomBadge);
-    } 
-    else if (context === 'pool') {
-        if (selectedIndices.includes(index)) { cardEl.classList.add('selected'); }
-        cardEl.onclick = () => {
-            // Insta Pick bypass handling
-            if(document.getElementById('toggle-instapick').checked && pickTargetCount === 1) {
-                selectedIndices = [index];
-                commitPickedCards();
-                return;
-            }
-
-            if (selectedIndices.includes(index)) {
-                selectedIndices = selectedIndices.filter(i => i !== index);
-            } else {
-                if(pickTargetCount === 1) {
-                    selectedIndices = [index];
-                } else if (selectedIndices.length < pickTargetCount) {
-                    selectedIndices.push(index);
-                }
-            }
-            renderPickPool();
-        };
-
-        const zoomBadge = document.createElement('div');
-        zoomBadge.className = 'zoom-badge';
-        zoomBadge.innerHTML = '🔍';
-        zoomBadge.onclick = (e) => {
-            e.stopPropagation();
-            openOverlayCard(card);
-        };
-        cardEl.appendChild(zoomBadge);
-    } 
-    else if (context === 'hand') {
-        cardEl.onclick = () => openOverlayCard(card, index);
-    }
-
-    return cardEl;
-}
-
 function renderHandViews() {
-    const mainHandContainer = document.getElementById('main-hand');
-    const pickHandContainer = document.getElementById('pick-hand');
+    const mainHandDiv = document.getElementById('main-hand');
+    const pickHandDiv = document.getElementById('pick-hand');
     
-    mainHandContainer.innerHTML = '';
-    pickHandContainer.innerHTML = '';
+    mainHandDiv.innerHTML = '';
+    pickHandDiv.innerHTML = '';
+    
+    // Render hand cards
+    hand.forEach((card, index) => {
+        const cCard = createCardElement(card, index, false);
+        mainHandDiv.appendChild(cCard);
+        
+        const pCard = createCardElement(card, index, false);
+        pCard.classList.add('disabled-hand-card');
+        pCard.style.opacity = '0.6';
+        pCard.style.cursor = 'not-allowed';
+        pickHandDiv.appendChild(pCard);
+    });
     
     document.getElementById('hand-count').innerText = hand.length;
-    document.getElementById('pick-hand-count').innerText = hand.length;
     document.getElementById('max-hand-count').innerText = currentHandLimit;
+    document.getElementById('pick-hand-count').innerText = hand.length;
     document.getElementById('pick-max-hand-count').innerText = currentHandLimit;
     
-    document.getElementById('hand-limit-warning').style.display = (hand.length >= currentHandLimit) ? 'block' : 'none';
-
-    hand.forEach((card, idx) => {
-        mainHandContainer.appendChild(createCardElement(card, idx, 'hand'));
-        pickHandContainer.appendChild(createCardElement(card, idx, 'hand'));
-    });
-}
-
-function renderPickPool() {
-    const poolContainer = document.getElementById('pick-pool');
-    poolContainer.innerHTML = '';
-    drawnPool.forEach((card, idx) => {
-        poolContainer.appendChild(createCardElement(card, idx, 'pool'));
-    });
-    
-    const isInsta = document.getElementById('toggle-instapick').checked;
-    const confirmBtn = document.getElementById('confirm-selection-btn');
-    
-    if(isDiscardingActive) {
-        confirmBtn.style.display = isInsta ? 'none' : 'block';
-        confirmBtn.innerText = `Confirm Discard Pay (${selectedIndices.length}/${discardTargetCount})`;
+    const warningBar = document.getElementById('hand-limit-warning');
+    if (hand.length >= currentHandLimit) {
+        warningBar.style.display = 'block';
     } else {
-        confirmBtn.style.display = (isInsta && pickTargetCount === 1) ? 'none' : 'block';
-        confirmBtn.innerText = `Confirm Selection (${selectedIndices.length}/${pickTargetCount})`;
+        warningBar.style.display = 'none';
     }
 }
 
-function flipAllCardsInPool() {
-    drawnPool.forEach(c => c.isFlipped = false);
-    renderPickPool();
-}
-
-function showCustomAlert(title, text) {
-    if(document.getElementById('toggle-mutepopups').checked && title.includes("Required")) {
-        return; // Muted skipping
-    }
-    hideAllModalChildren();
-    document.getElementById('alert-title').innerText = title;
-    document.getElementById('alert-text').innerText = text;
-    document.getElementById('overlay-alert').classList.remove('hidden');
-    document.getElementById('master-overlay').style.display = 'flex';
-}
-
-function showSeekerBroadcast(text) {
-    hideAllModalChildren();
-    document.getElementById('seeker-text-box').innerText = text;
-    document.getElementById('overlay-seeker-broadcast').classList.remove('hidden');
-    document.getElementById('master-overlay').style.display = 'flex';
-}
-
-function copySeekerMessageText() {
-    navigator.clipboard.writeText(document.getElementById('seeker-text-box').innerText).then(() => {
-        alert("Copied text successfully!");
-    });
-}
-
-function showCustomChoice(title, text, yesCallback, noCallback) {
-    hideAllModalChildren();
-    document.getElementById('choice-title').innerText = title;
-    document.getElementById('choice-text').innerText = text;
-    document.getElementById('choice-btn-yes').onclick = () => { closeOverlay(); yesCallback(); };
-    document.getElementById('choice-btn-no').onclick = () => { closeOverlay(); noCallback(); };
-    document.getElementById('overlay-choice').classList.remove('hidden');
-    document.getElementById('master-overlay').style.display = 'flex';
-}
-
-function hideAllModalChildren() {
-    document.getElementById('overlay-card').classList.add('hidden');
-    document.getElementById('overlay-alert').classList.add('hidden');
-    document.getElementById('overlay-choice').classList.add('hidden');
-    document.getElementById('overlay-seeker-broadcast').classList.add('hidden');
-    document.getElementById('overlay-ledger').classList.add('hidden');
-    document.getElementById('overlay-endgame-summary').classList.add('hidden');
-}
-
-function openOverlayCard(card, handIndex = null) {
-    hideAllModalChildren();
-    const oCard = document.getElementById('overlay-card');
-    oCard.className = `big-card ${card.type}`;
+function createCardElement(card, index, isInPickPool) {
+    const div = document.createElement('div');
+    div.className = `card ${card.type}`;
+    if (card.isFlipped) div.classList.add('flipped');
     
+    const isSelected = selectedIndices.includes(index);
+    if (isSelected && isInPickPool) div.classList.add('selected');
+    
+    // Discard active highlighting
+    const isBeingSelectedForDiscard = isDiscardingActive && discardedCardsThisTurn.includes(index);
+    if (isDiscardingActive && !isInPickPool) {
+        div.classList.add('selectable-discard');
+        if (isBeingSelectedForDiscard) {
+            div.classList.add('selected');
+            
+            // Highlight selected with fractional symbol indicator
+            const badge = document.createElement('div');
+            badge.className = 'card-badge-overlay';
+            badge.innerText = `${discardedCardsThisTurn.indexOf(index) + 1}/${discardTargetCount}`;
+            div.appendChild(badge);
+        }
+    }
+
+    const content = document.createElement('div');
+    content.className = 'card-content';
+    content.style.height = '100%';
+    content.style.display = 'flex';
+    content.style.flexDirection = 'column';
+    content.style.justifyContent = 'space-between';
+    content.style.width = '100%';
+    
+    const title = document.createElement('div');
+    title.className = 'card-title';
+    title.innerHTML = card.title;
+    content.appendChild(title);
+    
+    const iconCont = document.createElement('div');
+    iconCont.className = 'card-icon-container';
+    const icon = document.createElement('div');
+    icon.className = 'card-icon';
+    
+    if (card.type === 'time' && card.value) {
+        icon.className = 'digital-clock';
+        icon.innerText = `+${card.value}M`;
+    } else {
+        icon.innerText = card.symbol || "🃏";
+    }
+    iconCont.appendChild(icon);
+    content.appendChild(iconCont);
+    
+    div.appendChild(content);
+    
+    // Back structure
+    const back = document.createElement('div');
+    back.className = 'cat-badge';
+    back.innerHTML = '😺';
+    const zoom = document.createElement('div');
+    zoom.className = 'zoom-badge';
+    zoom.innerText = '🔍';
+    zoom.onclick = (e) => {
+        e.stopPropagation();
+        triggerZoomView(card);
+    };
+    back.appendChild(zoom);
+    div.appendChild(back);
+    
+    div.onclick = () => {
+        if (isInPickPool) {
+            handlePoolCardClick(index);
+        } else {
+            handleHandCardClick(index);
+        }
+    };
+    
+    return div;
+}
+
+function triggerZoomView(card) {
     document.getElementById('overlay-title').innerHTML = card.title;
+    const iconCont = document.getElementById('overlay-icon-container');
+    iconCont.innerHTML = '';
+    
+    const bigIcon = document.createElement('div');
+    if (card.type === 'time' && card.value) {
+        bigIcon.className = 'digital-clock';
+        bigIcon.style.fontSize = '28px';
+        bigIcon.innerText = `+${card.value} Min`;
+    } else {
+        bigIcon.style.fontSize = '80px';
+        bigIcon.innerText = card.symbol || "🃏";
+    }
+    iconCont.appendChild(bigIcon);
+    
     document.getElementById('overlay-desc').innerText = card.desc;
     
-    const iconContainer = document.getElementById('overlay-icon-container');
-    iconContainer.innerHTML = '';
-    const bigIcon = document.createElement('div');
-    
-    if(card.type === 'time' && card.value) {
-        bigIcon.className = 'digital-clock'; bigIcon.style.fontSize = '26px';
-        bigIcon.innerText = `00:${card.value < 10 ? '0' + card.value : card.value}`;
-    } else if(card.symbol) {
-        bigIcon.innerText = card.symbol; bigIcon.style.fontSize = '68px';
-    } else {
-        bigIcon.innerText = card.type === 'curse' ? '☠️' : '⏳'; bigIcon.style.fontSize = '68px';
-    }
-    iconContainer.appendChild(bigIcon);
-
-    const castEl = document.getElementById('overlay-cast');
+    const cast = document.getElementById('overlay-cast');
     if (card.cast) {
-        castEl.innerHTML = `<strong>Casting Cost:</strong> ${card.cast}`;
-        castEl.style.display = 'block';
+        cast.style.display = 'block';
+        cast.innerText = `Cast Condition: ${card.cast}`;
     } else {
-        castEl.style.display = 'none';
+        cast.style.display = 'none';
     }
-
-    const oldPanel = document.getElementById('overlay-action-panel');
-    if(oldPanel) oldPanel.remove();
-
-    if(handIndex !== null && !isDiscardingActive && !forceHandTrimmingRoutineActive) {
-        const actionPanel = document.createElement('div');
-        actionPanel.id = 'overlay-action-panel'; actionPanel.style.width = '100%'; actionPanel.style.marginTop = '15px';
-        
-        const useBtn = document.createElement('button');
-        useBtn.className = 'action-btn';
-        if (card.type === 'time' && card.value) {
-            useBtn.innerText = '⚠️ Unusable Asset'; useBtn.style.color = '#a4b0be';
-        } else {
-            useBtn.innerText = 'Use Card';
-            useBtn.onclick = () => { closeOverlay(); processCardPlay(card, handIndex); };
-        }
-        
-        const discardBtn = document.createElement('button');
-        discardBtn.className = 'back-btn'; discardBtn.innerText = 'Discard Card'; discardBtn.style.background = '#e84118';
-        discardBtn.onclick = () => {
-            showCustomChoice("Confirm Discard", `Discard "${card.title.replace(/<br>/g, ' ')}"?`, () => {
-                let disc = hand.splice(handIndex, 1)[0];
-                logActionToLedger('discarded', disc.title);
-                renderHandViews();
-            }, () => {});
-        };
-
-        actionPanel.appendChild(useBtn);
-        actionPanel.appendChild(discardBtn);
-        oCard.appendChild(actionPanel);
-    }
-
-    oCard.classList.remove('hidden');
+    
+    const overlayCard = document.getElementById('overlay-card');
+    overlayCard.className = `big-card ${card.type}`;
+    overlayCard.classList.remove('hidden');
+    
+    document.getElementById('overlay-alert').classList.add('hidden');
+    document.getElementById('overlay-seeker-broadcast').classList.add('hidden');
+    document.getElementById('overlay-choice').classList.add('hidden');
+    document.getElementById('overlay-ledger').classList.add('hidden');
+    document.getElementById('overlay-endgame-summary').classList.add('hidden');
+    
     document.getElementById('master-overlay').style.display = 'flex';
 }
 
@@ -752,449 +640,404 @@ function closeOverlay() {
     document.getElementById('master-overlay').style.display = 'none';
 }
 
-function handleDrawClick(drawAmount, pickAmount) {
-    // Guardrail validation to protect full hands unless hand capacity increases during selection
-    if (hand.length >= currentHandLimit) {
-        showCustomAlert("Hand Capacity Full", "Your slots are entirely loaded. You must play or discard a card first.");
-        return;
-    }
-
-    startPickPhase(drawAmount, pickAmount);
-}
-
-function startPickPhase(drawAmount, pickAmount) {
-    if (deck.length < drawAmount) {
-        showCustomAlert("Action Error", "The deck does not have enough remaining cards!");
-        return;
-    }
-    
-    pickTargetCount = pickAmount;
-    selectedIndices = [];
-    drawnPool = [];
-    
-    for (let i = 0; i < drawAmount; i++) {
-        let card = deck.pop();
-        // Handle explicit Auto Flip override
-        if (document.getElementById('toggle-autoflip').checked) {
-            card.isFlipped = false;
-        }
-        drawnPool.push(card);
-        globalHistory.drawnCounts[card.type]++;
-    }
-    document.getElementById('deck-count').innerText = deck.length;
-    
-    document.getElementById('pick-instruction').innerText = `Drawn ${drawAmount} Cards: Pick exactly ${pickAmount}`;
-    document.getElementById('flip-pool-btn').style.display = 'block';
-    document.getElementById('abort-pick-btn').style.display = 'block';
-    
-    document.getElementById('main-screen').classList.add('hidden');
-    document.getElementById('picking-screen').classList.remove('hidden');
-    
-    renderHandViews();
-    renderPickPool();
-}
-
-function abortPickingPhase() {
-    if(isDiscardingActive) {
-        rollbackDiscardedCosts();
-        return;
-    }
-    while(drawnPool.length > 0) { 
-        let c = drawnPool.pop();
-        deck.push(c); 
-        globalHistory.drawnCounts[c.type]--; 
-    }
-    document.getElementById('deck-count').innerText = deck.length;
-    document.getElementById('picking-screen').classList.add('hidden');
-    document.getElementById('main-screen').classList.remove('hidden');
-    renderHandViews();
-}
-
-function commitPickedCards() {
-    // Branch handler for confirmation clicks inside dynamic discard routines
-    if(isDiscardingActive) {
-        if(selectedIndices.length !== discardTargetCount) {
-            showCustomAlert("Selection Incomplete", `You must select exactly ${discardTargetCount} discard payments.`);
-            return;
-        }
-        executeDiscardPaymentCommitment();
-        return;
-    }
-
-    if (selectedIndices.length !== pickTargetCount) {
-        showCustomAlert("Selection Incomplete", `You must select exactly ${pickTargetCount} card(s).`);
-        return;
-    }
-
-    let keptCards = [];
-    let bottomDeckCards = [];
-    drawnPool.forEach((card, idx) => {
-        if (selectedIndices.includes(idx)) { 
-            keptCards.push(card); 
-            globalHistory.pickedCounts[card.type]++;
-        } else { 
-            bottomDeckCards.push(card); 
-            logActionToLedger('skipped', card.title);
-        }
-    });
-
-    deck.unshift(...bottomDeckCards);
-    hand.push(...keptCards);
-    
-    if(cardAwaitingDiscardExecution && cardAwaitingDiscardExecution.title.includes("Increase Hand Size by 1")) {
-        currentHandLimit += 1;
-    }
-    
-    cleanDiscardWorkflowState();
-
-    if (hand.length > currentHandLimit) {
-        let overflow = hand.length - currentHandLimit;
-        forceHandTrimmingRoutineActive = true;
-        
-        // Skip confirmation popup if Insta-Pick is enabled
-        if (document.getElementById('toggle-instapick').checked) {
-            renderHandViews();
+function handleHandCardClick(index) {
+    if (isDiscardingActive) {
+        const existingIdx = discardedCardsThisTurn.indexOf(index);
+        if (existingIdx > -1) {
+            discardedCardsThisTurn.splice(existingIdx, 1);
         } else {
-            showCustomAlert("Hand Limit Exceeded", `Discard ${overflow} card(s) from hand to fit.`);
-            renderHandViews();
+            if (discardedCardsThisTurn.length < discardTargetCount) {
+                discardedCardsThisTurn.push(index);
+            }
         }
+        renderHandViews();
         return;
     }
-
-    document.getElementById('picking-screen').classList.add('hidden');
-    document.getElementById('main-screen').classList.remove('hidden');
-    renderHandViews();
-}
-
-function handleTrimmingDiscardClick(index) {
-    let removed = hand.splice(index, 1)[0];
-    logActionToLedger('discarded', removed.title);
-    renderHandViews();
     
-    if(hand.length <= currentHandLimit) {
-        forceHandTrimmingRoutineActive = false;
-        document.getElementById('picking-screen').classList.add('hidden');
-        document.getElementById('main-screen').classList.remove('hidden');
-        renderHandViews();
-    }
+    // Normal hand card play
+    const card = hand[index];
+    triggerChoiceModal(
+        "Play Card?", 
+        `Are you sure you want to play "${card.title.replace('<br>', ' ')}"?`,
+        () => executeCardPlay(index),
+        null
+    );
 }
 
-function startVisualDiscardSequence(count, underlyingCard, underlyingIndex) {
+function executeCardPlay(index) {
+    const card = hand[index];
+    
+    // Log play stats
+    globalHistory.used.push(card);
+    globalHistory.usedCounts[card.type]++;
+    globalHistory.totalUsedEver++;
+    
+    // Process Card Abilities
+    if (card.title.includes("Discard 1<br>Draw 3<br>Pick 1")) {
+        setupDiscardRequirements(1, () => handleDrawClick(3, 1));
+    } else if (card.title.includes("Discard 1<br>Draw 2")) {
+        setupDiscardRequirements(1, () => {
+            const pullQty = Math.min(deck.length, 2);
+            for(let i = 0; i < pullQty; i++) {
+                hand.push(deck.pop());
+            }
+            updateDeckCounter();
+            renderHandViews();
+        });
+    } else if (card.title.includes("Discard 1<br>Draw 1<br>Increase Hand Size by 1")) {
+        setupDiscardRequirements(1, () => {
+            currentHandLimit++;
+            handleDrawClick(1, 1);
+        });
+    } else if (card.title.includes("Discard 2<br>Draw 3<br>Pick 2")) {
+        setupDiscardRequirements(2, () => handleDrawClick(3, 2));
+    } else if (card.seekerPov) {
+        // Broadcaster card
+        triggerSeekerBroadcastModal(card.seekerPov);
+    }
+    
+    // Remove played card
+    hand.splice(index, 1);
+    renderHandViews();
+}
+
+function setupDiscardRequirements(count, onSuccess) {
+    if (hand.length < count + 1) {
+        triggerAlertModal("Cannot Cast", "You do not have enough cards in hand to satisfy the discard requirements.");
+        return;
+    }
     isDiscardingActive = true;
     discardTargetCount = count;
     discardedCardsThisTurn = [];
+    
+    // Overwrite the pick instructions
+    const warn = document.getElementById('hand-limit-warning');
+    warn.style.display = 'block';
+    warn.className = "info-bar";
+    warn.innerText = `Please choose ${count} card(s) from your Hand to discard. Click them below, then confirm!`;
+    
+    // Create floating confirm button on Dashboard
+    const discardBtn = document.createElement('button');
+    discardBtn.id = "temporary-discard-confirm-btn";
+    discardBtn.className = "confirm-btn";
+    discardBtn.innerText = "Confirm Discard Choice";
+    discardBtn.onclick = () => {
+        if (discardedCardsThisTurn.length !== discardTargetCount) {
+            triggerAlertModal("Incomplete Choice", `Please select exactly ${discardTargetCount} card(s).`);
+            return;
+        }
+        
+        // Execute discard
+        discardedCardsThisTurn.sort((a,b) => b-a).forEach(idx => {
+            globalHistory.discarded.push(hand[idx]);
+            hand.splice(idx, 1);
+        });
+        
+        // Reset states
+        isDiscardingActive = false;
+        discardBtn.remove();
+        warn.className = "warning-bar";
+        warn.style.display = 'none';
+        
+        onSuccess();
+    };
+    
+    document.querySelector('.right-panel').appendChild(discardBtn);
+    renderHandViews();
+}
+
+function handleDrawClick(drawCount, pickCount) {
+    if (deck.length < drawCount) {
+        triggerAlertModal("Deck Exhausted", "There are not enough cards remaining in the deck!");
+        return;
+    }
+    
+    drawnPool = [];
+    for(let i = 0; i < drawCount; i++) {
+        const c = deck.pop();
+        c.isFlipped = !document.getElementById('toggle-autoflip').checked;
+        drawnPool.push(c);
+        globalHistory.drawnCounts[c.type]++;
+    }
+    
+    updateDeckCounter();
+    enterPickingPhase(pickCount);
+}
+
+function enterPickingPhase(pickCount) {
     selectedIndices = [];
-    cardAwaitingDiscardExecution = underlyingCard;
-    cardAwaitingDiscardIndex = underlyingIndex;
-    
-    // Temporarily slide out processing card to avoid self-discard paradoxes
-    hand.splice(underlyingIndex, 1);
-    
-    showCustomAlert("Discard Cost Required", `Select exactly ${count} card(s) from your hand panel to fulfill payment actions.`);
-    
-    // Reroute into choice workspace area
-    document.getElementById('pick-instruction').innerText = `Discard Cost Mode: Select ${count} card(s) to discard`;
-    document.getElementById('flip-pool-btn').style.display = 'none';
-    document.getElementById('abort-pick-btn').style.display = 'block';
-    
-    drawnPool = []; // Empty choices view during explicit hand loss events
+    pickTargetCount = pickCount;
     
     document.getElementById('main-screen').classList.add('hidden');
     document.getElementById('picking-screen').classList.remove('hidden');
     
-    renderHandViews();
-    renderPickPool();
+    document.getElementById('pick-instruction').innerText = `Pick ${pickCount} Card(s)`;
+    
+    renderPickingViews();
 }
 
-function handleVisualDiscardSelection(index) {
-    // Insta Pick discard logic stream
-    if (document.getElementById('toggle-instapick').checked) {
-        if (selectedIndices.includes(index)) {
-            selectedIndices = selectedIndices.filter(i => i !== index);
-        } else {
-            if (discardTargetCount === 1) {
-                selectedIndices = [index];
-                executeDiscardPaymentCommitment();
-                return;
-            } else if (selectedIndices.length < discardTargetCount) {
-                selectedIndices.push(index);
-                if (selectedIndices.length === discardTargetCount) {
-                    executeDiscardPaymentCommitment();
-                    return;
-                }
-            }
-        }
-    } else {
-        // Standard confirmation required flow
-        if (selectedIndices.includes(index)) {
-            selectedIndices = selectedIndices.filter(i => i !== index);
-        } else {
-            if (discardTargetCount === 1) {
-                selectedIndices = [index];
-            } else if (selectedIndices.length < discardTargetCount) {
-                selectedIndices.push(index);
-            }
-        }
-    }
-    renderPickPool();
-}
-
-function executeDiscardPaymentCommitment() {
-    // Sort descending to safely remove items without indexing shifts
-    selectedIndices.sort((a, b) => b - a);
-    selectedIndices.forEach(idx => {
-        let disc = hand.splice(idx, 1)[0];
-        discardedCardsThisTurn.push(disc);
-        logActionToLedger('discarded', disc.title);
+function renderPickingViews() {
+    const poolDiv = document.getElementById('pick-pool');
+    poolDiv.innerHTML = '';
+    
+    drawnPool.forEach((card, index) => {
+        const cardEl = createCardElement(card, index, true);
+        poolDiv.appendChild(cardEl);
     });
     
-    isDiscardingActive = false;
-    executePostDiscardResolution();
+    renderHandViews();
 }
 
-function rollbackDiscardedCosts() {
-    if(cardAwaitingDiscardExecution) { hand.push(cardAwaitingDiscardExecution); }
-    if(discardedCardsThisTurn.length > 0) { 
-        hand.push(...discardedCardsThisTurn); 
-        for(let i=0; i<discardedCardsThisTurn.length; i++) { globalHistory.discarded.pop(); }
+function flipAllCardsInPool() {
+    drawnPool.forEach(c => c.isFlipped = false);
+    renderPickingViews();
+}
+
+function handlePoolCardClick(index) {
+    const card = drawnPool[index];
+    
+    if (card.isFlipped) {
+        card.isFlipped = false;
+        renderPickingViews();
+        return;
     }
-    cleanDiscardWorkflowState();
+    
+    const existingIdx = selectedIndices.indexOf(index);
+    if (existingIdx > -1) {
+        selectedIndices.splice(existingIdx, 1);
+    } else {
+        if (selectedIndices.length < pickTargetCount) {
+            selectedIndices.push(index);
+        }
+    }
+    
+    // Auto-commit if Insta-Pick is enabled AND selection requirements are fully met
+    const instaPickEnabled = document.getElementById('toggle-instapick').checked;
+    if (instaPickEnabled && selectedIndices.length === pickTargetCount) {
+        commitPickedCards();
+        return;
+    }
+    
+    renderPickingViews();
+}
+
+function commitPickedCards() {
+    if (selectedIndices.length !== pickTargetCount) {
+        triggerAlertModal("Selection Incomplete", `Please pick exactly ${pickTargetCount} card(s) to add to your Hand.`);
+        return;
+    }
+    
+    // Add chosen to hand
+    selectedIndices.forEach(idx => {
+        const card = drawnPool[idx];
+        hand.push(card);
+        globalHistory.pickedCounts[card.type]++;
+    });
+    
+    // Discard/skip unselected
+    drawnPool.forEach((card, idx) => {
+        if (!selectedIndices.includes(idx)) {
+            globalHistory.skipped.push(card);
+        }
+    });
+    
+    exitPickingPhase();
+}
+
+function abortPickingPhase() {
+    triggerChoiceModal(
+        "Abort Draft?", 
+        "Aborting will return all drawn cards back to the bottom of the deck. Continue?", 
+        () => {
+            while(drawnPool.length) {
+                deck.unshift(drawnPool.pop());
+            }
+            updateDeckCounter();
+            exitPickingPhase();
+        }, 
+        null
+    );
+}
+
+function exitPickingPhase() {
     document.getElementById('picking-screen').classList.add('hidden');
     document.getElementById('main-screen').classList.remove('hidden');
     renderHandViews();
 }
 
-function cleanDiscardWorkflowState() {
-    discardTargetCount = 0; discardedCardsThisTurn = []; cardAwaitingDiscardExecution = null; cardAwaitingDiscardIndex = null; isDiscardingActive = false; selectedIndices = [];
-}
-
-function logActionToLedger(listKey, cardTitle) {
-    let cleanTitle = cardTitle.replace(/<br>/g, ' ');
-    let timeStr = formatSecondsToDigital(computedTotalSessionSeconds);
-    globalHistory[listKey].push(`[${timeStr}] ${cleanTitle}`);
-}
-
-function populateLedgerElements(prefix) {
-    document.getElementById(`${prefix}log-used`).innerHTML = globalHistory.used.map(item => `<div>${item}</div>`).join('') || '<div>No cards used yet.</div>';
-    document.getElementById(`${prefix}log-discarded`).innerHTML = globalHistory.discarded.map(item => `<div>${item}</div>`).join('') || '<div>No cards discarded yet.</div>';
-    document.getElementById(`${prefix}log-skipped`).innerHTML = globalHistory.skipped.map(item => `<div>${item}</div>`).join('') || '<div>No cards skipped yet.</div>';
+function triggerAlertModal(title, text) {
+    if (document.getElementById('toggle-mutepopups').checked) return;
     
-    const renderStatRow = (label, numerator, denominator) => {
-        let percent = denominator > 0 ? Math.round((numerator / denominator) * 100) : 0;
-        return `<div class="stat-label">${label}</div><div class="stat-val">${percent}% (${numerator}/${denominator})</div>`;
-    };
-
-    let totalPicked = globalHistory.pickedCounts.time + globalHistory.pickedCounts.powerup + globalHistory.pickedCounts.curse;
-    document.getElementById(`${prefix}stats-picked`).innerHTML = 
-        renderStatRow("Time Bonuses", globalHistory.pickedCounts.time, totalPicked) +
-        renderStatRow("Power Ups", globalHistory.pickedCounts.powerup, totalPicked) +
-        renderStatRow("Curses", globalHistory.pickedCounts.curse, totalPicked);
-
-    document.getElementById(`${prefix}stats-used`).innerHTML = 
-        renderStatRow("Time Bonuses", globalHistory.usedCounts.time, globalHistory.totalUsedEver) +
-        renderStatRow("Power Ups", globalHistory.usedCounts.powerup, globalHistory.totalUsedEver) +
-        renderStatRow("Curses", globalHistory.usedCounts.curse, globalHistory.totalUsedEver);
-}
-
-function openLedgerReport() {
-    hideAllModalChildren();
-    populateLedgerElements('');
-    document.getElementById('overlay-ledger').classList.remove('hidden');
+    document.getElementById('alert-title').innerText = title;
+    document.getElementById('alert-text').innerText = text;
+    
+    document.getElementById('overlay-alert').classList.remove('hidden');
+    document.getElementById('overlay-card').classList.add('hidden');
+    document.getElementById('overlay-seeker-broadcast').classList.add('hidden');
+    document.getElementById('overlay-choice').classList.add('hidden');
+    document.getElementById('overlay-ledger').classList.add('hidden');
+    document.getElementById('overlay-endgame-summary').classList.add('hidden');
+    
     document.getElementById('master-overlay').style.display = 'flex';
 }
 
-function triggerEndGameSummation() {
-    hideAllModalChildren();
+function triggerChoiceModal(title, text, onYes, onNo) {
+    document.getElementById('choice-title').innerText = title;
+    document.getElementById('choice-text').innerText = text;
     
-    let runtimeMinuteSum = 0;
-    hand.forEach(card => {
-        if (card.type === 'time' && card.value) {
-            runtimeMinuteSum += card.value;
+    const yesBtn = document.getElementById('choice-btn-yes');
+    const noBtn = document.getElementById('choice-btn-no');
+    
+    yesBtn.onclick = () => {
+        closeOverlay();
+        if (onYes) onYes();
+    };
+    
+    noBtn.onclick = () => {
+        closeOverlay();
+        if (onNo) onNo();
+    };
+    
+    document.getElementById('overlay-choice').classList.remove('hidden');
+    document.getElementById('overlay-card').classList.add('hidden');
+    document.getElementById('overlay-alert').classList.add('hidden');
+    document.getElementById('overlay-seeker-broadcast').classList.add('hidden');
+    document.getElementById('overlay-ledger').classList.add('hidden');
+    document.getElementById('overlay-endgame-summary').classList.add('hidden');
+    
+    document.getElementById('master-overlay').style.display = 'flex';
+}
+
+function triggerSeekerBroadcastModal(text) {
+    document.getElementById('seeker-text-box').innerText = text;
+    
+    document.getElementById('overlay-seeker-broadcast').classList.remove('hidden');
+    document.getElementById('overlay-card').classList.add('hidden');
+    document.getElementById('overlay-alert').classList.add('hidden');
+    document.getElementById('overlay-choice').classList.add('hidden');
+    document.getElementById('overlay-ledger').classList.add('hidden');
+    document.getElementById('overlay-endgame-summary').classList.add('hidden');
+    
+    document.getElementById('master-overlay').style.display = 'flex';
+}
+
+function copySeekerMessageText() {
+    const textVal = document.getElementById('seeker-text-box').innerText;
+    navigator.clipboard.writeText(textVal).then(() => {
+        alert("Text copied successfully to clipboard!");
+    });
+}
+
+function openLedgerReport() {
+    populateLedgerMarkup('log-used', 'log-discarded', 'log-skipped', 'stats-picked', 'stats-used');
+    
+    document.getElementById('overlay-ledger').classList.remove('hidden');
+    document.getElementById('overlay-card').classList.add('hidden');
+    document.getElementById('overlay-alert').classList.add('hidden');
+    document.getElementById('overlay-seeker-broadcast').classList.add('hidden');
+    document.getElementById('overlay-choice').classList.add('hidden');
+    document.getElementById('overlay-endgame-summary').classList.add('hidden');
+    
+    document.getElementById('master-overlay').style.display = 'flex';
+}
+
+function populateLedgerMarkup(uLog, dLog, sLog, statsP, statsU) {
+    const renderLogs = (elemId, source) => {
+        const el = document.getElementById(elemId);
+        el.innerHTML = '';
+        if(!source.length) {
+            el.innerHTML = '<div>No events recorded yet.</div>';
+            return;
+        }
+        source.forEach(c => {
+            const row = document.createElement('div');
+            row.innerHTML = `[${c.type.toUpperCase()}] ${c.title.replace('<br>', ' ')}`;
+            el.appendChild(row);
+        });
+    };
+    
+    renderLogs(uLog, globalHistory.used);
+    renderLogs(dLog, globalHistory.discarded);
+    renderLogs(sLog, globalHistory.skipped);
+    
+    // Math stats
+    const createStatGrid = (id, label, fraction, pct) => {
+        const container = document.getElementById(id);
+        if(!container) return;
+        container.innerHTML = `
+            <span class="stat-label">${label} (Time):</span><span class="stat-val">${fraction.time} (${pct.time}%)</span>
+            <span class="stat-label">${label} (Powerup):</span><span class="stat-val">${fraction.powerup} (${pct.powerup}%)</span>
+            <span class="stat-label">${label} (Curse):</span><span class="stat-val">${fraction.curse} (${pct.curse}%)</span>
+        `;
+    };
+    
+    const calcStats = (numerator, denominator) => {
+        const out = { time: 0, powerup: 0, curse: 0 };
+        ['time', 'powerup', 'curse'].forEach(cat => {
+            const num = numerator[cat] || 0;
+            const den = denominator[cat] || 0;
+            out[cat] = den > 0 ? Math.round((num / den) * 100) : 0;
+        });
+        return out;
+    };
+    
+    const pickPct = calcStats(globalHistory.pickedCounts, globalHistory.drawnCounts);
+    const pickFrac = {
+        time: `${globalHistory.pickedCounts.time}/${globalHistory.drawnCounts.time}`,
+        powerup: `${globalHistory.pickedCounts.powerup}/${globalHistory.drawnCounts.powerup}`,
+        curse: `${globalHistory.pickedCounts.curse}/${globalHistory.drawnCounts.curse}`
+    };
+    createStatGrid(statsP, 'Picked', pickFrac, pickPct);
+    
+    const usedPct = calcStats(globalHistory.usedCounts, globalHistory.pickedCounts);
+    const usedFrac = {
+        time: `${globalHistory.usedCounts.time}/${globalHistory.pickedCounts.time}`,
+        powerup: `${globalHistory.usedCounts.powerup}/${globalHistory.pickedCounts.powerup}`,
+        curse: `${globalHistory.usedCounts.curse}/${globalHistory.pickedCounts.curse}`
+    };
+    createStatGrid(statsU, 'Used', usedFrac, usedPct);
+}
+
+function syncEndgameToggle(checked) {
+    isGlobalEndgameActive = checked;
+    if (checked) {
+        document.body.style.boxShadow = "inset 0 0 100px rgba(232, 65, 24, 0.4)";
+    } else {
+        document.body.style.boxShadow = "none";
+    }
+}
+
+function triggerEndGameSummation() {
+    clearInterval(liveTimerIntervalId);
+    
+    document.getElementById('eg-elapsed-time').innerText = formatSecondsToDigital(computedTotalSessionSeconds);
+    
+    // Accumulate total bonuses
+    let bonusMins = 0;
+    hand.forEach(c => {
+        if (c.type === 'time' && c.value) {
+            bonusMins += c.value;
         }
     });
-
-    document.getElementById('eg-elapsed-time').innerText = formatSecondsToDigital(computedTotalSessionSeconds);
-    document.getElementById('eg-bonus-minutes').innerText = `${runtimeMinuteSum} Min`;
+    document.getElementById('eg-bonus-minutes').innerText = `+${bonusMins} Min`;
     
-    let totalSecScore = computedTotalSessionSeconds + (runtimeMinuteSum * 60);
-    document.getElementById('endgame-calculated-tally').innerText = formatSecondsToDigital(totalSecScore);
+    // Sum final score
+    const totalSurvivedSecs = computedTotalSessionSeconds + (bonusMins * 60);
+    document.getElementById('endgame-calculated-tally').innerText = formatSecondsToDigital(totalSurvivedSecs);
     
-    populateLedgerElements('eg-');
+    populateLedgerMarkup('eg-log-used', 'eg-log-discarded', 'eg-log-skipped', 'eg-stats-picked', 'eg-stats-used');
     
     document.getElementById('overlay-endgame-summary').classList.remove('hidden');
+    document.getElementById('overlay-card').classList.add('hidden');
+    document.getElementById('overlay-alert').classList.add('hidden');
+    document.getElementById('overlay-seeker-broadcast').classList.add('hidden');
+    document.getElementById('overlay-choice').classList.add('hidden');
+    document.getElementById('overlay-ledger').classList.add('hidden');
+    
     document.getElementById('master-overlay').style.display = 'flex';
 }
 
 function resetWholeGameTracker() {
-    if(liveTimerIntervalId) clearInterval(liveTimerIntervalId);
-    matchStartTimestamp = null;
-    computedTotalSessionSeconds = 0;
-    document.getElementById('live-session-timer').innerText = "00:00:00";
-
-    hand = []; drawnPool = []; selectedIndices = []; pickTargetCount = 0; currentHandLimit = 5; isGlobalEndgameActive = false;
-    cleanDiscardWorkflowState();
-    forceHandTrimmingRoutineActive = false;
-    
-    globalHistory = {
-        used: [], discarded: [], skipped: [],
-        pickedCounts: { time: 0, powerup: 0, curse: 0 },
-        drawnCounts: { time: 0, powerup: 0, curse: 0 },
-        usedCounts: { time: 0, powerup: 0, curse: 0 },
-        totalUsedEver: 0
-    };
-    
-    syncEndgameToggle(false);
-    closeOverlay();
-    
-    // Redirect back to landing interface page setup
-    document.getElementById('picking-screen').classList.add('hidden');
-    document.getElementById('main-screen').classList.remove('hidden');
-    document.getElementById('start-screen').style.display = 'flex';
+    location.reload();
 }
-
-function processCardPlay(card, index) {
-    if (card.type === 'time' && card.value) {
-        showCustomAlert("Action Restrained", "Time assets cannot be used manually. Retain them to tally into your final score!");
-        return;
-    }
-
-    if(isGlobalEndgameActive && card.title.includes("Mobile Bus")) {
-        showCustomAlert("Play Restricted", "This card cannot be cast during the Endgame phase!");
-        return;
-    }
-
-    // Checking Hand Cost Requirements
-    if(card.title.includes("Draw 3<br>Pick 1") && hand.length < 2) { showCustomAlert("Cost Shortage", "Insufficient cards to pay discard requirement."); return; }
-    if(card.title.includes("Discard 1<br>Draw 2") && hand.length < 2) { showCustomAlert("Cost Shortage", "Insufficient cards to pay discard requirement."); return; }
-    if(card.title.includes("Increase Hand Size by 1") && hand.length < 2) { showCustomAlert("Cost Shortage", "Insufficient cards to pay discard requirement."); return; }
-    if(card.title.includes("Pick 2") && hand.length < 3) { showCustomAlert("Cost Shortage", "Insufficient cards to pay discard requirement."); return; }
-    if(card.title.includes("Drained Brain") && hand.length < 2) { showCustomAlert("Cost Shortage", "Insufficient cards to pay discard requirement."); return; }
-    if(card.title.includes("Gifted Express")) {
-        if(hand.filter((c, i) => c.type === 'powerup' && i !== index).length < 1) {
-            showCustomAlert("Cost Shortage", "You do not have another Power Up card to discard!"); return;
-        }
-    }
-
-    // Open Discard Cost Screens
-    if(card.title.includes("Draw 3<br>Pick 1")) { startVisualDiscardSequence(1, card, index); return; }
-    if(card.title.includes("Discard 1<br>Draw 2")) { startVisualDiscardSequence(1, card, index); return; }
-    if(card.title.includes("Increase Hand Size by 1")) { startVisualDiscardSequence(1, card, index); return; }
-    if(card.title.includes("Pick 2")) { startVisualDiscardSequence(2, card, index); return; }
-    if(card.title.includes("Drained Brain")) { startVisualDiscardSequence(1, card, index); return; }
-    if(card.title.includes("Gifted Express")) { startVisualDiscardSequence(1, card, index); return; }
-
-    // Automated Endgame Curse Mechanics
-    if(card.title.includes("Marco Muzammil") && isGlobalEndgameActive) {
-        let timeIndices = []; let totalValue = 0;
-        hand.forEach((c, idx) => { if(idx !== index && c.type === 'time' && c.value) { timeIndices.push(idx); totalValue += c.value; } });
-
-        if(totalValue < 15) {
-            showCustomAlert("Endgame Casting Failure", `Casting failed: Marco Muzammil requires 15+ minutes of time bonuses in the endgame. You only have ${totalValue} minutes!`);
-            return;
-        }
-        timeIndices.sort((a,b) => b - a);
-        let targetedLoss = 0;
-        
-        logActionToLedger('used', card.title);
-        globalHistory.usedCounts[card.type]++;
-        globalHistory.totalUsedEver++;
-        
-        hand.splice(index, 1);
-        while(targetedLoss < 15 && timeIndices.length > 0) {
-            let nextPopIdx = timeIndices.shift();
-            let actualHandIdx = nextPopIdx > index ? nextPopIdx - 1 : nextPopIdx;
-            let lostCard = hand.splice(actualHandIdx, 1)[0];
-            targetedLoss += lostCard.value;
-            logActionToLedger('discarded', lostCard.title);
-        }
-        renderHandViews();
-        if(card.seekerPov) { showSeekerBroadcast(card.seekerPov); }
-        return;
-    }
-
-    logActionToLedger('used', card.title);
-    globalHistory.usedCounts[card.type]++;
-    globalHistory.totalUsedEver++;
-
-    hand.splice(index, 1);
-    renderHandViews();
-
-    if(card.title.includes("Randomise")) {
-        let roll = Math.floor(Math.random() * 31) + 1;
-        showSeekerBroadcast(`🎲 RANDOMISE ACTIVATED!\nYour next question has been randomized. I rolled a [ ${roll} ]!\n\nYou must automatically ask question number ${roll} from your sheet.`);
-        return;
-    }
-    
-    if(card.title.includes("Duplicate")) {
-        if (hand.length === 0) {
-            showCustomAlert("Action Cancelled", "Your hand is empty."); hand.push(card); renderHandViews(); return;
-        }
-        let selectionPanel = document.createElement('div');
-        selectionPanel.id = "temp-dup-panel";
-        selectionPanel.style.cssText = "position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:#2f3640; border:3px solid #4cd137; padding:20px; border-radius:12px; z-index:10000; width:90%; max-width:400px; text-align:center;";
-        selectionPanel.innerHTML = `<h3 style='color:#4cd137;margin-top:0;'>Select Target to Duplicate</h3><div id='dup-options' style='display:flex;flex-direction:column;gap:10px;margin-bottom:15px;max-height:200px;overflow-y:auto;'></div>`;
-        
-        hand.forEach((hCard, hIdx) => {
-            let rowBtn = document.createElement('button'); rowBtn.innerText = hCard.title.replace(/<br>/g, ' ');
-            rowBtn.onclick = () => {
-                hand.push({...hCard}); document.getElementById('temp-dup-panel').remove();
-                renderHandViews(); showCustomAlert("Duplication Complete", "Card copied directly into your hand.");
-            };
-            selectionPanel.querySelector('#dup-options').appendChild(rowBtn);
-        });
-        
-        let cancelBtn = document.createElement('button'); cancelBtn.innerText = "Cancel Action"; cancelBtn.className = "back-btn";
-        cancelBtn.onclick = () => { document.getElementById('temp-dup-panel').remove(); hand.push(card); renderHandViews(); };
-        selectionPanel.appendChild(cancelBtn); document.body.appendChild(selectionPanel);
-        return;
-    }
-
-    if(card.seekerPov) {
-        showSeekerBroadcast(card.seekerPov);
-    } else {
-        showCustomAlert("Card Activated", `"${card.title.replace(/<br>/g, ' ')}" rules are active!`);
-    }
-}
-
-function executePostDiscardResolution() {
-    let title = cardAwaitingDiscardExecution.title;
-    
-    logActionToLedger('used', cardAwaitingDiscardExecution.title);
-    globalHistory.usedCounts[cardAwaitingDiscardExecution.type]++;
-    globalHistory.totalUsedEver++;
-
-    if(title.includes("Draw 3<br>Pick 1")) { startPickPhase(3, 1); }
-    else if(title.includes("Discard 1<br>Draw 2")) { 
-        // Direct draw bypass logic
-        for(let i=0; i<2; i++){
-            if(deck.length > 0) {
-                let c = deck.pop();
-                globalHistory.drawnCounts[c.type]++;
-                globalHistory.pickedCounts[c.type]++;
-                hand.push(c);
-            }
-        }
-        cleanDiscardWorkflowState();
-        document.getElementById('picking-screen').classList.add('hidden');
-        document.getElementById('main-screen').classList.remove('hidden');
-        renderHandViews();
-    }
-    else if(title.includes("Increase Hand Size by 1")) { startPickPhase(1, 1); }
-    else if(title.includes("Pick 2")) { startPickPhase(3, 2); }
-    else {
-        if(cardAwaitingDiscardExecution.seekerPov) {
-            showSeekerBroadcast(cardAwaitingDiscardExecution.seekerPov);
-        } else {
-            showCustomAlert("Curse Active", `"${title.replace(/<br>/g, ' ')}" is live!`);
-        }
-        cleanDiscardWorkflowState();
-        document.getElementById('picking-screen').classList.add('hidden');
-        document.getElementById('main-screen').classList.remove('hidden');
-        renderHandViews();
-    }
-}
-</script>
-</body>
-</html>
-
-```
+</script></body></html>
