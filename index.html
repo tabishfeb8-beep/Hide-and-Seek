@@ -142,6 +142,11 @@
         .big-title { font-size: 22px; font-weight: bold; margin-bottom: 15px; }
         .big-desc { font-size: 14px; margin-top: 15px; color: #2f3640; font-weight: normal; line-height: 1.4; text-align: left; background: rgba(0,0,0,0.05); padding: 15px; border-radius: 8px; width: 100%; flex-grow: 1; display: flex; align-items: center; }
         .big-card.curse .big-desc { color: #dcdde1; background: rgba(255,255,255,0.05); }
+        
+        /* Gamble row layout layout */
+        .gamble-row-list { display: flex; flex-direction: column; gap: 4px; width: 100%; font-weight: bold; text-align: center; margin-top: 5px; }
+        .gamble-row { padding: 4px; border-radius: 4px; font-size: 13px; color: #fff; text-shadow: 1px 1px 2px #000; }
+
         .big-cast { font-weight: bold; font-size: 13px; color: #e84118; margin-top: 12px; width: 100%; text-align: left; border-top: 1px solid rgba(113, 128, 147, 0.3); padding-top: 10px; }
         
         .custom-modal { background: #2f3640; border: 3px solid #fbc531; border-radius: 16px; padding: 25px; max-width: 500px; width: 95%; text-align: center; box-shadow: 0 12px 25px rgba(0,0,0,0.7); color: white; max-height: 85vh; overflow-y: auto; }
@@ -175,7 +180,7 @@
 
     <div id="start-screen">
         <div class="start-logo">HIDE AND SEEK</div>
-        <div style="font-size: 16px; color: #a4b0be; font-style: italic; margin-bottom: 10px;">Hider Deck & Match Infrastructure Engine</div>
+        <div style="font-size: 16px; color: #a4b0be; font-style: italic; margin-bottom: 10px;">Hider Deck (40 Cards Fixed Pool Edition)</div>
         <button style="max-width: 260px; background: #4cd137; border: none; font-size: 18px;" onclick="bootGameSession()">🚀 Start Live Tracker</button>
     </div>
 
@@ -379,6 +384,8 @@ let discardTargetCount = 0;
 let discardedCardsThisTurn = [];
 let isDiscardingActive = false;
 let forceHandTrimmingRoutineActive = false;
+let disallowedDiscardUid = null; // Prevent self-discard options
+let specificRequiredType = null; // Specific type matching cost checks
 let afterDiscardSuccessCallback = null;
 
 // Is duplicating card selection active?
@@ -393,32 +400,33 @@ let globalHistory = {
     totalUsedEver: 0
 };
 
+// Exact 40 cards distribution base
 const cardDefinitions = [
     { qty: 4, title: "2 Minute<br>Time Bonus", type: "time", value: 2, symbol: "⏱️", desc: "Hold this in your Hand until the End of the Game to gain 2 Minutes" },
     { qty: 3, title: "5 Minute<br>Time Bonus", type: "time", value: 5, symbol: "⏱️", desc: "Hold this in your Hand until the End of the Game to gain 5 Minutes" },
     { qty: 3, title: "7 Minute<br>Time Bonus", type: "time", value: 7, symbol: "⏱️", desc: "Hold this in your Hand until the End of the Game to gain 7 Minutes" },
     { qty: 2, title: "10 Minute<br>Time Bonus", type: "time", value: 10, symbol: "⏱️", desc: "Hold this in your Hand until the End of the Game to gain 10 Minutes" },
     { qty: 2, title: "12 Minute<br>Time Bonus", type: "time", value: 12, symbol: "⏱️", desc: "Hold this in your Hand until the End of the Game to gain 12 Minutes" },
-    { qty: 2, title: "Time Trap", type: "time", symbol: "🪤", seekerPov: "🚨 TIME TRAP ACTIVATED!\nI have placed a Time Trap at a bus stop on the map. Every 12 minutes it remains on the map it gains 4 minutes in value. If you board a bus, pass by on bus, or exit at this stop, I'm awarded its full accumulated value!", desc: "Place this at any Bus Stop in the Map, notify the seekers of its Location. Every 12 minutes it remains on the map it gains 4 minutes in value. If the Seekers board a bus, pass by on bus, or exit at this bus stop, the Hider is awarded the value of the Time Trap, and the Trap disappears." },
-    { qty: 2, title: "Randomise", type: "powerup", symbol: "🎲", desc: "Randomise a Seeker’s question, use this card and it will randomly generate a number, the Seeker automatically asks the question associated with the number generated, you and answer and get the reward. The Seeker can ask the original question again but for double the cost regardless of what the random question was.", customAction: "randomise" },
-    { qty: 2, title: "Duplicate", type: "powerup", symbol: "👥", desc: "Duplicate a card in your hand, if it has a casting cost, they are still paid separately.", customAction: "duplicate" },
-    { qty: 2, title: "Veto", type: "powerup", symbol: "🚫", desc: "Block a Seeker's question, they cannot ask that Question for the rest of the game, you do not draw from this Question." },
+    { qty: 2, title: "Time Trap", type: "time", symbol: "🪤", desc: "Place this at any Bus Stop in the Map, notify the seekers of its Location. Every 12 minutes it remains on the map it gains 4 minutes in value. If the Seekers board a bus, pass by on bus, or exit at this bus stop, the Hider is awarded the value of the Time Trap, and the Trap disappears" },
+    { qty: 2, title: "Randomise", type: "powerup", symbol: "🎲", desc: "Randomise a Seeker’s question, use this card and it will randomly generate a number, the Seeker automatically asks the question associated with the number generated, you and answer and get the reward. The Seeker can ask the original question again but for double the cost regardless of what the random question was", customAction: "randomise" },
+    { qty: 2, title: "Duplicate", type: "powerup", symbol: "👥", desc: "Duplicate a card in your hand, if it has a casting cost, they are still paid separately", customAction: "duplicate" },
+    { qty: 2, title: "Veto", type: "powerup", symbol: "🚫", desc: "block a Seeker's question, they cannot ask that Question for the rest of the game, you do not draw from this Question" },
     { qty: 2, title: "Discard 1 Draw 3 Pick 1", type: "powerup", symbol: "🔄", desc: "Select one card from your hand to discard, then enter the picking interface to choose 1 card out of 3 drawn from the deck.", customAction: "discard1draw3pick1" },
+    { qty: 2, title: "Discard 1, Draw 1, increase Hand Size by 1", type: "powerup", symbol: "📈", desc: "Select a card to discard, permanently expand your active maximum hand size capacity by 1 slot, and draw a card to add to your hand", customAction: "discard1draw1incsize" },
+    { qty: 1, title: "Discard 2, Draw 3, Pick 2", type: "powerup", symbol: "🧬", desc: "Select two cards from your hand to discard, draw 3 cards from the deck, and pick 2 to add to your hand", customAction: "discard2draw3pick2" },
     { qty: 2, title: "Discard 1 Draw 2", type: "powerup", symbol: "🎴", desc: "Select one card from your hand to discard, then draw 2 cards directly from the deck.", customAction: "discard1draw2" },
-    { qty: 2, title: "Discard 1, Draw 1, increase Hand Size by 1", type: "powerup", symbol: "📈", desc: "Select a card to discard, permanently expand your active maximum hand size capacity by 1 slot, and draw a card to add to your hand.", customAction: "discard1draw1incsize" },
-    { qty: 1, title: "Discard 2, Draw 3, Pick 2", type: "powerup", symbol: "🧬", desc: "Select two cards from your hand to discard, draw 3 cards from the deck, and pick 2 to add to your hand.", customAction: "discard2draw3pick2" },
-    { qty: 2, title: "Freeze", type: "powerup", symbol: "❄️", seekerPov: "❄️ FREEZE POWER-UP PLAYED!\nYou must stay in place completely for the next 5 minutes. If on transit, you may get off but remain immobile. If you board after this warning, immediately request a stop!", desc: "Inform the Seekers, they must stay in place for 5 minutes. If on transit, they may get off, but are immobile until the 5 minutes are up. If they receive the notification for the freeze before boarding a bus but board regardless, they must immediately request a stop and get off." },
-    { qty: 2, title: "Curse of the Gifted Express", type: "curse", symbol: "🚌", cast: "Discard a Power up. Can only use while the Seekers are on transit.", seekerPov: "☠️ CURSE OF THE GIFTED EXPRESS!\nYou must stay on your current Bus until the end of its route, or at the final stop before it exits the Game Boundary!", desc: "The Seekers must stay on their Bus until the end of the route or the last stop before it exits the Game Boundary. Casting Cost: Discard a Power up. Can only use while the Seekers are on transit.", customAction: "curseGifted" },
-    { qty: 2, title: "Curse of the Itinerary", type: "curse", symbol: "📋", seekerPov: "☠️ CURSE OF THE ITINERARY!\nBefore boarding your next bus, you must inform me exactly which stop you intend to get off at, and you must exit at that stop!", desc: "The Seekers must, before boarding their next bus, inform the Hider which stop they will get off at, and must get off at that stop unless a curse forces them otherwise." },
-    { qty: 2, title: "Curse of Marco Muzammil", type: "curse", symbol: "🛝", cast: "Discard 15+ Minutes of Time Bonuses if used in the Endgame.", seekerPov: "☠️ CURSE OF MARCO MUZAMMIL!\nYou must go to a playground and send a video of you going down a slide before you can ask another question!", desc: "The Seekers must go to a playground and send a video of them going down a slide before asking another Question. Casting Cost: Discard 15+ Minutes of Time Bonuses if used in the Endgame." },
-    { qty: 2, title: "Curse of the Gamble", type: "curse", symbol: "🎲", cast: "Reveal a Card in your hand to the Seekers.", seekerPov: "☠️ CURSE OF THE GAMBLE!\nI am predicting your next question category. Category choice fields: Photo (Zone)/Oddball, Video/Measuring, Radar, Matching, Precision, Photo (You), Photo (Bus Stop).", desc: "Predict the next Category (Photo (Zone)/Oddball, Video/Measuring, Radar, Matching, Precision, Photo (You), Photo (Bus Stop)) the Seekers will ask a Question from. When the Seekers ask their next question, if you are correct, you Draw the Reward 3 times; if you are wrong you draw nothing. When playing this Curse, inform the Seekers you have played it even before they have asked their next Question. Casting Cost: Reveal a Card in your hand to the Seekers." },
-    { qty: 2, title: "Curse of the Dead Phone", type: "curse", symbol: "📴", cast: "The Hider cannot use their phone for the next 15 minutes except to answer Questions/communicate/use Google Maps to answer a question.", seekerPov: "☠️ CURSE OF THE DEAD PHONE!\nYou cannot use your phone for the next 25 minutes except to ask questions or communicate with the Hider!", desc: "The Seekers cannot use their Phones for the next 25 Minutes except to ask Questions/communicate with the Hider. Casting Cost: The Hider cannot use their phone for the next 15 minutes except to answer Questions/communicate/use Google Maps to answer a question." },
-    { qty: 2, title: "Curse of the Mobile Bus", type: "curse", symbol: "🚏", cast: "The Seeker’s next question on the Bus is free. Cannot be used in the Endgame.", seekerPov: "☠️ CURSE OF THE MOBILE BUS!\nYou must ask your next 3 questions while actively riding on a Bus!", desc: "The Seekers must ask their next 3 questions while on a Bus. Casting Cost: The Seeker’s next question on the Bus is free. Cannot be used in the Endgame." },
-    { qty: 2, title: "Curse of the Short Stop", type: "curse", symbol: "🛑", cast: "The Seekers must be on transit.", seekerPov: "☠️ CURSE OF THE SHORT STOP!\nYou must request a stop and get off at the very next bus stop immediately!", desc: "The Seekers must get off at the next stop and request a stop if not already requested. Casting Cost: The Seekers must be on transit." },
-    { qty: 2, title: "Curse of the Drained Brain", type: "curse", symbol: "🧠", cast: "Discard a card. The Seeker’s next Question only Draws 1.", seekerPov: "☠️ CURSE OF THE DRAINED BRAIN!\nChoose any 3 questions from the pool. They are blocked and cannot be asked for the rest of the game!", desc: "Choose any 3 Questions, they cannot be asked for the rest of the Game. Casting Cost: Discard a card. The Seeker’s next Question only Draws 1.", customAction: "curseDrained" },
-    { qty: 2, title: "Curse of the Unguided Tourist", type: "curse", symbol: "🗺️", cast: "Take a picture of a place in your Zone.", seekerPov: "☠️ CURSE OF THE UNGUIDED TOURIST!\nI have sent you a picture. You cannot ask another question until you find a place with a higher Google Maps review rating (min 5 reviews). If your guess is lower, you must wait 10 minutes before retrying!", desc: "Take a picture of a place/building/business and send it to the Seekers, then inform them of its Google Maps rating (must have 5 reviews minimum, you cannot change the picture you are sending unless it has less than 5 reviews, you cannot check the rating of a place before taking a picture). The Seekers may not ask another Question until they have found a place with a higher rating. The Seekers take a picture, send it, and then check the rating; if it is equal or lower, they must wait 10 minutes before trying again. Casting Cost: Take a picture of a place in your Zone." },
-    { qty: 2, title: "Curse of the Nosey Looker", type: "curse", symbol: "👃", cast: "Do the same before sending the Question.", seekerPov: "☠️ CURSE OF THE NOSEY LOOKER!\nYou must find, take a picture, and send 3 of the following before asking a question: A dog, a sports ball, someone wearing a helmet, litter not in place (throw it away after), or a fast food chain (no internet search allowed)!", desc: "The Seekers must find, take a picture, and send 3 of the following to the Hider before asking a Question: A dog, a sports ball, someone wearing a helmet, litter not in the proper place (and you must throw it away after taking a picture), or a fast food chain (without searching one up). Casting Cost: Do the same before sending the Question." },
-    { qty: 2, title: "Curse of the Nomad", type: "curse", symbol: "⛺", cast: "Inform the Seeker of how far this image is from the Hider’s Bus Stop.", seekerPov: "☠️ CURSE OF THE NOMAD!\nI've sent you a Google Streetview image within 300m of you. You must navigate to it, take a photo to confirm, and are blocked from asking any questions until cleared!", desc: "Send a Google Streetview image within 300m of the Seekers (the picture must be upright, not looking up into the sky or into the ground, it cannot have any blurred objects, and it must have a distinct feature(s)). The Seeker must take a picture of (what they believe to be) the location, and send it to the Hider to confirm it is the right one. The Seeker cannot ask any questions until this Curse is cleared. Casting Cost: Inform the Seeker of how far this image is from the Hider’s Bus Stop." }
+    { qty: 2, title: "Freeze", type: "powerup", symbol: "❄️", desc: "inform the Seekers, they must stay in place for 5 minutes. If on transit, they may get off, but are immoble until the 5 minutes are up. If they receive the notification for the freeze before boarding a bus but board regardless, they must immediately request a stop and get off" },
+    { qty: 2, title: "Curse of the Gifted Express", type: "curse", symbol: "🚌", desc: "the Seekers must stay on their Bus until the end of the route or the last stop before it exits the Game Boundary. Casting Cost: Discard a Power up. Can only use while the Seekers are on transit", customAction: "curseGifted" },
+    { qty: 2, title: "Curse of the Itinerary", type: "curse", symbol: "📋", desc: "the Seekers must, before boarding their next bus, inform the Hider which stop they will get off at, and must get off at that stop unless a curse forces them otherwise" },
+    { qty: 2, title: "Curse of Marco Muzammil", type: "curse", symbol: "🛝", desc: "the Seekers must go to a playground and send a video of them going down a slide before asking another Question. Casting Cost: Discard 15+ Minutes of Time Bonuses if used in the Endgame" },
+    { qty: 2, title: "Curse of the Gamble", type: "curse", symbol: "🎲", desc: "Predict the next Category ((Categories listed below)) the Seekers will ask a Question from ((Photo (Zone)/Oddball, Video/Measuring, Radar, Matching, Precision, Photo (You), Photo (Bus Stop))), when the Seekers ask their next question, if you are correct, you Draw the Reward 3 times, if you are wrong you draw nothing. When playing this Curse, inform the Seekers you have played it even before they have asked their next Question. Casting Cost: Reveal a Card in your hand to the Seekers.", isGambleCard: true },
+    { qty: 2, title: "Curse of the Dead Phone", type: "curse", symbol: "📴", desc: "The Seekers cannot use their Phones for the next 25 Minutes except to ask Questions/communicate with the Hider. Casting Cost: The Hider cannot use their phone for the next 15 minutes except to answer Questions/communicate/use Google Maps to answer a question" },
+    { qty: 2, title: "Curse of the Mobile Bus", type: "curse", symbol: "🚏", desc: "The Seekers must ask their next 3 questions while on Bus. Casting Cost: The Seeker’s next question on the Bus is free. Cannot be used in the Endgame" },
+    { qty: 2, title: "Curse of the Short Stop", type: "curse", symbol: "🛑", desc: "The Seekers must get off at the next stop and request a stop if not already requested. Casting Cost: The Seekers must be on transit" },
+    { qty: 2, title: "Curse of the Drained Brain", type: "curse", symbol: "🧠", desc: "Choose any 3 Questions, they cannot be asked for the rest of the Game. Casting Cost: Discard a card. The Seeker’s next Question only Draws 1", customAction: "curseDrained" },
+    { qty: 2, title: "Curse of the Unguided Tourist", type: "curse", symbol: "🗺️", desc: "Take a picture of a place/building/business and send it to the Seekers, then inform them of its Google Maps rating (must have 5 reviews minimum, you cannot change the picture you are sending unless it has less than 5 reviews, you cannot check the rating of a place before taking a picture), the Seekers may not ask another Question until they have found a place with a higher rating. The Seekers take a picture, send it, and then check the rating, if it is equal or lower, they must wait 10 minutes before trying again. Casting Cost: take a picture of a place in your Zone" },
+    { qty: 2, title: "Curse of the Nosey Looker", type: "curse", symbol: "👃", desc: "The Seekers must find, take a picture, and send 3 of the following to the Hider before asking a Question: A dog, a sports ball, someone wearing a helmet, litter not in the proper place(and you must throw it away after taking a picture), or a fast food chain (without searching one up). Casting Cost: Do the same before sending the Question" },
+    { qty: 2, title: "Curse of the Nomad", type: "curse", symbol: "⛺", desc: "send a Google Streetview image within 300m of the Seekers (the picture must be upright, not looking up into the sky or into the ground, it cannot have any blurred objects, and it must have a distinct feature(s). The Seeker must take a picture of (what they believe to be) the location, and send it to the Hider to confirm it is the right one. The Seeker cannot ask any questions until this Curse is cleared. Casting Cost: Inform the Seeker of how far this image is from the Hider’s Bus Stop" }
 ];
 
 // LocalStorage State Management
@@ -426,7 +434,7 @@ function saveState() {
     const state = {
         deck, hand, drawnPool, selectedIndices, pickTargetCount, currentHandLimit, isGlobalEndgameActive,
         matchStartTimestamp, computedTotalSessionSeconds, discardTargetCount, discardedCardsThisTurn, isDiscardingActive,
-        globalHistory, forceHandTrimmingRoutineActive, isDuplicatingActive,
+        globalHistory, forceHandTrimmingRoutineActive, isDuplicatingActive, disallowedDiscardUid, specificRequiredType,
         autoFlip: document.getElementById('toggle-autoflip').checked,
         instaPick: document.getElementById('toggle-instapick').checked,
         mutePopups: document.getElementById('toggle-mutepopups').checked
@@ -453,6 +461,8 @@ function loadState() {
         isDiscardingActive = parsed.isDiscardingActive || false;
         forceHandTrimmingRoutineActive = parsed.forceHandTrimmingRoutineActive || false;
         isDuplicatingActive = parsed.isDuplicatingActive || false;
+        disallowedDiscardUid = parsed.disallowedDiscardUid || null;
+        specificRequiredType = parsed.specificRequiredType || null;
         globalHistory = parsed.globalHistory || globalHistory;
 
         document.getElementById('toggle-autoflip').checked = !!parsed.autoFlip;
@@ -485,9 +495,8 @@ function buildFreshDeck() {
                 value: def.value || null,
                 symbol: def.symbol,
                 desc: def.desc,
-                cast: def.cast || null,
-                seekerPov: def.seekerPov || null,
                 customAction: def.customAction || null,
+                isGambleCard: def.isGambleCard || false,
                 isFlippedUp: false
             });
         }
@@ -604,6 +613,7 @@ function renderPickingPool() {
         cDiv.innerHTML = `
             <div class="cat-badge">😺</div>
             <div class="card-content" style="height:100%; display:flex; flex-direction:column; justify-content:space-between; width:100%;">
+                <div class="zoom-badge">🔍</div>
                 <div class="card-title">${card.title}</div>
                 <div class="card-icon-container">
                     ${card.value ? `<div class="digital-clock">+${card.value}M</div>` : `<div class="card-icon">${card.symbol}</div>`}
@@ -667,7 +677,6 @@ function handlePickingPoolCardClick(index) {
     renderPickingPool();
     saveState();
 
-    // Insta-Pick Toggle Logic Integration for Selection Phase
     const isInstaPickActive = document.getElementById('toggle-instapick').checked;
     if (isInstaPickActive && selectedIndices.length === pickTargetCount) {
         commitPickedCards();
@@ -762,12 +771,11 @@ function renderHandContainer(elementId, isPickingContext) {
         const cDiv = document.createElement('div');
         cDiv.className = `card ${card.type}`;
         
-        // Context Highlightings
         if (isDiscardingActive) {
             cDiv.classList.add('selectable-discard');
         }
         if (isDuplicatingActive) {
-            cDiv.classList.add('selectable-discard'); // shared visual pulsing effect
+            cDiv.classList.add('selectable-discard');
         }
         
         cDiv.onclick = () => {
@@ -781,13 +789,21 @@ function renderHandContainer(elementId, isPickingContext) {
         };
         
         let overlayBadgeHTML = '';
+        let showZoomBadge = isPickingContext || isDiscardingActive || isDuplicatingActive;
+
         if (isDiscardingActive) {
             const discPos = discardedCardsThisTurn.indexOf(index);
             if (discPos > -1) {
                 cDiv.classList.add('selected');
                 overlayBadgeHTML = `<div class="card-badge-overlay">Discard #${discPos+1}</div>`;
             } else {
-                overlayBadgeHTML = `<div class="card-badge-overlay" style="background:#e84118; color:white;">Cost</div>`;
+                if (card.uid === disallowedDiscardUid) {
+                    overlayBadgeHTML = `<div class="card-badge-overlay" style="background:#7f8c8d; color:white;">Active</div>`;
+                } else if (specificRequiredType && card.type !== specificRequiredType) {
+                    overlayBadgeHTML = `<div class="card-badge-overlay" style="background:#c23616; color:white;">Wrong Type</div>`;
+                } else {
+                    overlayBadgeHTML = `<div class="card-badge-overlay" style="background:#e84118; color:white;">Cost</div>`;
+                }
             }
         } else if (isDuplicatingActive) {
             overlayBadgeHTML = `<div class="card-badge-overlay" style="background:#4cd137; color:white;">Copy Target</div>`;
@@ -795,7 +811,7 @@ function renderHandContainer(elementId, isPickingContext) {
         
         cDiv.innerHTML = `
             ${overlayBadgeHTML}
-            <div class="zoom-badge">🔍</div>
+            ${showZoomBadge ? '<div class="zoom-badge">🔍</div>' : ''}
             <div class="card-title">${card.title}</div>
             <div class="card-icon-container">
                 ${card.value ? `<div class="digital-clock">+${card.value}M</div>` : `<div class="card-icon">${card.symbol}</div>`}
@@ -805,27 +821,47 @@ function renderHandContainer(elementId, isPickingContext) {
     });
 }
 
-// Discard State Framework Actions
-function initiateCostDiscardSequence(targetsCount, successCallback) {
+// Discard State Framework Actions with self-prevention rules and specific type options
+function initiateCostDiscardSequence(targetsCount, activeCardUid, requiredType, successCallback) {
     isDiscardingActive = true;
     discardTargetCount = targetsCount;
     discardedCardsThisTurn = [];
+    disallowedDiscardUid = activeCardUid;
+    specificRequiredType = requiredType;
     afterDiscardSuccessCallback = successCallback;
     
     renderHandViews();
-    triggerAlertModal("Discard Required", `You must select exactly ${targetsCount} card(s) from your Hand to discard as a casting action/cost.`);
+    let msg = `You must select exactly ${targetsCount} card(s) from your Hand to discard as a casting action/cost.`;
+    if (requiredType) {
+        msg += ` Requirement: Must be a ${requiredType.toUpperCase()} type card.`;
+    }
+    triggerAlertModal("Discard Required", msg);
 }
 
 function initiateAutomatedTrimmingSequence() {
     forceHandTrimmingRoutineActive = true;
     const overage = hand.length - currentHandLimit;
-    initiateCostDiscardSequence(overage, () => {
+    initiateCostDiscardSequence(overage, null, null, () => {
         forceHandTrimmingRoutineActive = false;
         triggerAlertModal("Hand Stabilized", "Hand capacity rules verified. Discard routing complete.");
     });
 }
 
 function handleDiscardSelectionClick(index) {
+    const card = hand[index];
+    
+    // Prevent selecting the active card item itself
+    if (card.uid === disallowedDiscardUid) {
+        triggerAlertModal("Action Disallowed", "You cannot select the card that is actively being played to fulfill its own cost.");
+        return;
+    }
+
+    // Enforce matching specific card rules types if specified
+    if (specificRequiredType && card.type !== specificRequiredType) {
+        triggerAlertModal("Action Disallowed", `This action cost requires discarding a card of type: ${specificRequiredType.toUpperCase()}`);
+        return;
+    }
+
     const pos = discardedCardsThisTurn.indexOf(index);
     if (pos > -1) {
         discardedCardsThisTurn.splice(pos, 1);
@@ -842,7 +878,6 @@ function handleDiscardSelectionClick(index) {
     renderHandViews();
     saveState();
 
-    // Insta-Pick Toggle Logic Integration for Discard Phase
     const isInstaPickActive = document.getElementById('toggle-instapick').checked;
     if (isInstaPickActive && discardedCardsThisTurn.length === discardTargetCount) {
         executeHandDiscardCommitment();
@@ -852,7 +887,6 @@ function handleDiscardSelectionClick(index) {
 function executeHandDiscardCommitment() {
     if (discardedCardsThisTurn.length !== discardTargetCount) return;
     
-    // Sort descending to safely pull item indices out
     discardedCardsThisTurn.sort((a, b) => b - a);
     
     const elementsDiscarded = [];
@@ -865,6 +899,8 @@ function executeHandDiscardCommitment() {
     isDiscardingActive = false;
     discardTargetCount = 0;
     discardedCardsThisTurn = [];
+    disallowedDiscardUid = null;
+    specificRequiredType = null;
     
     renderHandViews();
     saveState();
@@ -886,7 +922,48 @@ function openInspectCardOverlay(index) {
     oCard.className = `big-card ${card.type}`;
     
     document.getElementById('overlay-title').innerHTML = card.title;
-    document.getElementById('overlay-desc').innerText = card.desc;
+    
+    const descBox = document.getElementById('overlay-desc');
+    descBox.innerHTML = '';
+    
+    // Custom Colorful row breakdown rules logic for Gamble Card
+    if (card.isGambleCard) {
+        descBox.style.display = 'block';
+        
+        let introText = document.createElement('div');
+        introText.style.marginBottom = '8px';
+        introText.innerText = "Predict the next Category ((Categories listed below)) the Seekers will ask a Question from:\n";
+        descBox.appendChild(introText);
+
+        let rowContainer = document.createElement('div');
+        rowContainer.className = "gamble-row-list";
+        
+        const categories = [
+            { text: "Photo (Zone) / Oddball", bg: "#2980b9" },
+            { text: "Video / Measuring", bg: "#27ae60" },
+            { text: "Radar", bg: "#e67e22" },
+            { text: "Matching", bg: "#8e44ad" },
+            { text: "Precision", bg: "#16a085" },
+            { text: "Photo (You)", bg: "#d35400" },
+            { text: "Photo (Bus Stop)", bg: "#c0392b" }
+        ];
+
+        categories.forEach(cat => {
+            let row = document.createElement('div');
+            row.className = "gamble-row";
+            row.style.backgroundColor = cat.bg;
+            row.innerText = cat.text;
+            rowContainer.appendChild(row);
+        });
+        descBox.appendChild(rowContainer);
+
+        let outroText = document.createElement('div');
+        outroText.style.marginTop = '8px';
+        outroText.innerText = "\nwhen the Seekers ask their next question, if you are correct, you Draw the Reward 3 times, if you are wrong you draw nothing. When playing this Curse, inform the Seekers you have played it even before they have asked their next Question. Casting Cost: Reveal a Card in your hand to the Seekers.";
+        descBox.appendChild(outroText);
+    } else {
+        descBox.innerText = card.desc;
+    }
     
     const iconBox = document.getElementById('overlay-icon-container');
     if (card.value) {
@@ -895,18 +972,12 @@ function openInspectCardOverlay(index) {
         iconBox.innerHTML = `<div style="font-size: 72px;">${card.symbol}</div>`;
     }
     
+    // Custom template cost displaying string matching user requirements
     const castBox = document.getElementById('overlay-cast');
-    if (card.cast) {
-        castBox.innerText = `Casting Cost: ${card.cast}`;
-        castBox.style.display = 'block';
-    } else {
-        castBox.style.display = 'none';
-    }
+    castBox.style.display = 'none';
     
-    // Handle gameplay applicability constraints
     const playBtn = document.getElementById('overlay-play-btn');
     if (card.type === 'time' && !card.customAction) {
-        // Plain old time bonuses cannot be played directly
         playBtn.disabled = true;
         playBtn.innerText = "Passive Benefit";
     } else {
@@ -954,13 +1025,11 @@ function executePlayHandCard(index) {
     const card = hand[index];
     closeOverlay();
     
-    // Handle Custom Action Scripts First
     if (card.customAction === "randomise") {
         hand.splice(index, 1);
         globalHistory.used.push(card);
         globalHistory.usedCounts[card.type]++;
         
-        // Centered window, dim rest, generate random number 1-31
         const randNum = Math.floor(Math.random() * 31) + 1;
         document.getElementById('randomise-number-box').innerText = randNum;
         
@@ -979,11 +1048,11 @@ function executePlayHandCard(index) {
     }
     
     if (card.customAction === "duplicate") {
+        // Must have at least 1 other card option to duplicate
         if (hand.length <= 1) {
             triggerAlertModal("No Duplication Targets", "You hold no other cards in your hand to duplicate!");
             return;
         }
-        // Consume the duplicate card first
         hand.splice(index, 1);
         globalHistory.used.push(card);
         globalHistory.usedCounts[card.type]++;
@@ -995,46 +1064,54 @@ function executePlayHandCard(index) {
     }
     
     if (card.customAction === "discard1draw3pick1") {
-        initiateCostDiscardSequence(1, () => {
+        if (hand.length < 2) {
+            triggerAlertModal("Insufficient Cost", "You do not have enough other cards in hand to fulfill this discard cost requirement.");
+            return;
+        }
+        initiateCostDiscardSequence(1, card.uid, null, () => {
             hand.splice(hand.indexOf(card), 1);
             globalHistory.used.push(card);
             globalHistory.usedCounts[card.type]++;
-            // Open interface with 3 drawn items, select 1
             handleDrawClick(3, 1);
         });
         return;
     }
     
     if (card.customAction === "discard1draw2") {
-        initiateCostDiscardSequence(1, () => {
+        if (hand.length < 2) {
+            triggerAlertModal("Insufficient Cost", "You do not have enough other cards in hand to fulfill this discard cost requirement.");
+            return;
+        }
+        initiateCostDiscardSequence(1, card.uid, null, () => {
             hand.splice(hand.indexOf(card), 1);
             globalHistory.used.push(card);
             globalHistory.usedCounts[card.type]++;
-            
-            // Draw 2 straight into hand through picking screen
             handleDrawClick(2, 2);
         });
         return;
     }
     
     if (card.customAction === "discard1draw1incsize") {
-        initiateCostDiscardSequence(1, () => {
+        if (hand.length < 2) {
+            triggerAlertModal("Insufficient Cost", "You do not have enough other cards in hand to fulfill this discard cost requirement.");
+            return;
+        }
+        initiateCostDiscardSequence(1, card.uid, null, () => {
             hand.splice(hand.indexOf(card), 1);
             globalHistory.used.push(card);
             globalHistory.usedCounts[card.type]++;
-            
-            currentHandLimit += 1; // expand permanently
+            currentHandLimit += 1;
             handleDrawClick(1, 1);
         });
         return;
     }
     
     if (card.customAction === "discard2draw3pick2") {
-        if (hand.length < 3) { // card itself + 2 discards
-            triggerAlertModal("Insufficient Cost", "You do not have enough cards to fulfill this discard cost requirement.");
+        if (hand.length < 3) {
+            triggerAlertModal("Insufficient Cost", "You do not have enough other cards to fulfill this discard cost requirement.");
             return;
         }
-        initiateCostDiscardSequence(2, () => {
+        initiateCostDiscardSequence(2, card.uid, null, () => {
             hand.splice(hand.indexOf(card), 1);
             globalHistory.used.push(card);
             globalHistory.usedCounts[card.type]++;
@@ -1044,48 +1121,40 @@ function executePlayHandCard(index) {
     }
     
     if (card.customAction === "curseGifted") {
-        // Cost: Discard a Power-up card
-        const hasPowerup = hand.some((c, idx) => c.type === 'powerup' && idx !== index);
+        const hasPowerup = hand.some((c) => c.type === 'powerup' && c.uid !== card.uid);
         if (!hasPowerup) {
-            triggerAlertModal("Cost Unresolved", "You do not own a valid Power-up card in your hand to discard for this cost.");
+            triggerAlertModal("Cost Unresolved", "You do not own a valid separate Power-up card in your hand to discard for this cost.");
             return;
         }
-        initiateCostDiscardSequence(1, (discardedList) => {
-            if (discardedList[0].type !== 'powerup') {
-                // Refund and retry if they didn't discard a powerup
-                hand.push(...discardedList);
-                triggerAlertModal("Invalid Cast Discard", "The cost requires discarding a Power-Up card specifically.");
-                return;
-            }
-            // Execute play
+        initiateCostDiscardSequence(1, card.uid, 'powerup', () => {
             hand.splice(hand.indexOf(card), 1);
             globalHistory.used.push(card);
             globalHistory.usedCounts[card.type]++;
-            launchBroadcastScreen(card.seekerPov || card.desc);
+            launchBroadcastScreen(card.desc);
         });
         return;
     }
     
     if (card.customAction === "curseDrained") {
-        initiateCostDiscardSequence(1, () => {
+        if (hand.length < 2) {
+            triggerAlertModal("Insufficient Cost", "You do not have enough other cards to fulfill this discard cost requirement.");
+            return;
+        }
+        initiateCostDiscardSequence(1, card.uid, null, () => {
             hand.splice(hand.indexOf(card), 1);
             globalHistory.used.push(card);
             globalHistory.usedCounts[card.type]++;
-            launchBroadcastScreen(card.seekerPov || card.desc);
+            launchBroadcastScreen(card.desc);
         });
         return;
     }
     
-    // Fallback standard implementation rules for any basic actions
+    // Normal card activation fallback routing
     hand.splice(index, 1);
     globalHistory.used.push(card);
     globalHistory.usedCounts[card.type]++;
     
-    if (card.seekerPov) {
-        launchBroadcastScreen(card.seekerPov);
-    } else {
-        triggerAlertModal("Card Executed", `Successfully activated item effect: ${card.title}`);
-    }
+    launchBroadcastScreen(card.desc);
     
     renderHandViews();
     saveState();
@@ -1094,7 +1163,6 @@ function executePlayHandCard(index) {
 function handleDuplicateSelectionClick(targetIndex) {
     const cardToCopy = hand[targetIndex];
     
-    // Create an exact distinct item copy instance
     const clone = {
         ...cardToCopy,
         uid: `${cardToCopy.uid.split('-')[0]}-${cardToCopy.uid.split('-')[1]}-cln${Math.random().toString(36).substr(2,2)}`
@@ -1103,7 +1171,7 @@ function handleDuplicateSelectionClick(targetIndex) {
     hand.push(clone);
     isDuplicatingActive = false;
     
-    triggerAlertModal("Card Duplicated", `Successfully created a matching clone of: ${cardToCopy.title}`);
+    triggerAlertModal("Card Duplicated", `Successfully created a matching clone of: ${cardToCopy.title.replace('<br>',' ')}`);
     renderHandViews();
     saveState();
     
@@ -1127,7 +1195,7 @@ function launchBroadcastScreen(msgText) {
 function copySeekerMessageText() {
     const text = document.getElementById('seeker-text-box').innerText;
     navigator.clipboard.writeText(text).then(() => {
-        alert("Broadcast text successfully copied to clipboard.");
+        alert("Text successfully copied to clipboard.");
     });
 }
 
