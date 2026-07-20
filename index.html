@@ -14,18 +14,14 @@
             overflow: hidden; 
         }
         
-        /* Layout Structure */
         .screen { display: flex; width: 100vw; height: 100vh; padding-top: 60px; }
         .left-panel { width: 50%; height: 100%; padding: 25px; border-right: 3px solid #718093; display: flex; flex-direction: column; justify-content: flex-start; overflow-y: auto; }
         .right-panel { width: 50%; height: 100%; padding: 25px; display: flex; flex-direction: column; justify-content: flex-start; overflow-y: auto; }
         
-        /* Center alignment adjustments for main actions */
         .centered-content { justify-content: center; align-items: center; text-align: center; }
-
         .picking-left { width: 60%; border-right: 3px solid #718093; }
         .picking-right { width: 40%; }
 
-        /* Start Screen Interface Styling */
         #start-screen {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
@@ -36,7 +32,6 @@
         }
         .start-logo { font-size: 42px; font-weight: bold; color: #fbc531; text-shadow: 0 4px 10px rgba(0,0,0,0.5); letter-spacing: 2px; }
 
-        /* Top Header Utilities */
         .top-navbar {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 60px;
@@ -45,12 +40,9 @@
             padding: 0 20px; z-index: 900;
         }
         .header-title { font-size: 16px; font-weight: bold; color: #fbc531; letter-spacing: 1px; display: flex; align-items: center; gap: 10px; }
-        
-        /* Ledger Button */
         .ledger-trigger { font-size: 22px; cursor: pointer; background: none; border: none; padding: 5px; width: auto; transition: transform 0.2s; }
         .ledger-trigger:hover { transform: scale(1.2); }
 
-        /* Toggles Styling Area */
         .controls-cluster { display: flex; align-items: center; gap: 15px; }
         .toggle-container { display: flex; align-items: center; gap: 6px; font-weight: bold; font-size: 11px; color: #dcdde1; }
         .switch { position: relative; display: inline-block; width: 40px; height: 22px; }
@@ -60,51 +52,43 @@
         input:checked + .slider { background-color: #e84118; box-shadow: 0 0 8px #e84118; }
         input:checked + .slider:before { transform: translateX(18px); }
         
-        /* System Session Timer styling */
         .navbar-session-timer {
             font-family: 'Courier New', Courier, monospace;
             background: #1e272e;
             color: #fbc531; border: 2px solid #718093; padding: 4px 12px;
             border-radius: 4px; font-size: 16px; font-weight: bold;
-            box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
         }
 
         h1 { color: #fbc531; margin: 0 0 5px 0; font-size: 26px; text-transform: uppercase; letter-spacing: 1px; }
         .subtitle { color: #a4b0be; font-style: italic; margin-bottom: 20px; font-size: 15px; }
         .deck-status { font-size: 16px; color: #fbc531; font-weight: bold; margin-bottom: 20px; background: rgba(251, 197, 49, 0.1); padding: 8px 14px; border-radius: 6px; display: inline-block; }
-        .warning-bar { background: #e84118; color: white; padding: 10px; font-size: 14px; font-weight: bold; border-radius: 6px; margin-bottom: 15px; display: none; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
+        .warning-bar { background: #e84118; color: white; padding: 10px; font-size: 14px; font-weight: bold; border-radius: 6px; margin-bottom: 15px; display: none; text-align: center; }
         .info-bar { background: #27ae60; color: white; padding: 10px; font-size: 14px; font-weight: bold; border-radius: 6px; margin-bottom: 15px; text-align: center; }
 
-        /* Button Styling */
         .btn-grid { display: flex; flex-direction: column; gap: 12px; max-width: 380px; width: 100%; margin: 0 auto; }
         button { background: #353b48; color: white; border: 2px solid #718093; padding: 14px; font-size: 15px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-weight: bold; width: 100%; }
         button:hover { background: #57606f; border-color: #dcdde1; }
         button:disabled { background: #2f3640; border-color: #485460; color: #7f8c8d; cursor: not-allowed; }
-        .action-btn { background: #2f3640; border-color: #fbc531; color: #fbc531; margin-top: 10px; }
-        .action-btn:hover { background: #fbc531; color: black; }
         .confirm-btn { background: #4cd137; border: none; font-size: 17px; margin-top: 15px; }
         .confirm-btn:hover { background: #44bd32; }
         .back-btn { background: #718093; border: none; margin-top: 10px; }
         .back-btn:hover { background: #57606f; }
         .utility-btn { background: #2f3640; border: 2px dashed #fbc531; color: #fbc531; padding: 8px; font-size: 13px; border-radius: 6px; margin-bottom: 15px; }
-        .finish-btn { background: #e84118; border: none; margin-top: 20px; font-size: 16px; box-shadow: 0 4px 10px rgba(232,65,24,0.3); }
-        .finish-btn:hover { background: #c23616; }
+        .finish-btn { background: #e84118; border: none; margin-top: 20px; font-size: 16px; }
 
-        /* Card Mechanics */
         .card-container { display: flex; justify-content: center; gap: 12px; margin-top: 15px; flex-wrap: wrap; }
         
         .card { 
             background: #ffffff; color: #000000; width: 120px; height: 175px; 
             border-radius: 12px; border: 4px solid #dcdde1; box-shadow: 0 5px 10px rgba(0,0,0,0.4); 
             cursor: pointer; user-select: none; position: relative; display: flex; flex-direction: column; 
-            align-items: center; justify-content: space-between; padding: 10px; text-align: center; font-weight: bold; transition: transform 0.2s, box-shadow 0.2s;
+            align-items: center; justify-content: space-between; padding: 10px; text-align: center; font-weight: bold; transition: transform 0.2s;
         }
-        .card:hover { transform: translateY(-4px); box-shadow: 0 8px 15px rgba(0,0,0,0.5); }
+        .card:hover { transform: translateY(-4px); }
         .card.selected { border: 4px solid #4cd137; box-shadow: 0 0 18px #4cd137; }
         .card.selectable-discard { border: 4px solid #fbc531; animation: pulse 1.5s infinite; }
         
-        /* Selection and Discard Overlay Labels */
-        .card-badge-overlay { position: absolute; top: 5px; left: 5px; background: #fbc531; color: black; border-radius: 4px; padding: 2px 6px; font-size: 12px; font-weight: bold; z-index: 10; box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+        .card-badge-overlay { position: absolute; top: 5px; left: 5px; background: #fbc531; color: black; border-radius: 4px; padding: 2px 6px; font-size: 12px; font-weight: bold; z-index: 10; }
 
         @keyframes pulse {
             0% { box-shadow: 0 0 0 0 rgba(251, 197, 49, 0.7); }
@@ -112,66 +96,57 @@
             100% { box-shadow: 0 0 0 0 rgba(251, 197, 49, 0); }
         }
         
-        /* Card Interiors */
         .card-title { font-size: 10.5px; line-height: 1.25; word-wrap: break-word; width: 100%; flex-grow: 0; min-height: 42px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .card-icon-container { flex-grow: 1; display: flex; align-items: center; justify-content: center; width: 100%; }
         .card-icon { font-size: 32px; display: flex; align-items: center; justify-content: center; }
         
-        /* Digital Clock Display inside Card */
-        .digital-clock { background: #222; color: #00ff66; font-family: 'Courier New', Courier, monospace; padding: 4px 8px; border-radius: 6px; font-size: 14px; border: 2px solid #444; box-shadow: inset 0 0 6px rgba(0,255,102,0.5); letter-spacing: 0.5px; }
+        .digital-clock { background: #222; color: #00ff66; font-family: 'Courier New', Courier, monospace; padding: 4px 8px; border-radius: 6px; font-size: 14px; border: 2px solid #444; }
         
         .card.curse { background: #2f3640; color: #e84118; border-color: #e84118; }
         .card.powerup { background: #f5f6fa; color: #1e272e; border-color: #27ae60; }
         .card.time { background: #fff; color: #2f3640; border-color: #fbc531; }
 
-        /* Card Back: Graphics */
         .card.flipped { background: linear-gradient(135deg, #2c3e50 0%, #0f171e 100%) !important; color: white !important; border: 4px solid #fbc531 !important; display: flex !important; align-items: center !important; justify-content: center !important; }
         .card.flipped .card-content { display: none !important; }
         .card.flipped .cat-badge { display: flex !important; }
         .card .cat-badge { display: none; }
         
-        .cat-badge { width: 70px; height: 70px; border-radius: 50%; background: #fbc531; border: 3px double #ffffff; display: flex; align-items: center; justify-content: center; font-size: 36px; box-shadow: 0 4px 6px rgba(0,0,0,0.5); position: relative; }
-        .zoom-badge { position: absolute; bottom: 5px; right: 5px; background: #353b48; color: white; border-radius: 50%; width: 22px; height: 22px; font-size: 11px; display: flex; align-items: center; justify-content: center; z-index: 5; border: 1px solid #718093; }
+        .cat-badge { width: 70px; height: 70px; border-radius: 50%; background: #fbc531; border: 3px double #ffffff; display: flex; align-items: center; justify-content: center; font-size: 36px; }
+        .zoom-badge { position: absolute; bottom: 5px; right: 5px; background: #353b48; color: white; border-radius: 50%; width: 24px; height: 24px; font-size: 12px; display: flex; align-items: center; justify-content: center; z-index: 20; border: 1px solid #718093; }
+        .zoom-badge:hover { background: #fbc531; color: black; }
 
-        /* Overlays & Modals */
         .overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 999; backdrop-filter: blur(4px); }
-        .big-card { background: white; color: black; width: 330px; min-height: 460px; border-radius: 20px; padding: 25px; box-shadow: 0 0 35px rgba(0,0,0,0.6); display: flex; flex-direction: column; align-items: center; justify-content: space-between; text-align: center; position: relative; }
+        .big-card { background: white; color: black; width: 340px; min-height: 480px; border-radius: 20px; padding: 25px; box-shadow: 0 0 35px rgba(0,0,0,0.6); display: flex; flex-direction: column; align-items: center; justify-content: space-between; text-align: center; position: relative; }
         .big-card.curse { background: #2f3640; color: #e84118; border: 5px solid #e84118; }
         .big-card.powerup { background: #f5f6fa; color: #1e272e; border: 5px solid #27ae60; }
         .big-card.time { background: #fff; color: #2f3640; border: 5px solid #fbc531; }
         .big-title { font-size: 22px; font-weight: bold; margin-bottom: 15px; }
-        .big-desc { font-size: 14px; margin-top: 15px; color: #2f3640; font-weight: normal; line-height: 1.4; text-align: left; background: rgba(0,0,0,0.05); padding: 15px; border-radius: 8px; width: 100%; flex-grow: 1; display: flex; align-items: center; }
+        .big-desc { font-size: 14px; margin-top: 15px; color: #2f3640; line-height: 1.4; text-align: left; background: rgba(0,0,0,0.05); padding: 15px; border-radius: 8px; width: 100%; flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
         .big-card.curse .big-desc { color: #dcdde1; background: rgba(255,255,255,0.05); }
         
-        /* Gamble row layout layout */
         .gamble-row-list { display: flex; flex-direction: column; gap: 4px; width: 100%; font-weight: bold; text-align: center; margin-top: 5px; }
         .gamble-row { padding: 4px; border-radius: 4px; font-size: 13px; color: #fff; text-shadow: 1px 1px 2px #000; }
 
-        .big-cast { font-weight: bold; font-size: 13px; color: #e84118; margin-top: 12px; width: 100%; text-align: left; border-top: 1px solid rgba(113, 128, 147, 0.3); padding-top: 10px; }
+        .big-cast { font-weight: bold; font-size: 14px; color: #ff3838 !important; margin-top: 12px; width: 100%; text-align: center; border-top: 1px solid rgba(113, 128, 147, 0.3); padding-top: 10px; }
         
-        .custom-modal { background: #2f3640; border: 3px solid #fbc531; border-radius: 16px; padding: 25px; max-width: 500px; width: 95%; text-align: center; box-shadow: 0 12px 25px rgba(0,0,0,0.7); color: white; max-height: 85vh; overflow-y: auto; }
+        .custom-modal { background: #2f3640; border: 3px solid #fbc531; border-radius: 16px; padding: 25px; max-width: 500px; width: 95%; text-align: center; color: white; max-height: 85vh; overflow-y: auto; }
         .custom-modal h2 { color: #fbc531; margin-top: 0; margin-bottom: 12px; font-size: 22px; }
         .custom-modal p { font-size: 15px; line-height: 1.5; color: #dcdde1; margin-bottom: 20px; }
         .modal-btn-row { display: flex; gap: 15px; justify-content: center; }
         .modal-btn-row button { max-width: 180px; }
 
-        /* Copy Container */
         .seeker-text-container { width: 100%; background: #1e272e; border: 2px solid #718093; border-radius: 8px; padding: 12px; font-size: 14px; font-family: monospace; text-align: left; color: #fbc531; max-height: 110px; overflow-y: auto; margin-bottom: 15px; white-space: pre-wrap; }
 
-        /* Full Screen Ledger Styling */
-        .ledger-fullscreen { width: 90vw !important; height: 90vh !important; max-width: 1400px !important; max-height: 950px !important; display: flex; flex-direction: column; justify-content: space-between; }
+        .ledger-fullscreen { width: 90vw !important; height: 90vh !important; max-width: 1400px !important; display: flex; flex-direction: column; justify-content: space-between; }
         .ledger-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; flex-grow: 1; margin-bottom: 20px; overflow: hidden; }
         .ledger-column { background: #1e272e; border: 2px solid #718093; border-radius: 10px; padding: 15px; display: flex; flex-direction: column; overflow: hidden; }
         .ledger-column h3 { color: #fbc531; margin-top: 0; margin-bottom: 10px; border-bottom: 2px solid #fbc531; padding-bottom: 5px; font-size: 16px; text-transform: uppercase; }
         .ledger-list { flex-grow: 1; overflow-y: auto; text-align: left; font-family: monospace; font-size: 13px; }
-        .ledger-list div { border-bottom: 1px dashed rgba(255,255,255,0.1); padding: 6px 0; }
 
-        /* Stats Display Grid */
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; text-align: left; font-size: 12.5px; font-family: monospace; background: #1e272e; padding: 10px; border-radius: 6px; }
         .stat-label { color: #a4b0be; }
         .stat-val { color: #4cd137; text-align: right; font-weight: bold; }
 
-        /* Randomise Modal Styling */
         .randomise-content { font-size: 28px; font-weight: bold; color: #fbc531; margin: 20px 0; font-family: monospace; }
         .randomise-subtext { font-size: 16px; color: #ffffff; margin-top: 10px; font-style: italic; }
 
@@ -180,7 +155,7 @@
 
     <div id="start-screen">
         <div class="start-logo">HIDE AND SEEK</div>
-        <div style="font-size: 16px; color: #a4b0be; font-style: italic; margin-bottom: 10px;">Hider Deck (40 Cards Fixed Pool Edition)</div>
+        <div style="font-size: 16px; color: #a4b0be; font-style: italic; margin-bottom: 10px;">Hider Deck (Strict 40 Cards Edition)</div>
         <button style="max-width: 260px; background: #4cd137; border: none; font-size: 18px;" onclick="bootGameSession()">🚀 Start Live Tracker</button>
     </div>
 
@@ -188,9 +163,7 @@
         <div class="header-title">
             <button class="ledger-trigger" onclick="openLedgerReport()" title="Open Ledger Logs">📖 Open Ledger</button>
         </div>
-
         <div class="navbar-session-timer" id="live-session-timer">00:00:00</div>
-
         <div class="controls-cluster">
             <div class="toggle-container">
                 <span>Auto Flip-Up</span>
@@ -234,7 +207,6 @@
                 <button id="draw-btn-2" onclick="handleDrawClick(2, 1)">Draw 2 Pick 1</button>
                 <button id="draw-btn-3" onclick="handleDrawClick(3, 1)">Draw 3 Pick 1</button>
                 <button id="draw-btn-4" onclick="handleDrawClick(4, 1)">Draw 4 Pick 1</button>
-                
                 <button class="finish-btn" onclick="triggerEndGameSummation()">🏁 End Game (Compile Summary)</button>
             </div>
         </div>
@@ -242,6 +214,10 @@
         <div class="right-panel">
             <h1>Hider Hand (<span id="hand-count">0</span>/<span id="max-hand-count">5</span>)</h1>
             <div class="warning-bar" id="hand-limit-warning">WARNING: Hand limit reached! Play or discard cards to fit new items.</div>
+            <div id="discard-control-banner" style="display:none; background:#fbc531; color:black; padding:10px; border-radius:6px; margin-bottom:15px; font-weight:bold; text-align:center;">
+                <span id="discard-banner-text">Select cards to discard</span>
+                <button id="manual-confirm-discard-btn" style="background:rgba(0,0,0,0.8); color:white; border:none; padding:6px 12px; font-size:13px; border-radius:4px; margin-left:10px; width:auto; display:inline-block;" onclick="executeHandDiscardCommitment()">Confirm Discard</button>
+            </div>
             <div id="main-hand" class="card-container"></div>
         </div>
     </div>
@@ -293,7 +269,6 @@
 
         <div class="custom-modal hidden" id="overlay-seeker-broadcast" onclick="event.stopPropagation()">
             <h2>🚨 Send to Seekers</h2>
-            <p>Copy text below and paste into the chat channel:</p>
             <div class="seeker-text-container" id="seeker-text-box">Copy container</div>
             <button class="confirm-btn" style="margin: 0 auto 10px auto; max-width: 200px; background: #27ae60;" onclick="copySeekerMessageText()">Copy Text</button>
             <button class="back-btn" style="margin: 0 auto; max-width: 200px;" onclick="closeOverlay()">Done</button>
@@ -311,61 +286,23 @@
         <div class="custom-modal ledger-fullscreen hidden" id="overlay-ledger" onclick="event.stopPropagation()">
             <h2>📖 Ledger Action Book</h2>
             <div class="ledger-grid">
-                <div class="ledger-column">
-                    <h3>Used Cards</h3>
-                    <div id="log-used" class="ledger-list"></div>
-                </div>
-                <div class="ledger-column">
-                    <h3>Discarded Cards</h3>
-                    <div id="log-discarded" class="ledger-list"></div>
-                </div>
-                <div class="ledger-column">
-                    <h3>Skipped Cards (Returned to Deck)</h3>
-                    <div id="log-skipped" class="ledger-list"></div>
-                </div>
-            </div>
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 15px;">
-                <div>
-                    <div class="ledger-section-title" style="margin-top:0; font-weight: bold; color: #a4b0be; font-size:12px; margin-bottom:5px;">% Selected From Draws</div>
-                    <div id="stats-picked" class="stats-grid"></div>
-                </div>
-                <div>
-                    <div class="ledger-section-title" style="margin-top:0; font-weight: bold; color: #a4b0be; font-size:12px; margin-bottom:5px;">% Hand Cards Used</div>
-                    <div id="stats-used" class="stats-grid"></div>
-                </div>
+                <div class="ledger-column"><div class="ledger-list" id="log-used"></div></div>
+                <div class="ledger-column"><div class="ledger-list" id="log-discarded"></div></div>
+                <div class="ledger-column"><div class="ledger-list" id="log-skipped"></div></div>
             </div>
             <button class="back-btn" style="margin: 0 auto; max-width: 180px;" onclick="closeOverlay()">Close Ledger</button>
         </div>
 
         <div class="custom-modal hidden" id="overlay-endgame-summary" onclick="event.stopPropagation()">
             <h2 style="color: #4cd137;">🏁 Final Match Summary</h2>
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
-                <div style="background: #1e272e; padding: 12px; border-radius: 8px; border: 1px dashed #718093;">
-                    <div style="font-size: 11px; color: #a4b0be; text-transform: uppercase;">Real Session Elapsed</div>
-                    <div id="eg-elapsed-time" style="font-size: 20px; font-weight: bold; color: #fbc531; font-family: monospace; margin-top: 5px;">00:00:00</div>
-                </div>
-                <div style="background: #1e272e; padding: 12px; border-radius: 8px; border: 1px dashed #718093;">
-                    <div style="font-size: 11px; color: #a4b0be; text-transform: uppercase;">Retained Bonuses</div>
-                    <div id="eg-bonus-minutes" style="font-size: 20px; font-weight: bold; color: #4cd137; font-family: monospace; margin-top: 5px;">0 Min</div>
-                </div>
-            </div>
-
             <div style="background: #1e272e; padding: 15px; border-radius: 12px; border: 2px solid #4cd137; margin-bottom: 15px;">
-                <div style="font-size: 13px; color: #a4b0be; text-transform: uppercase; font-weight: bold;">Calculated Total Survival Record</div>
-                <div id="endgame-calculated-tally" style="font-size: 34px; font-weight: bold; color: #00ff66; font-family: monospace; margin-top: 5px;">00:00:00</div>
+                <div id="endgame-calculated-tally" style="font-size: 34px; font-weight: bold; color: #00ff66; font-family: monospace;">00:00:00</div>
             </div>
-
-            <div style="display: flex; flex-direction: column; gap: 10px; max-width: 300px; margin: 0 auto;">
-                <button class="confirm-btn" style="background: #e84118; margin: 0;" onclick="resetWholeGameTracker()">🏁 End Game</button>
-                <button class="back-btn" style="margin: 0;" onclick="closeOverlay()">Dismiss Summary</button>
-            </div>
+            <button class="confirm-btn" style="background: #e84118; margin: 0 auto;" onclick="resetWholeGameTracker()">🏁 End Game</button>
         </div>
     </div>
 
 <script>
-// State Configuration Engine
 let deck = [];
 let hand = [];
 let drawnPool = [];
@@ -373,108 +310,79 @@ let selectedIndices = [];
 let pickTargetCount = 0;
 let currentHandLimit = 5;
 let isGlobalEndgameActive = false;
-
-// Time Tracking State Variables
 let matchStartTimestamp = null;
 let liveTimerIntervalId = null;
 let computedTotalSessionSeconds = 0;
 
-// Dynamic Discard Workflow Parameters
 let discardTargetCount = 0;
 let discardedCardsThisTurn = [];
 let isDiscardingActive = false;
 let forceHandTrimmingRoutineActive = false;
-let disallowedDiscardUid = null; // Prevent self-discard options
-let specificRequiredType = null; // Specific type matching cost checks
+let disallowedDiscardUid = null;
+let specificRequiredType = null;
+let specialMarcoDiscardMode = false;
 let afterDiscardSuccessCallback = null;
-
-// Is duplicating card selection active?
 let isDuplicatingActive = false;
 
-// Global Ledger Statistics Database
-let globalHistory = {
-    used: [], discarded: [], skipped: [],
-    pickedCounts: { time: 0, powerup: 0, curse: 0 },
-    drawnCounts: { time: 0, powerup: 0, curse: 0 },
-    usedCounts: { time: 0, powerup: 0, curse: 0 },
-    totalUsedEver: 0
-};
+let globalHistory = { used: [], discarded: [], skipped: [], pickedCounts: { time: 0, powerup: 0, curse: 0 } };
 
-// Exact 40 cards distribution base
 const cardDefinitions = [
     { qty: 4, title: "2 Minute<br>Time Bonus", type: "time", value: 2, symbol: "⏱️", desc: "Hold this in your Hand until the End of the Game to gain 2 Minutes" },
     { qty: 3, title: "5 Minute<br>Time Bonus", type: "time", value: 5, symbol: "⏱️", desc: "Hold this in your Hand until the End of the Game to gain 5 Minutes" },
     { qty: 3, title: "7 Minute<br>Time Bonus", type: "time", value: 7, symbol: "⏱️", desc: "Hold this in your Hand until the End of the Game to gain 7 Minutes" },
     { qty: 2, title: "10 Minute<br>Time Bonus", type: "time", value: 10, symbol: "⏱️", desc: "Hold this in your Hand until the End of the Game to gain 10 Minutes" },
     { qty: 2, title: "12 Minute<br>Time Bonus", type: "time", value: 12, symbol: "⏱️", desc: "Hold this in your Hand until the End of the Game to gain 12 Minutes" },
-    { qty: 2, title: "Time Trap", type: "time", symbol: "🪤", desc: "Place this at any Bus Stop in the Map, notify the seekers of its Location. Every 12 minutes it remains on the map it gains 4 minutes in value. If the Seekers board a bus, pass by on bus, or exit at this bus stop, the Hider is awarded the value of the Time Trap, and the Trap disappears" },
+    { qty: 2, title: "Time Trap", type: "powerup", symbol: "🪤", desc: "Place this at any Bus Stop in the Map, notify the seekers of its Location. Every 12 minutes it remains on the map it gains 4 minutes in value. If the Seekers board a bus, pass by on bus, or exit at this bus stop, the Hider is awarded the value of the Time Trap, and the Trap disappears", customAction: "broadcastOnly" },
     { qty: 2, title: "Randomise", type: "powerup", symbol: "🎲", desc: "Randomise a Seeker’s question, use this card and it will randomly generate a number, the Seeker automatically asks the question associated with the number generated, you and answer and get the reward. The Seeker can ask the original question again but for double the cost regardless of what the random question was", customAction: "randomise" },
     { qty: 2, title: "Duplicate", type: "powerup", symbol: "👥", desc: "Duplicate a card in your hand, if it has a casting cost, they are still paid separately", customAction: "duplicate" },
-    { qty: 2, title: "Veto", type: "powerup", symbol: "🚫", desc: "block a Seeker's question, they cannot ask that Question for the rest of the game, you do not draw from this Question" },
-    { qty: 2, title: "Discard 1 Draw 3 Pick 1", type: "powerup", symbol: "🔄", desc: "Select one card from your hand to discard, then enter the picking interface to choose 1 card out of 3 drawn from the deck.", customAction: "discard1draw3pick1" },
-    { qty: 2, title: "Discard 1, Draw 1, increase Hand Size by 1", type: "powerup", symbol: "📈", desc: "Select a card to discard, permanently expand your active maximum hand size capacity by 1 slot, and draw a card to add to your hand", customAction: "discard1draw1incsize" },
+    { qty: 2, title: "Veto", type: "powerup", symbol: "🚫", desc: "block a Seeker's question, they cannot ask that Question for the rest of the game, you do not draw from this Question", customAction: "broadcastOnly" },
+    { qty: 2, title: "Discard 1 Draw 3 Pick 1", type: "powerup", symbol: "🔄", desc: "Select one card from your hand to discard and make them go into the picking interface with two cards (they draw both so they just click on both to flip them over and they go into their hand, unless their hand is full then they can discard), this also goes for other discard x pick/draw x", customAction: "discard1draw3pick1" },
+    { qty: 2, title: "Discard 1, Draw 1, increase Hand Size by 1", type: "powerup", symbol: "📈", desc: "increase the user’s Hand Size by 1 after playing this card, and make them select a card to discard, then give them a card to flip over and add to their hand", customAction: "discard1draw1incsize" },
+    
+    // Exactly 1 of each of the remaining cards to equal 40
     { qty: 1, title: "Discard 2, Draw 3, Pick 2", type: "powerup", symbol: "🧬", desc: "Select two cards from your hand to discard, draw 3 cards from the deck, and pick 2 to add to your hand", customAction: "discard2draw3pick2" },
-    { qty: 2, title: "Discard 1 Draw 2", type: "powerup", symbol: "🎴", desc: "Select one card from your hand to discard, then draw 2 cards directly from the deck.", customAction: "discard1draw2" },
-    { qty: 2, title: "Freeze", type: "powerup", symbol: "❄️", desc: "inform the Seekers, they must stay in place for 5 minutes. If on transit, they may get off, but are immoble until the 5 minutes are up. If they receive the notification for the freeze before boarding a bus but board regardless, they must immediately request a stop and get off" },
-    { qty: 2, title: "Curse of the Gifted Express", type: "curse", symbol: "🚌", desc: "the Seekers must stay on their Bus until the end of the route or the last stop before it exits the Game Boundary. Casting Cost: Discard a Power up. Can only use while the Seekers are on transit", customAction: "curseGifted" },
-    { qty: 2, title: "Curse of the Itinerary", type: "curse", symbol: "📋", desc: "the Seekers must, before boarding their next bus, inform the Hider which stop they will get off at, and must get off at that stop unless a curse forces them otherwise" },
-    { qty: 2, title: "Curse of Marco Muzammil", type: "curse", symbol: "🛝", desc: "the Seekers must go to a playground and send a video of them going down a slide before asking another Question. Casting Cost: Discard 15+ Minutes of Time Bonuses if used in the Endgame" },
-    { qty: 2, title: "Curse of the Gamble", type: "curse", symbol: "🎲", desc: "Predict the next Category ((Categories listed below)) the Seekers will ask a Question from ((Photo (Zone)/Oddball, Video/Measuring, Radar, Matching, Precision, Photo (You), Photo (Bus Stop))), when the Seekers ask their next question, if you are correct, you Draw the Reward 3 times, if you are wrong you draw nothing. When playing this Curse, inform the Seekers you have played it even before they have asked their next Question. Casting Cost: Reveal a Card in your hand to the Seekers.", isGambleCard: true },
-    { qty: 2, title: "Curse of the Dead Phone", type: "curse", symbol: "📴", desc: "The Seekers cannot use their Phones for the next 25 Minutes except to ask Questions/communicate with the Hider. Casting Cost: The Hider cannot use their phone for the next 15 minutes except to answer Questions/communicate/use Google Maps to answer a question" },
-    { qty: 2, title: "Curse of the Mobile Bus", type: "curse", symbol: "🚏", desc: "The Seekers must ask their next 3 questions while on Bus. Casting Cost: The Seeker’s next question on the Bus is free. Cannot be used in the Endgame" },
-    { qty: 2, title: "Curse of the Short Stop", type: "curse", symbol: "🛑", desc: "The Seekers must get off at the next stop and request a stop if not already requested. Casting Cost: The Seekers must be on transit" },
-    { qty: 2, title: "Curse of the Drained Brain", type: "curse", symbol: "🧠", desc: "Choose any 3 Questions, they cannot be asked for the rest of the Game. Casting Cost: Discard a card. The Seeker’s next Question only Draws 1", customAction: "curseDrained" },
-    { qty: 2, title: "Curse of the Unguided Tourist", type: "curse", symbol: "🗺️", desc: "Take a picture of a place/building/business and send it to the Seekers, then inform them of its Google Maps rating (must have 5 reviews minimum, you cannot change the picture you are sending unless it has less than 5 reviews, you cannot check the rating of a place before taking a picture), the Seekers may not ask another Question until they have found a place with a higher rating. The Seekers take a picture, send it, and then check the rating, if it is equal or lower, they must wait 10 minutes before trying again. Casting Cost: take a picture of a place in your Zone" },
-    { qty: 2, title: "Curse of the Nosey Looker", type: "curse", symbol: "👃", desc: "The Seekers must find, take a picture, and send 3 of the following to the Hider before asking a Question: A dog, a sports ball, someone wearing a helmet, litter not in the proper place(and you must throw it away after taking a picture), or a fast food chain (without searching one up). Casting Cost: Do the same before sending the Question" },
-    { qty: 2, title: "Curse of the Nomad", type: "curse", symbol: "⛺", desc: "send a Google Streetview image within 300m of the Seekers (the picture must be upright, not looking up into the sky or into the ground, it cannot have any blurred objects, and it must have a distinct feature(s). The Seeker must take a picture of (what they believe to be) the location, and send it to the Hider to confirm it is the right one. The Seeker cannot ask any questions until this Curse is cleared. Casting Cost: Inform the Seeker of how far this image is from the Hider’s Bus Stop" }
+    { qty: 1, title: "Discard 1 Draw 2", type: "powerup", symbol: "🎴", desc: "Select one card from your hand to discard, then draw 2 cards directly from the deck.", customAction: "discard1draw2" },
+    { qty: 1, title: "Freeze", type: "powerup", symbol: "❄️", desc: "(inform the Seekers, they must stay in place for 5 minutes. If on transit, they may get off, but are immoble until the 5 minutes are up. If they receive the notification for the freeze before boarding a bus but board regardless, they must immediately request a stop and get off)", customAction: "broadcastOnly" },
+    { qty: 1, title: "Curse of the Gifted Express", type: "curse", symbol: "🚌", desc: "(the Seekers must stay on their Bus until the end of the route or the last stop before it exits the Game Boundary. Casting Cost: Discard a Power up. Can only use while the Seekers are on transit)", customAction: "curseGifted", castText: "Casting Cost: Discard a Power up. Can only use while the Seekers are on transit" },
+    { qty: 1, title: "Curse of the Itinerary", type: "curse", symbol: "📋", desc: "(the Seekers must, before boarding their next bus, inform the Hider which stop they will get off at, and must get off at that stop unless a curse forces them otherwise)", customAction: "broadcastOnly" },
+    { qty: 1, title: "Curse of Marco Muzammil", type: "curse", symbol: "🛝", desc: "(the Seekers must go to a playground and send a video of them going down a slide before asking another Question. Casting Cost: Discard 15+ Minutes of Time Bonuses if used in the Endgame)", customAction: "curseMarco", castText: "Casting Cost: Discard 15+ Minutes of Time Bonuses if used in the Endgame" },
+    { qty: 1, title: "Curse of the Gamble", type: "curse", symbol: "🎲", desc: "Predict the next Category ((Categories listed below)) the Seekers will ask a Question from ((Photo (Zone)/Oddball, Video/Measuring, Radar, Matching, Precision, Photo (You), Photo (Bus Stop))), when the Seekers ask their next question, if you are correct, you Draw the Reward 3 times, if you are wrong, you draw nothing. When playing this Curse, inform the Seekers you have played it even before they have asked their next Question. Casting Cost: Reveal a Card in your hand to the Seekers.", isGambleCard: true, castText: "Casting Cost: Reveal a Card in your hand to the Seekers." },
+    { qty: 1, title: "Curse of the Dead Phone", type: "curse", symbol: "📴", desc: "(The Seekers cannot use their Phones for the next 25 Minutes except to ask Questions/communicate with the Hider. Casting Cost: The Hider cannot use their phone for the next 15 minutes except to answer Questions/communicate/use Google Maps to answer a question)", customAction: "broadcastOnly", castText: "Casting Cost: The Hider cannot use their phone for the next 15 minutes except to answer Questions/communicate/use Google Maps to answer a question" },
+    { qty: 1, title: "Curse of the Mobile Bus", type: "curse", symbol: "🢪", desc: "(The Seekers must ask their next 3 questions while on Bus. Casting Cost: The Seeker’s next question on the Bus is free. Cannot be used in the Endgame)", customAction: "curseMobileBus", castText: "Casting Cost: The Seeker’s next question on the Bus is free. Cannot be used in the Endgame" },
+    { qty: 1, title: "Curse of the Short Stop", type: "curse", symbol: "🛑", desc: "(The Seekers must get off at the next stop and request a stop if not already requested. Casting Cost: The Seekers must be on transit)", customAction: "broadcastOnly", castText: "Casting Cost: The Seekers must be on transit" },
+    { qty: 1, title: "Curse of the Drained Brain", type: "curse", symbol: "🧠", desc: "(Choose any 3 Questions, they cannot be asked for the rest of the Game. Casting Cost: Discard a card. The Seeker’s next Question only Draws 1)", customAction: "curseDrained", castText: "Casting Cost: Discard a card. The Seeker’s next Question only Draws 1" },
+    { qty: 1, title: "Curse of the Unguided Tourist", type: "curse", symbol: "🗺️", desc: "(Take a picture of a place/building/business and send it to the Seekers, then inform them of its Google Maps rating (must have 5 reviews minimum, you cannot change the picture you are sending unless it has less than 5 reviews, you cannot check the rating of a place before taking a picture), the Seekers may not ask another Question until they have found a place with a higher rating. The Seekers take a picture, send it, and then check the rating, if it is equal or lower, they must wait 10 minutes before trying again. Casting Cost: take a picture of a place in your Zone)", customAction: "broadcastOnly", castText: "Casting Cost: take a picture of a place in your Zone" },
+    { qty: 1, title: "Curse of the Nosey Looker", type: "curse", symbol: "👃", desc: "(The Seekers must find, take a picture, and send 3 of the following to the Hider before asking a Question: A dog, a sports ball, someone wearing a helmet, litter not in the proper place(and you must throw it away after taking a picture), or a fast food chain (without searching one up). Casting Cost: Do the same before sending the Question)", customAction: "broadcastOnly", castText: "Casting Cost: Do the same before sending the Question" },
+    { qty: 1, title: "Curse of the Nomad", type: "curse", symbol: "⛺", desc: "(send a Google Streetview image within 300m of the Seekers (the picture must be upright, not looking up into the sky or into the ground, it cannot have any blurred objects, and it must have a distinct feature(s). The Seeker must take a picture of (what they believe to be) the location, and send it to the Hider to confirm it is the right one. The Seeker cannot ask any questions until this Curse is cleared. Casting Cost: Inform the Seeker of how far this image is from the Hider’s Bus Stop)", customAction: "broadcastOnly", castText: "Casting Cost: Inform the Seeker of how far this image is from the Hider’s Bus Stop" }
 ];
 
-// LocalStorage State Management
 function saveState() {
     const state = {
-        deck, hand, drawnPool, selectedIndices, pickTargetCount, currentHandLimit, isGlobalEndgameActive,
-        matchStartTimestamp, computedTotalSessionSeconds, discardTargetCount, discardedCardsThisTurn, isDiscardingActive,
-        globalHistory, forceHandTrimmingRoutineActive, isDuplicatingActive, disallowedDiscardUid, specificRequiredType,
+        deck, hand, currentHandLimit, isGlobalEndgameActive, matchStartTimestamp, computedTotalSessionSeconds,
         autoFlip: document.getElementById('toggle-autoflip').checked,
         instaPick: document.getElementById('toggle-instapick').checked,
         mutePopups: document.getElementById('toggle-mutepopups').checked
     };
-    localStorage.setItem('hide_and_seek_state', JSON.stringify(state));
+    localStorage.setItem('hide_and_seek_strict_state', JSON.stringify(state));
 }
 
 function loadState() {
-    const saved = localStorage.getItem('hide_and_seek_state');
+    const saved = localStorage.getItem('hide_and_seek_strict_state');
     if (!saved) return false;
     try {
         const parsed = JSON.parse(saved);
         deck = parsed.deck || [];
         hand = parsed.hand || [];
-        drawnPool = parsed.drawnPool || [];
-        selectedIndices = parsed.selectedIndices || [];
-        pickTargetCount = parsed.pickTargetCount || 0;
         currentHandLimit = parsed.currentHandLimit || 5;
         isGlobalEndgameActive = parsed.isGlobalEndgameActive || false;
         matchStartTimestamp = parsed.matchStartTimestamp;
         computedTotalSessionSeconds = parsed.computedTotalSessionSeconds || 0;
-        discardTargetCount = parsed.discardTargetCount || 0;
-        discardedCardsThisTurn = parsed.discardedCardsThisTurn || [];
-        isDiscardingActive = parsed.isDiscardingActive || false;
-        forceHandTrimmingRoutineActive = parsed.forceHandTrimmingRoutineActive || false;
-        isDuplicatingActive = parsed.isDuplicatingActive || false;
-        disallowedDiscardUid = parsed.disallowedDiscardUid || null;
-        specificRequiredType = parsed.specificRequiredType || null;
-        globalHistory = parsed.globalHistory || globalHistory;
-
         document.getElementById('toggle-autoflip').checked = !!parsed.autoFlip;
         document.getElementById('toggle-instapick').checked = !!parsed.instaPick;
         document.getElementById('toggle-mutepopups').checked = !!parsed.mutePopups;
         document.getElementById('global-endgame-toggle').checked = isGlobalEndgameActive;
-
         return true;
-    } catch (e) {
-        console.error("State recovery failure:", e);
-        return false;
-    }
+    } catch (e) { return false; }
 }
 
 function shuffle(array) {
@@ -490,14 +398,9 @@ function buildFreshDeck() {
         for (let i = 0; i < def.qty; i++) {
             deck.push({
                 uid: `${blueprintIndex}-${i}-${Math.random().toString(36).substr(2,4)}`,
-                title: def.title,
-                type: def.type,
-                value: def.value || null,
-                symbol: def.symbol,
-                desc: def.desc,
-                customAction: def.customAction || null,
-                isGambleCard: def.isGambleCard || false,
-                isFlippedUp: false
+                title: def.title, type: def.type, value: def.value || null, symbol: def.symbol,
+                desc: def.desc, customAction: def.customAction || null, isGambleCard: def.isGambleCard || false,
+                castText: def.castText || null, isFlippedUp: false
             });
         }
     });
@@ -510,38 +413,19 @@ function bootGameSession() {
         buildFreshDeck();
         hand = [];
         currentHandLimit = 5;
-        isGlobalEndgameActive = false;
         matchStartTimestamp = Date.now();
-        computedTotalSessionSeconds = 0;
-        globalHistory = {
-            used: [], discarded: [], skipped: [],
-            pickedCounts: { time: 0, powerup: 0, curse: 0 },
-            drawnCounts: { time: 0, powerup: 0, curse: 0 },
-            usedCounts: { time: 0, powerup: 0, curse: 0 },
-            totalUsedEver: 0
-        };
         saveState();
     }
-    
-    if (matchStartTimestamp) {
-        liveTimerIntervalId = setInterval(updateLiveTimerClock, 1000);
-    }
-    
+    if (matchStartTimestamp) liveTimerIntervalId = setInterval(updateLiveTimerClock, 1000);
     syncEndgameToggle(isGlobalEndgameActive);
     updateDeckCounter();
     renderHandViews();
-    
-    if (drawnPool.length > 0) {
-        enterPickingPhase(drawnPool, pickTargetCount, false);
-    }
 }
 
 function updateLiveTimerClock() {
     if (!matchStartTimestamp) return;
-    const deltaMs = Date.now() - matchStartTimestamp;
-    computedTotalSessionSeconds = Math.floor(deltaMs / 1000);
+    computedTotalSessionSeconds = Math.floor((Date.now() - matchStartTimestamp) / 1000);
     document.getElementById('live-session-timer').innerText = formatSecondsToDigital(computedTotalSessionSeconds);
-    if (Math.random() < 0.05) saveState();
 }
 
 function formatSecondsToDigital(totalSecs) {
@@ -551,792 +435,406 @@ function formatSecondsToDigital(totalSecs) {
     return [hrs, mins, secs].map(v => String(v).padStart(2, '0')).join(':');
 }
 
-function updateDeckCounter() {
-    document.getElementById('deck-count').innerText = deck.length;
-}
+function updateDeckCounter() { document.getElementById('deck-count').innerText = deck.length; }
 
 function syncEndgameToggle(activeFlag) {
     isGlobalEndgameActive = activeFlag;
     document.getElementById('global-endgame-toggle').checked = activeFlag;
-    if (activeFlag) {
-        document.body.style.boxShadow = "inset 0 0 100px rgba(232, 65, 24, 0.4)";
-    } else {
-        document.body.style.boxShadow = "none";
-    }
+    document.body.style.boxShadow = activeFlag ? "inset 0 0 100px rgba(232, 65, 24, 0.4)" : "none";
 }
 
-// Draw Action Router
 function handleDrawClick(drawCount, targetPickCount) {
-    if (deck.length < drawCount) {
-        triggerAlertModal("Deck Low", "Insufficient cards remaining in the deck to perform this draw option.");
-        return;
-    }
+    if (deck.length < drawCount) return;
     const cardsPulled = [];
-    for (let i = 0; i < drawCount; i++) {
-        cardsPulled.push(deck.pop());
-    }
+    for (let i = 0; i < drawCount; i++) cardsPulled.push(deck.pop());
     enterPickingPhase(cardsPulled, targetPickCount, true);
 }
 
 function enterPickingPhase(pool, targets, autoFlipHook) {
-    drawnPool = pool;
-    pickTargetCount = targets;
-    selectedIndices = [];
-    
+    drawnPool = pool; pickTargetCount = targets; selectedIndices = [];
     document.getElementById('main-screen').classList.add('hidden');
     document.getElementById('picking-screen').classList.remove('hidden');
-    
-    const autoFlipCheckbox = document.getElementById('toggle-autoflip').checked;
-    if (autoFlipHook && autoFlipCheckbox) {
-        drawnPool.forEach(c => c.isFlippedUp = true);
-    }
-    
+    if (autoFlipHook && document.getElementById('toggle-autoflip').checked) drawnPool.forEach(c => c.isFlippedUp = true);
     renderPickingPool();
-    saveState();
 }
 
 function renderPickingPool() {
-    const poolBox = document.getElementById('pick-pool');
-    poolBox.innerHTML = '';
-    
+    const poolBox = document.getElementById('pick-pool'); poolBox.innerHTML = '';
     let allFlipped = true;
     drawnPool.forEach((card, index) => {
         if (!card.isFlippedUp) allFlipped = false;
-        
         const cDiv = document.createElement('div');
         cDiv.className = `card ${card.type}`;
         if (!card.isFlippedUp) cDiv.classList.add('flipped');
         if (selectedIndices.includes(index)) cDiv.classList.add('selected');
-        
         cDiv.onclick = () => handlePickingPoolCardClick(index);
         
         cDiv.innerHTML = `
             <div class="cat-badge">😺</div>
             <div class="card-content" style="height:100%; display:flex; flex-direction:column; justify-content:space-between; width:100%;">
-                <div class="zoom-badge">🔍</div>
+                <div class="zoom-badge" onclick="inspectCardDirectly(event, 'pool', ${index})">🔍</div>
                 <div class="card-title">${card.title}</div>
-                <div class="card-icon-container">
-                    ${card.value ? `<div class="digital-clock">+${card.value}M</div>` : `<div class="card-icon">${card.symbol}</div>`}
-                </div>
+                <div class="card-icon-container">${card.value ? `<div class="digital-clock">+${card.value}M</div>` : `<div class="card-icon">${card.symbol}</div>`}</div>
             </div>
         `;
         poolBox.appendChild(cDiv);
     });
-    
-    const warnBar = document.getElementById('picking-warning');
-    const flipBtn = document.getElementById('flip-pool-btn');
-    if (allFlipped) {
-        warnBar.style.display = 'none';
-        flipBtn.style.display = 'none';
-    } else {
-        warnBar.style.display = 'block';
-        flipBtn.style.display = 'inline-block';
-    }
-    
-    document.getElementById('pick-instruction').innerText = `Pick Exactly ${pickTargetCount} Card(s)`;
-    
-    const isInstaPickActive = document.getElementById('toggle-instapick').checked;
-    const confirmBtn = document.getElementById('confirm-selection-btn');
-    if (isInstaPickActive) {
-        confirmBtn.style.display = 'none';
-    } else {
-        confirmBtn.style.display = 'inline-block';
-    }
-    
+    document.getElementById('picking-warning').style.display = allFlipped ? 'none' : 'block';
+    document.getElementById('flip-pool-btn').style.display = allFlipped ? 'none' : 'inline-block';
+    document.getElementById('confirm-selection-btn').style.display = document.getElementById('toggle-instapick').checked ? 'none' : 'inline-block';
     renderHandViews();
 }
 
-function flipAllCardsInPool() {
-    drawnPool.forEach(c => c.isFlippedUp = true);
-    renderPickingPool();
-    saveState();
-}
+function flipAllCardsInPool() { drawnPool.forEach(c => c.isFlippedUp = true); renderPickingPool(); }
 
 function handlePickingPoolCardClick(index) {
     const card = drawnPool[index];
-    if (!card.isFlippedUp) {
-        card.isFlippedUp = true;
-        renderPickingPool();
-        saveState();
-        return;
-    }
-    
+    if (!card.isFlippedUp) { card.isFlippedUp = true; renderPickingPool(); return; }
     const pos = selectedIndices.indexOf(index);
-    if (pos > -1) {
-        selectedIndices.splice(pos, 1);
-    } else {
-        if (pickTargetCount === 1) {
-            selectedIndices = [index];
-        } else {
-            if (selectedIndices.length < pickTargetCount) {
-                selectedIndices.push(index);
-            }
-        }
-    }
-    
+    if (pos > -1) selectedIndices.splice(pos, 1);
+    else if (pickTargetCount === 1) selectedIndices = [index];
+    else if (selectedIndices.length < pickTargetCount) selectedIndices.push(index);
     renderPickingPool();
-    saveState();
-
-    const isInstaPickActive = document.getElementById('toggle-instapick').checked;
-    if (isInstaPickActive && selectedIndices.length === pickTargetCount) {
-        commitPickedCards();
-    }
+    if (document.getElementById('toggle-instapick').checked && selectedIndices.length === pickTargetCount) commitPickedCards();
 }
 
 function commitPickedCards() {
-    let unFlippedExists = drawnPool.some(c => !c.isFlippedUp);
-    if (unFlippedExists) {
-        triggerAlertModal("Cards Face Down", "You must reveal/flip all cards face up before committing your choice.");
-        return;
-    }
-    if (selectedIndices.length !== pickTargetCount) {
-        triggerAlertModal("Selection Incomplete", `Please pick exactly ${pickTargetCount} card(s) to add to your Hand.`);
-        return;
-    }
-    
-    selectedIndices.forEach(idx => {
-        const card = drawnPool[idx];
-        hand.push(card);
-        globalHistory.pickedCounts[card.type]++;
-    });
-    
-    const returnedToBottom = [];
-    drawnPool.forEach((card, idx) => {
-        if (!selectedIndices.includes(idx)) {
-            returnedToBottom.push(card);
-            globalHistory.skipped.push(card);
-        }
-    });
-    
-    if (returnedToBottom.length > 0) {
-        shuffle(returnedToBottom);
-        deck.unshift(...returnedToBottom);
-    }
-    
+    if (drawnPool.some(c => !c.isFlippedUp) || selectedIndices.length !== pickTargetCount) return;
+    selectedIndices.forEach(idx => hand.push(drawnPool[idx]));
+    const returned = [];
+    drawnPool.forEach((c, i) => { if (!selectedIndices.includes(i)) returned.push(c); });
+    if (returned.length > 0) { shuffle(returned); deck.unshift(...returned); }
     exitPickingPhase();
 }
 
 function abortPickingPhase() {
-    triggerChoiceModal(
-        "Abort Draft?",
-        "Aborting will return all drawn cards back to the bottom of the deck. Continue?",
-        () => {
-            while(drawnPool.length) {
-                deck.unshift(drawnPool.pop());
-            }
-            updateDeckCounter();
-            exitPickingPhase();
-        },
-        null
-    );
+    while(drawnPool.length) deck.unshift(drawnPool.pop());
+    exitPickingPhase();
 }
 
 function exitPickingPhase() {
-    drawnPool = [];
-    selectedIndices = [];
+    drawnPool = []; selectedIndices = [];
     document.getElementById('picking-screen').classList.add('hidden');
     document.getElementById('main-screen').classList.remove('hidden');
-    updateDeckCounter();
-    renderHandViews();
-    saveState();
-    
-    if (hand.length > currentHandLimit) {
-        initiateAutomatedTrimmingSequence();
-    }
+    updateDeckCounter(); renderHandViews(); saveState();
+    if (hand.length > currentHandLimit) initiateAutomatedTrimmingSequence();
 }
 
-// Hand Management & View Builders
 function renderHandViews() {
     document.getElementById('hand-count').innerText = hand.length;
     document.getElementById('max-hand-count').innerText = currentHandLimit;
     document.getElementById('pick-hand-count').innerText = hand.length;
     document.getElementById('pick-max-hand-count').innerText = currentHandLimit;
-    
-    const warningBar = document.getElementById('hand-limit-warning');
-    if (hand.length > currentHandLimit) {
-        warningBar.style.display = 'block';
-    } else {
-        warningBar.style.display = 'none';
-    }
+    document.getElementById('hand-limit-warning').style.display = (hand.length > currentHandLimit) ? 'block' : 'none';
     
     renderHandContainer('main-hand', false);
     renderHandContainer('pick-hand', true);
 }
 
 function renderHandContainer(elementId, isPickingContext) {
-    const box = document.getElementById(elementId);
-    box.innerHTML = '';
+    const box = document.getElementById(elementId); box.innerHTML = '';
+    const isInstaPick = document.getElementById('toggle-instapick').checked;
     
+    if (!isPickingContext && isDiscardingActive) {
+        document.getElementById('discard-control-banner').style.display = 'block';
+        document.getElementById('discard-banner-text').innerText = `Select exactly ${discardTargetCount} card(s) to discard (Selected: ${discardedCardsThisTurn.length}/${discardTargetCount})`;
+        document.getElementById('manual-confirm-discard-btn').style.display = isInstaPick ? 'none' : 'inline-block';
+    } else if (!isPickingContext) {
+        document.getElementById('discard-control-banner').style.display = 'none';
+    }
+
     hand.forEach((card, index) => {
         const cDiv = document.createElement('div');
         cDiv.className = `card ${card.type}`;
-        
-        if (isDiscardingActive) {
-            cDiv.classList.add('selectable-discard');
-        }
-        if (isDuplicatingActive) {
-            cDiv.classList.add('selectable-discard');
-        }
+        if (isDiscardingActive || isDuplicatingActive) cDiv.classList.add('selectable-discard');
         
         cDiv.onclick = () => {
-            if (isDiscardingActive) {
-                handleDiscardSelectionClick(index);
-            } else if (isDuplicatingActive) {
-                handleDuplicateSelectionClick(index);
-            } else {
-                openInspectCardOverlay(index);
-            }
+            if (isDiscardingActive) handleDiscardSelectionClick(index);
+            else if (isDuplicatingActive) handleDuplicateSelectionClick(index);
+            else openInspectCardOverlay(index);
         };
         
         let overlayBadgeHTML = '';
-        let showZoomBadge = isPickingContext || isDiscardingActive || isDuplicatingActive;
-
         if (isDiscardingActive) {
-            const discPos = discardedCardsThisTurn.indexOf(index);
-            if (discPos > -1) {
-                cDiv.classList.add('selected');
-                overlayBadgeHTML = `<div class="card-badge-overlay">Discard #${discPos+1}</div>`;
-            } else {
-                if (card.uid === disallowedDiscardUid) {
-                    overlayBadgeHTML = `<div class="card-badge-overlay" style="background:#7f8c8d; color:white;">Active</div>`;
-                } else if (specificRequiredType && card.type !== specificRequiredType) {
-                    overlayBadgeHTML = `<div class="card-badge-overlay" style="background:#c23616; color:white;">Wrong Type</div>`;
-                } else {
-                    overlayBadgeHTML = `<div class="card-badge-overlay" style="background:#e84118; color:white;">Cost</div>`;
-                }
-            }
-        } else if (isDuplicatingActive) {
-            overlayBadgeHTML = `<div class="card-badge-overlay" style="background:#4cd137; color:white;">Copy Target</div>`;
+            const dPos = discardedCardsThisTurn.indexOf(index);
+            if (dPos > -1) { cDiv.classList.add('selected'); overlayBadgeHTML = `<div class="card-badge-overlay">Discard</div>`; }
         }
         
         cDiv.innerHTML = `
             ${overlayBadgeHTML}
-            ${showZoomBadge ? '<div class="zoom-badge">🔍</div>' : ''}
+            ${(isDiscardingActive || isDuplicatingActive || isPickingContext) ? `<div class="zoom-badge" onclick="inspectCardDirectly(event, 'hand', ${index})">🔍</div>` : ''}
             <div class="card-title">${card.title}</div>
-            <div class="card-icon-container">
-                ${card.value ? `<div class="digital-clock">+${card.value}M</div>` : `<div class="card-icon">${card.symbol}</div>`}
-            </div>
+            <div class="card-icon-container">${card.value ? `<div class="digital-clock">+${card.value}M</div>` : `<div class="card-icon">${card.symbol}</div>`}</div>
         `;
         box.appendChild(cDiv);
     });
 }
 
-// Discard State Framework Actions with self-prevention rules and specific type options
-function initiateCostDiscardSequence(targetsCount, activeCardUid, requiredType, successCallback) {
-    isDiscardingActive = true;
-    discardTargetCount = targetsCount;
-    discardedCardsThisTurn = [];
-    disallowedDiscardUid = activeCardUid;
-    specificRequiredType = requiredType;
-    afterDiscardSuccessCallback = successCallback;
+function inspectCardDirectly(e, source, idx) {
+    e.stopPropagation();
+    const card = (source === 'pool') ? drawnPool[idx] : hand[idx];
+    const dummyIdx = (source === 'hand') ? idx : -1;
     
-    renderHandViews();
-    let msg = `You must select exactly ${targetsCount} card(s) from your Hand to discard as a casting action/cost.`;
-    if (requiredType) {
-        msg += ` Requirement: Must be a ${requiredType.toUpperCase()} type card.`;
+    const oCard = document.getElementById('overlay-card');
+    oCard.className = `big-card ${card.type}`;
+    document.getElementById('overlay-title').innerHTML = card.title;
+    
+    const descBox = document.getElementById('overlay-desc'); descBox.innerHTML = '';
+    if (card.isGambleCard) {
+        let introText = document.createElement('div'); introText.innerText = "Predict the next Category the Seekers will ask a Question from:\n"; descBox.appendChild(introText);
+        let rows = ["Photo (Zone) / Oddball", "Video / Measuring", "Radar", "Matching", "Precision", "Photo (You)", "Photo (Bus Stop)"];
+        let cols = ["#2980b9", "#27ae60", "#e67e22", "#8e44ad", "#16a085", "#d35400", "#c0392b"];
+        let rowContainer = document.createElement('div'); rowContainer.className = "gamble-row-list";
+        rows.forEach((r, i) => {
+            let row = document.createElement('div'); row.className = "gamble-row"; row.style.backgroundColor = cols[i]; row.innerText = r; rowContainer.appendChild(row);
+        });
+        descBox.appendChild(rowContainer);
+        let outroText = document.createElement('div'); outroText.innerText = "\nwhen the Seekers ask their next question, if you are correct, you Draw the Reward 3 times, if you are wrong, you draw nothing. When playing this Curse, inform the Seekers you have played it even before they have asked their next Question."; descBox.appendChild(outroText);
+    } else {
+        descBox.innerText = card.desc;
     }
-    triggerAlertModal("Discard Required", msg);
+    
+    document.getElementById('overlay-icon-container').innerHTML = card.value ? `<div class="digital-clock" style="font-size:26px;">+${card.value} Min</div>` : `<div style="font-size:72px;">${card.symbol}</div>`;
+    
+    const castBox = document.getElementById('overlay-cast');
+    if (card.castText) { castBox.style.display = 'block'; castBox.innerText = card.castText; } else { castBox.style.display = 'none'; }
+    
+    document.getElementById('overlay-play-btn').style.display = 'none';
+    document.getElementById('overlay-discard-btn').style.display = 'none';
+    
+    oCard.classList.remove('hidden');
+    ['overlay-alert','overlay-randomise','overlay-seeker-broadcast','overlay-choice','overlay-ledger','overlay-endgame-summary'].forEach(id=>document.getElementById(id).classList.add('hidden'));
+    document.getElementById('master-overlay').style.display = 'flex';
+}
+
+function initiateCostDiscardSequence(targetsCount, activeCardUid, requiredType, specialMarco, successCallback) {
+    isDiscardingActive = true; discardTargetCount = targetsCount; discardedCardsThisTurn = [];
+    disallowedDiscardUid = activeCardUid; specificRequiredType = requiredType; specialMarcoDiscardMode = specialMarco;
+    afterDiscardSuccessCallback = successCallback; renderHandViews();
 }
 
 function initiateAutomatedTrimmingSequence() {
     forceHandTrimmingRoutineActive = true;
-    const overage = hand.length - currentHandLimit;
-    initiateCostDiscardSequence(overage, null, null, () => {
+    initiateCostDiscardSequence(hand.length - currentHandLimit, null, null, false, () => {
         forceHandTrimmingRoutineActive = false;
-        triggerAlertModal("Hand Stabilized", "Hand capacity rules verified. Discard routing complete.");
     });
 }
 
 function handleDiscardSelectionClick(index) {
     const card = hand[index];
+    if (card.uid === disallowedDiscardUid) return;
+    if (specificRequiredType && card.type !== specificRequiredType) return;
     
-    // Prevent selecting the active card item itself
-    if (card.uid === disallowedDiscardUid) {
-        triggerAlertModal("Action Disallowed", "You cannot select the card that is actively being played to fulfill its own cost.");
-        return;
-    }
-
-    // Enforce matching specific card rules types if specified
-    if (specificRequiredType && card.type !== specificRequiredType) {
-        triggerAlertModal("Action Disallowed", `This action cost requires discarding a card of type: ${specificRequiredType.toUpperCase()}`);
-        return;
-    }
-
     const pos = discardedCardsThisTurn.indexOf(index);
-    if (pos > -1) {
-        discardedCardsThisTurn.splice(pos, 1);
-    } else {
-        if (discardTargetCount === 1) {
-            discardedCardsThisTurn = [index];
-        } else {
-            if (discardedCardsThisTurn.length < discardTargetCount) {
-                discardedCardsThisTurn.push(index);
-            }
-        }
-    }
+    if (pos > -1) discardedCardsThisTurn.splice(pos, 1);
+    else if (discardTargetCount === 1) discardedCardsThisTurn = [index];
+    else if (discardedCardsThisTurn.length < discardTargetCount) discardedCardsThisTurn.push(index);
     
     renderHandViews();
-    saveState();
-
-    const isInstaPickActive = document.getElementById('toggle-instapick').checked;
-    if (isInstaPickActive && discardedCardsThisTurn.length === discardTargetCount) {
+    if (document.getElementById('toggle-instapick').checked && discardedCardsThisTurn.length === discardTargetCount) {
         executeHandDiscardCommitment();
     }
 }
 
 function executeHandDiscardCommitment() {
-    if (discardedCardsThisTurn.length !== discardTargetCount) return;
+    if (specialMarcoDiscardMode) {
+        let totalMinutes = 0;
+        discardedCardsThisTurn.forEach(idx => { if (hand[idx].type === 'time' && hand[idx].value) totalMinutes += hand[idx].value; });
+        if (totalMinutes < 15) {
+            triggerAlertModal("Cost Unresolved", "You must select Time Bonuses totaling at least 15 minutes.");
+            return;
+        }
+    } else if (discardedCardsThisTurn.length !== discardTargetCount) {
+        return;
+    }
     
     discardedCardsThisTurn.sort((a, b) => b - a);
+    discardedCardsThisTurn.forEach(idx => { globalHistory.discarded.push(hand.splice(idx, 1)[0]); });
     
-    const elementsDiscarded = [];
-    discardedCardsThisTurn.forEach(idx => {
-        const removed = hand.splice(idx, 1)[0];
-        elementsDiscarded.push(removed);
-        globalHistory.discarded.push(removed);
-    });
+    isDiscardingActive = false; discardTargetCount = 0; discardedCardsThisTurn = [];
+    disallowedDiscardUid = null; specificRequiredType = null; specialMarcoDiscardMode = false;
     
-    isDiscardingActive = false;
-    discardTargetCount = 0;
-    discardedCardsThisTurn = [];
-    disallowedDiscardUid = null;
-    specificRequiredType = null;
-    
-    renderHandViews();
-    saveState();
-    
-    if (afterDiscardSuccessCallback) {
-        const callbackRef = afterDiscardSuccessCallback;
-        afterDiscardSuccessCallback = null;
-        callbackRef(elementsDiscarded);
-    }
+    renderHandViews(); saveState();
+    if (afterDiscardSuccessCallback) { const cb = afterDiscardSuccessCallback; afterDiscardSuccessCallback = null; cb(); }
 }
 
-// Card Zoom Modals
-let activeInspectedIndex = null;
 function openInspectCardOverlay(index) {
-    activeInspectedIndex = index;
     const card = hand[index];
-    
     const oCard = document.getElementById('overlay-card');
     oCard.className = `big-card ${card.type}`;
-    
     document.getElementById('overlay-title').innerHTML = card.title;
     
-    const descBox = document.getElementById('overlay-desc');
-    descBox.innerHTML = '';
-    
-    // Custom Colorful row breakdown rules logic for Gamble Card
+    const descBox = document.getElementById('overlay-desc'); descBox.innerHTML = '';
     if (card.isGambleCard) {
-        descBox.style.display = 'block';
-        
-        let introText = document.createElement('div');
-        introText.style.marginBottom = '8px';
-        introText.innerText = "Predict the next Category ((Categories listed below)) the Seekers will ask a Question from:\n";
-        descBox.appendChild(introText);
-
-        let rowContainer = document.createElement('div');
-        rowContainer.className = "gamble-row-list";
-        
-        const categories = [
-            { text: "Photo (Zone) / Oddball", bg: "#2980b9" },
-            { text: "Video / Measuring", bg: "#27ae60" },
-            { text: "Radar", bg: "#e67e22" },
-            { text: "Matching", bg: "#8e44ad" },
-            { text: "Precision", bg: "#16a085" },
-            { text: "Photo (You)", bg: "#d35400" },
-            { text: "Photo (Bus Stop)", bg: "#c0392b" }
-        ];
-
-        categories.forEach(cat => {
-            let row = document.createElement('div');
-            row.className = "gamble-row";
-            row.style.backgroundColor = cat.bg;
-            row.innerText = cat.text;
-            rowContainer.appendChild(row);
+        let introText = document.createElement('div'); introText.innerText = "Predict the next Category the Seekers will ask a Question from:\n"; descBox.appendChild(introText);
+        let rows = ["Photo (Zone) / Oddball", "Video / Measuring", "Radar", "Matching", "Precision", "Photo (You)", "Photo (Bus Stop)"];
+        let cols = ["#2980b9", "#27ae60", "#e67e22", "#8e44ad", "#16a085", "#d35400", "#c0392b"];
+        let rowContainer = document.createElement('div'); rowContainer.className = "gamble-row-list";
+        rows.forEach((r, i) => {
+            let row = document.createElement('div'); row.className = "gamble-row"; row.style.backgroundColor = cols[i]; row.innerText = r; rowContainer.appendChild(row);
         });
         descBox.appendChild(rowContainer);
-
-        let outroText = document.createElement('div');
-        outroText.style.marginTop = '8px';
-        outroText.innerText = "\nwhen the Seekers ask their next question, if you are correct, you Draw the Reward 3 times, if you are wrong you draw nothing. When playing this Curse, inform the Seekers you have played it even before they have asked their next Question. Casting Cost: Reveal a Card in your hand to the Seekers.";
-        descBox.appendChild(outroText);
+        let outroText = document.createElement('div'); outroText.innerText = "\nwhen the Seekers ask their next question, if you are correct, you Draw the Reward 3 times, if you are wrong, you draw nothing. When playing this Curse, inform the Seekers you have played it even before they have asked their next Question."; descBox.appendChild(outroText);
     } else {
         descBox.innerText = card.desc;
     }
     
-    const iconBox = document.getElementById('overlay-icon-container');
-    if (card.value) {
-        iconBox.innerHTML = `<div class="digital-clock" style="font-size: 26px; padding: 10px 20px;">+${card.value} Min</div>`;
-    } else {
-        iconBox.innerHTML = `<div style="font-size: 72px;">${card.symbol}</div>`;
-    }
+    document.getElementById('overlay-icon-container').innerHTML = card.value ? `<div class="digital-clock" style="font-size:26px;">+${card.value} Min</div>` : `<div style="font-size:72px;">${card.symbol}</div>`;
     
-    // Custom template cost displaying string matching user requirements
     const castBox = document.getElementById('overlay-cast');
-    castBox.style.display = 'none';
+    if (card.castText) { castBox.style.display = 'block'; castBox.innerText = card.castText; } else { castBox.style.display = 'none'; }
     
     const playBtn = document.getElementById('overlay-play-btn');
-    if (card.type === 'time' && !card.customAction) {
-        playBtn.disabled = true;
-        playBtn.innerText = "Passive Benefit";
-    } else {
-        playBtn.disabled = false;
-        playBtn.innerText = "Play Card";
-    }
+    playBtn.style.display = 'inline-block';
+    if (card.type === 'time' && !card.customAction) { playBtn.disabled = true; playBtn.innerText = "Passive Benefit"; }
+    else { playBtn.disabled = false; playBtn.innerText = "Play Card"; }
     
-    playBtn.onclick = () => executePlayHandCard(activeInspectedIndex);
-    
-    const discBtn = document.getElementById('overlay-discard-btn');
-    discBtn.onclick = () => {
-        triggerChoiceModal(
-            "Discard Card?",
-            "Are you sure you want to discard this item directly into the graveyard list?",
-            () => {
-                const removed = hand.splice(activeInspectedIndex, 1)[0];
-                globalHistory.discarded.push(removed);
-                closeOverlay();
-                renderHandViews();
-                saveState();
-                if (hand.length > currentHandLimit) initiateAutomatedTrimmingSequence();
-            },
-            null
-        );
+    playBtn.onclick = () => executePlayHandCard(index);
+    document.getElementById('overlay-discard-btn').style.display = 'inline-block';
+    document.getElementById('overlay-discard-btn').onclick = () => {
+        globalHistory.discarded.push(hand.splice(index, 1)[0]);
+        closeOverlay(); renderHandViews(); saveState();
+        if (hand.length > currentHandLimit) initiateAutomatedTrimmingSequence();
     };
     
     oCard.classList.remove('hidden');
-    document.getElementById('overlay-alert').classList.add('hidden');
-    document.getElementById('overlay-randomise').classList.add('hidden');
-    document.getElementById('overlay-seeker-broadcast').classList.add('hidden');
-    document.getElementById('overlay-choice').classList.add('hidden');
-    document.getElementById('overlay-ledger').classList.add('hidden');
-    document.getElementById('overlay-endgame-summary').classList.add('hidden');
-    
+    ['overlay-alert','overlay-randomise','overlay-seeker-broadcast','overlay-choice','overlay-ledger','overlay-endgame-summary'].forEach(id=>document.getElementById(id).classList.add('hidden'));
     document.getElementById('master-overlay').style.display = 'flex';
 }
 
-function closeOverlay() {
-    document.getElementById('master-overlay').style.display = 'none';
-    activeInspectedIndex = null;
-}
+function closeOverlay() { document.getElementById('master-overlay').style.display = 'none'; }
 
-// Gameplay Action Engine Core
 function executePlayHandCard(index) {
     const card = hand[index];
     closeOverlay();
     
+    if (card.customAction === "curseMobileBus" && isGlobalEndgameActive) {
+        triggerAlertModal("Action Restricted", "Curse of the Mobile Bus cannot be used in the Endgame.");
+        return;
+    }
+
+    if (card.customAction === "curseMarco" && isGlobalEndgameActive) {
+        let validTimeCardsCount = hand.filter(c => c.type === 'time' && c.value && c.uid !== card.uid).length;
+        if (validTimeCardsCount < 1) {
+            triggerAlertModal("Cannot Cast", "You do not have enough Time Bonuses in hand to pay the 15+ minute endgame cost.");
+            return;
+        }
+        initiateCostDiscardSequence(99, card.uid, "time", true, () => {
+            hand.splice(hand.indexOf(card), 1); globalHistory.used.push(card);
+            launchBroadcastScreen(card.desc);
+        });
+        return;
+    }
+    
     if (card.customAction === "randomise") {
-        hand.splice(index, 1);
-        globalHistory.used.push(card);
-        globalHistory.usedCounts[card.type]++;
-        
-        const randNum = Math.floor(Math.random() * 31) + 1;
-        document.getElementById('randomise-number-box').innerText = randNum;
-        
+        hand.splice(index, 1); globalHistory.used.push(card);
+        document.getElementById('randomise-number-box').innerText = Math.floor(Math.random() * 31) + 1;
         document.getElementById('overlay-randomise').classList.remove('hidden');
         document.getElementById('overlay-card').classList.add('hidden');
-        document.getElementById('overlay-alert').classList.add('hidden');
-        document.getElementById('overlay-seeker-broadcast').classList.add('hidden');
-        document.getElementById('overlay-choice').classList.add('hidden');
-        document.getElementById('overlay-ledger').classList.add('hidden');
-        document.getElementById('overlay-endgame-summary').classList.add('hidden');
         document.getElementById('master-overlay').style.display = 'flex';
-        
-        renderHandViews();
-        saveState();
-        return;
+        renderHandViews(); saveState(); return;
     }
     
     if (card.customAction === "duplicate") {
-        // Must have at least 1 other card option to duplicate
-        if (hand.length <= 1) {
-            triggerAlertModal("No Duplication Targets", "You hold no other cards in your hand to duplicate!");
-            return;
-        }
-        hand.splice(index, 1);
-        globalHistory.used.push(card);
-        globalHistory.usedCounts[card.type]++;
-        
-        isDuplicatingActive = true;
-        renderHandViews();
-        triggerAlertModal("Select Duplication Target", "Click on any remaining card in your hand to make an exact copy of it.");
-        return;
+        if (hand.length <= 1) { triggerAlertModal("No Targets", "No other cards to duplicate."); return; }
+        hand.splice(index, 1); globalHistory.used.push(card); isDuplicatingActive = true; renderHandViews(); return;
     }
     
     if (card.customAction === "discard1draw3pick1") {
-        if (hand.length < 2) {
-            triggerAlertModal("Insufficient Cost", "You do not have enough other cards in hand to fulfill this discard cost requirement.");
-            return;
-        }
-        initiateCostDiscardSequence(1, card.uid, null, () => {
-            hand.splice(hand.indexOf(card), 1);
-            globalHistory.used.push(card);
-            globalHistory.usedCounts[card.type]++;
-            handleDrawClick(3, 1);
+        if (hand.length < 2) return;
+        initiateCostDiscardSequence(1, card.uid, null, false, () => {
+            hand.splice(hand.indexOf(card), 1); globalHistory.used.push(card); handleDrawClick(3, 1);
         });
         return;
     }
     
     if (card.customAction === "discard1draw2") {
-        if (hand.length < 2) {
-            triggerAlertModal("Insufficient Cost", "You do not have enough other cards in hand to fulfill this discard cost requirement.");
-            return;
-        }
-        initiateCostDiscardSequence(1, card.uid, null, () => {
-            hand.splice(hand.indexOf(card), 1);
-            globalHistory.used.push(card);
-            globalHistory.usedCounts[card.type]++;
-            handleDrawClick(2, 2);
+        if (hand.length < 2) return;
+        initiateCostDiscardSequence(1, card.uid, null, false, () => {
+            hand.splice(hand.indexOf(card), 1); globalHistory.used.push(card); handleDrawClick(2, 2);
         });
         return;
     }
     
     if (card.customAction === "discard1draw1incsize") {
-        if (hand.length < 2) {
-            triggerAlertModal("Insufficient Cost", "You do not have enough other cards in hand to fulfill this discard cost requirement.");
-            return;
-        }
-        initiateCostDiscardSequence(1, card.uid, null, () => {
-            hand.splice(hand.indexOf(card), 1);
-            globalHistory.used.push(card);
-            globalHistory.usedCounts[card.type]++;
-            currentHandLimit += 1;
-            handleDrawClick(1, 1);
+        if (hand.length < 2) return;
+        initiateCostDiscardSequence(1, card.uid, null, false, () => {
+            hand.splice(hand.indexOf(card), 1); globalHistory.used.push(card); currentHandLimit += 1; handleDrawClick(1, 1);
         });
         return;
     }
     
     if (card.customAction === "discard2draw3pick2") {
-        if (hand.length < 3) {
-            triggerAlertModal("Insufficient Cost", "You do not have enough other cards to fulfill this discard cost requirement.");
-            return;
-        }
-        initiateCostDiscardSequence(2, card.uid, null, () => {
-            hand.splice(hand.indexOf(card), 1);
-            globalHistory.used.push(card);
-            globalHistory.usedCounts[card.type]++;
-            handleDrawClick(3, 2);
+        if (hand.length < 3) return;
+        initiateCostDiscardSequence(2, card.uid, null, false, () => {
+            hand.splice(hand.indexOf(card), 1); globalHistory.used.push(card); handleDrawClick(3, 2);
         });
         return;
     }
     
     if (card.customAction === "curseGifted") {
-        const hasPowerup = hand.some((c) => c.type === 'powerup' && c.uid !== card.uid);
-        if (!hasPowerup) {
-            triggerAlertModal("Cost Unresolved", "You do not own a valid separate Power-up card in your hand to discard for this cost.");
-            return;
-        }
-        initiateCostDiscardSequence(1, card.uid, 'powerup', () => {
-            hand.splice(hand.indexOf(card), 1);
-            globalHistory.used.push(card);
-            globalHistory.usedCounts[card.type]++;
-            launchBroadcastScreen(card.desc);
+        if (!hand.some(c => c.type === 'powerup' && c.uid !== card.uid)) return;
+        initiateCostDiscardSequence(1, card.uid, 'powerup', false, () => {
+            hand.splice(hand.indexOf(card), 1); globalHistory.used.push(card); launchBroadcastScreen(card.desc);
         });
         return;
     }
     
     if (card.customAction === "curseDrained") {
-        if (hand.length < 2) {
-            triggerAlertModal("Insufficient Cost", "You do not have enough other cards to fulfill this discard cost requirement.");
-            return;
-        }
-        initiateCostDiscardSequence(1, card.uid, null, () => {
-            hand.splice(hand.indexOf(card), 1);
-            globalHistory.used.push(card);
-            globalHistory.usedCounts[card.type]++;
-            launchBroadcastScreen(card.desc);
+        if (hand.length < 2) return;
+        initiateCostDiscardSequence(1, card.uid, null, false, () => {
+            hand.splice(hand.indexOf(card), 1); globalHistory.used.push(card); launchBroadcastScreen(card.desc);
         });
         return;
     }
     
-    // Normal card activation fallback routing
-    hand.splice(index, 1);
-    globalHistory.used.push(card);
-    globalHistory.usedCounts[card.type]++;
-    
-    launchBroadcastScreen(card.desc);
-    
-    renderHandViews();
-    saveState();
+    hand.splice(index, 1); globalHistory.used.push(card);
+    launchBroadcastScreen(card.desc); renderHandViews(); saveState();
 }
 
 function handleDuplicateSelectionClick(targetIndex) {
-    const cardToCopy = hand[targetIndex];
-    
-    const clone = {
-        ...cardToCopy,
-        uid: `${cardToCopy.uid.split('-')[0]}-${cardToCopy.uid.split('-')[1]}-cln${Math.random().toString(36).substr(2,2)}`
-    };
-    
-    hand.push(clone);
-    isDuplicatingActive = false;
-    
-    triggerAlertModal("Card Duplicated", `Successfully created a matching clone of: ${cardToCopy.title.replace('<br>',' ')}`);
-    renderHandViews();
-    saveState();
-    
-    if (hand.length > currentHandLimit) {
-        initiateAutomatedTrimmingSequence();
-    }
+    const orig = hand[targetIndex];
+    hand.push({ ...orig, uid: `${orig.uid}-cln-${Math.random().toString(36).substr(2,2)}` });
+    isDuplicatingActive = false; renderHandViews(); saveState();
+    if (hand.length > currentHandLimit) initiateAutomatedTrimmingSequence();
 }
 
-// Global Messenger Overlays
 function launchBroadcastScreen(msgText) {
     document.getElementById('seeker-text-box').innerText = msgText;
     document.getElementById('overlay-seeker-broadcast').classList.remove('hidden');
     document.getElementById('overlay-card').classList.add('hidden');
-    document.getElementById('overlay-alert').classList.add('hidden');
-    document.getElementById('overlay-choice').classList.add('hidden');
-    document.getElementById('overlay-ledger').classList.add('hidden');
-    document.getElementById('overlay-endgame-summary').classList.add('hidden');
     document.getElementById('master-overlay').style.display = 'flex';
 }
 
 function copySeekerMessageText() {
-    const text = document.getElementById('seeker-text-box').innerText;
-    navigator.clipboard.writeText(text).then(() => {
-        alert("Text successfully copied to clipboard.");
-    });
+    navigator.clipboard.writeText(document.getElementById('seeker-text-box').innerText).then(() => { alert("Copied!"); });
 }
 
 function triggerAlertModal(title, text) {
     if (document.getElementById('toggle-mutepopups').checked) return;
-    document.getElementById('alert-title').innerText = title;
-    document.getElementById('alert-text').innerText = text;
-    document.getElementById('overlay-alert').classList.remove('hidden');
-    document.getElementById('overlay-card').classList.add('hidden');
-    document.getElementById('overlay-seeker-broadcast').classList.add('hidden');
-    document.getElementById('overlay-choice').classList.add('hidden');
-    document.getElementById('overlay-ledger').classList.add('hidden');
-    document.getElementById('overlay-endgame-summary').classList.add('hidden');
+    document.getElementById('alert-title').innerText = title; document.getElementById('alert-text').innerText = text;
+    document.getElementById('overlay-alert').classList.remove('hidden'); document.getElementById('overlay-card').classList.add('hidden');
     document.getElementById('master-overlay').style.display = 'flex';
 }
 
-function triggerChoiceModal(title, text, onYes, onNo) {
-    document.getElementById('choice-title').innerText = title;
-    document.getElementById('choice-text').innerText = text;
-    
-    const yesBtn = document.getElementById('choice-btn-yes');
-    const noBtn = document.getElementById('choice-btn-no');
-    
-    yesBtn.onclick = () => { closeOverlay(); if (onYes) onYes(); };
-    noBtn.onclick = () => { closeOverlay(); if (onNo) onNo(); };
-    
-    document.getElementById('overlay-choice').classList.remove('hidden');
-    document.getElementById('overlay-card').classList.add('hidden');
-    document.getElementById('overlay-alert').classList.add('hidden');
-    document.getElementById('overlay-seeker-broadcast').classList.add('hidden');
-    document.getElementById('overlay-ledger').classList.add('hidden');
-    document.getElementById('overlay-endgame-summary').classList.add('hidden');
-    document.getElementById('master-overlay').style.display = 'flex';
-}
-
-// Live Logging Ledger Operations
 function openLedgerReport() {
-    const populateLog = (boxId, list) => {
-        const b = document.getElementById(boxId);
-        b.innerHTML = '';
-        if (list.length === 0) b.innerHTML = '<div style="color:#7f8c8d;">No actions logged.</div>';
-        list.forEach(c => {
-            const d = document.createElement('div');
-            d.innerHTML = `<span>${c.symbol || '🃏'}</span> <strong>${c.title.replace('<br>',' ')}</strong> <span style="color:#a4b0be; font-size:11px;">(${c.type})</span>`;
-            b.appendChild(d);
-        });
+    const pop = (id, arr) => {
+        document.getElementById(id).innerHTML = `<h3>${id.replace('log-','')}</h3>` + (arr.length ? arr.map(c=>`<div>${c.symbol} ${c.title.replace('<br>',' ')}</div>`).join('') : 'None');
     };
-    
-    populateLog('log-used', globalHistory.used);
-    populateLog('log-discarded', globalHistory.discarded);
-    populateLog('log-skipped', globalHistory.skipped);
-    
-    const statsP = document.getElementById('stats-picked');
-    const statsU = document.getElementById('stats-used');
-    
-    const createStatGrid = (el, header, fractionObj, percentObj) => {
-        el.innerHTML = `
-            <div class="stat-label">Time Bonuses:</div><div class="stat-val">${fractionObj.time} (${percentObj.time}%)</div>
-            <div class="stat-label">Power-Ups:</div><div class="stat-val">${fractionObj.powerup} (${percentObj.powerup}%)</div>
-            <div class="stat-label">Curses:</div><div class="stat-val">${fractionObj.curse} (${percentObj.curse}%)</div>
-        `;
-    };
-    
-    const calcStats = (nums, dens) => {
-        const out = {};
-        ['time', 'powerup', 'curse'].forEach(k => {
-            out[k] = dens[k] ? Math.round((nums[k] / dens[k]) * 100) : 0;
-        });
-        return out;
-    };
-    
-    const totalDrawnBase = {
-        time: globalHistory.pickedCounts.time + globalHistory.skipped.filter(c => c.type === 'time').length,
-        powerup: globalHistory.pickedCounts.powerup + globalHistory.skipped.filter(c => c.type === 'powerup').length,
-        curse: globalHistory.pickedCounts.curse + globalHistory.skipped.filter(c => c.type === 'curse').length
-    };
-
-    const totalInHandBase = {
-        time: globalHistory.usedCounts.time + globalHistory.discarded.filter(c => c.type === 'time').length + hand.filter(c => c.type === 'time').length,
-        powerup: globalHistory.usedCounts.powerup + globalHistory.discarded.filter(c => c.type === 'powerup').length + hand.filter(c => c.type === 'powerup').length,
-        curse: globalHistory.usedCounts.curse + globalHistory.discarded.filter(c => c.type === 'curse').length + hand.filter(c => c.type === 'curse').length
-    };
-    
-    const pickPct = calcStats(globalHistory.pickedCounts, totalDrawnBase);
-    const pickFrac = {
-        time: `${globalHistory.pickedCounts.time}/${totalDrawnBase.time}`,
-        powerup: `${globalHistory.pickedCounts.powerup}/${totalDrawnBase.powerup}`,
-        curse: `${globalHistory.pickedCounts.curse}/${totalDrawnBase.curse}`
-    };
-    createStatGrid(statsP, 'Picked', pickFrac, pickPct);
-    
-    const usedPct = calcStats(globalHistory.usedCounts, totalInHandBase);
-    const usedFrac = {
-        time: `${globalHistory.usedCounts.time}/${totalInHandBase.time}`,
-        powerup: `${globalHistory.usedCounts.powerup}/${totalInHandBase.powerup}`,
-        curse: `${globalHistory.usedCounts.curse}/${totalInHandBase.curse}`
-    };
-    createStatGrid(statsU, 'Used', usedFrac, usedPct);
-    
-    document.getElementById('overlay-ledger').classList.remove('hidden');
-    document.getElementById('overlay-card').classList.add('hidden');
-    document.getElementById('overlay-alert').classList.add('hidden');
-    document.getElementById('overlay-seeker-broadcast').classList.add('hidden');
-    document.getElementById('overlay-choice').classList.add('hidden');
-    document.getElementById('overlay-endgame-summary').classList.add('hidden');
+    pop('log-used', globalHistory.used); pop('log-discarded', globalHistory.discarded); pop('log-skipped', globalHistory.skipped);
+    document.getElementById('overlay-ledger').classList.remove('hidden'); document.getElementById('overlay-card').classList.add('hidden');
     document.getElementById('master-overlay').style.display = 'flex';
 }
 
 function triggerEndGameSummation() {
     clearInterval(liveTimerIntervalId);
-    
-    document.getElementById('eg-elapsed-time').innerText = formatSecondsToDigital(computedTotalSessionSeconds);
-    
-    let bonusMins = 0;
-    hand.forEach(c => {
-        if (c.type === 'time' && c.value) {
-            bonusMins += c.value;
-        }
-    });
-    document.getElementById('eg-bonus-minutes').innerText = `+${bonusMins} Min`;
-    
-    const totalSurvivedSecs = computedTotalSessionSeconds + (bonusMins * 60);
-    document.getElementById('endgame-calculated-tally').innerText = formatSecondsToDigital(totalSurvivedSecs);
-    
-    document.getElementById('overlay-endgame-summary').classList.remove('hidden');
-    document.getElementById('overlay-card').classList.add('hidden');
-    document.getElementById('overlay-alert').classList.add('hidden');
-    document.getElementById('overlay-seeker-broadcast').classList.add('hidden');
-    document.getElementById('overlay-choice').classList.add('hidden');
-    document.getElementById('overlay-ledger').classList.add('hidden');
+    let bonusMins = 0; hand.forEach(c => { if (c.type === 'time' && c.value) bonusMins += c.value; });
+    document.getElementById('endgame-calculated-tally').innerText = formatSecondsToDigital(computedTotalSessionSeconds + (bonusMins * 60));
+    document.getElementById('overlay-endgame-summary').classList.remove('hidden'); document.getElementById('overlay-card').classList.add('hidden');
     document.getElementById('master-overlay').style.display = 'flex';
 }
 
-function resetWholeGameTracker() {
-    localStorage.removeItem('hide_and_seek_state');
-    location.reload();
-}
+function resetWholeGameTracker() { localStorage.removeItem('hide_and_seek_strict_state'); location.reload(); }
 
-window.onload = () => {
-    if (localStorage.getItem('hide_and_seek_state')) {
-        bootGameSession();
-    }
-};
+window.onload = () => { if (localStorage.getItem('hide_and_seek_strict_state')) bootGameSession(); };
 </script></body></html>
