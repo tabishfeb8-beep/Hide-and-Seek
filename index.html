@@ -3,6 +3,117 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hide and Seek Tracker</title>
     <style>
+        /* Chart Table Grid Styling */
+.question-matrix {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    background: #2f3640;
+    border-radius: 8px;
+    overflow: hidden;
+}
+.question-matrix th, .question-matrix td {
+    border: 1px solid #485460;
+    padding: 10px;
+    text-align: center;
+    vertical-align: top;
+}
+.question-matrix th {
+    background-color: #353b48;
+    color: #fbc531;
+    font-size: 14px;
+}
+.question-matrix tr:nth-child(even) { background-color: #272d38; }
+
+/* Question Item Buttons Styling */
+.question-item {
+    background: #3d4656;
+    border: 2px solid #718093;
+    border-radius: 6px;
+    padding: 8px;
+    margin: 5px 0;
+    text-align: left;
+    cursor: pointer;
+    transition: 0.2s;
+    position: relative;
+}
+.question-item:hover { background: #4b566b; border-color: #dcdde1; }
+.question-name { font-weight: bold; font-size: 13px; color: #fff; display: block; margin-bottom: 4px; }
+
+/* Special State Modifiers */
+.question-item.endgame-q {
+    border: 2px solid #e84118 !important;
+    background: #3a2226;
+}
+.question-item.endgame-q:hover { background: #492a2f; }
+.question-item.asked-once {
+    border: 2px dashed #00ff66 !important;
+    background: #1f3327;
+}
+
+.desc-text {
+    font-size: 11px;
+    color: #dcdde1;
+    margin-top: 4px;
+    display: none;
+    background: rgba(0,0,0,0.2);
+    padding: 4px;
+    border-radius: 4px;
+}
+.question-item.expanded .desc-text { display: block; }
+
+.btn-row {
+    display: flex;
+    gap: 5px;
+    margin-top: 5px;
+}
+.q-btn {
+    padding: 4px 8px;
+    font-size: 11px;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    width: auto;
+}
+.use-btn { background: #4cd137; color: black; }
+.use-btn:hover { background: #44bd32; }
+.unask-btn { background: #718093; color: white; display: none; }
+.unask-btn:hover { background: #57606f; }
+.question-item.asked-once .unask-btn { display: inline-block; }
+
+/* Logger Column Panels */
+.log-box {
+    background: #2f3640;
+    border: 2px solid #718093;
+    border-radius: 8px;
+    padding: 12px;
+    height: 180px;
+    overflow-y: auto;
+    font-family: monospace;
+    font-size: 12px;
+    margin-bottom: 15px;
+}
+.log-entry {
+    padding: 4px 0;
+    border-bottom: 1px dashed rgba(255,255,255,0.1);
+}
+.stat-counter {
+    background: rgba(251, 197, 49, 0.1);
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #fbc531;
+    font-family: monospace;
+    font-size: 13px;
+    color: #fbc531;
+}
+.endgame-container {
+    border: 2px double #e84118;
+    border-radius: 8px;
+    padding: 12px;
+    background: #261719;
+    margin-top: 15px;
+}
         * { box-sizing: border-box; }
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
@@ -306,27 +417,38 @@
     </div>
 
     <div id="main-screen" class="screen">
-        <div class="left-panel centered-content">
-            <h1>Hider's Deck</h1>
-            <div class="subtitle">Hide and Seek Options</div>
-            <p class="deck-status">Deck: <span id="deck-count">0</span> cards remaining</p>
-            
-            <div class="btn-grid">
-                <button id="draw-btn-1" onclick="handleDrawClick(1, 1)">Draw 1</button>
-                <button id="draw-btn-2" onclick="handleDrawClick(2, 1)">Draw 2 Pick 1</button>
-                <button id="draw-btn-3" onclick="handleDrawClick(3, 1)">Draw 3 Pick 1</button>
-                <button id="draw-btn-4" onclick="handleDrawClick(4, 1)">Draw 4 Pick 1</button>
-                
-                <button class="finish-btn" onclick="triggerEndGameSummation()">🏁 End Game (Compile Summary)</button>
-            </div>
-        </div>
-        
-        <div class="right-panel">
-            <h1>Hider Hand (<span id="hand-count">0</span>/<span id="max-hand-count">5</span>)</h1>
-            <div class="warning-bar" id="hand-limit-warning">WARNING: Hand limit reached! Play or discard cards to fit new items.</div>
-            <div id="main-hand" class="card-container"></div>
-        </div>
+       <div class="left-panel">
+    <h1>Standard Questions</h1>
+    <div class="subtitle">Click a question to view full description. Column headers reflect draw weight value.</div>
+    
+    <table class="question-matrix">
+        <thead>
+            <tr>
+                <th style="width: 20%;">Category</th>
+                <th style="width: 26%;">Draw 1</th>
+                <th style="width: 27%;">Draw 2 Pick 1</th>
+                <th style="width: 27%;">Draw 3 Pick 1 / Draw 4 Pick 1</th>
+            </tr>
+        </thead>
+        <tbody id="matrix-body">
+            </tbody>
+    </table>
+
+    <div class="endgame-container">
+        <h2>🚨 Endgame Dashboard Questions</h2>
+        <div class="subtitle" style="color: #ff7675;">Active only during match finalization phase. Borders highlighted in red.</div>
+        <table class="question-matrix" style="margin-bottom: 0;">
+            <thead>
+                <tr>
+                    <th style="width: 20%;">Category</th>
+                    <th style="width: 80%;">Draw 1 Questions</th>
+                </tr>
+            </thead>
+            <tbody id="endgame-matrix-body">
+                </tbody>
+        </table>
     </div>
+</div>
 
     <div id="picking-screen" class="screen hidden">
         <div class="left-panel picking-left">
@@ -343,6 +465,23 @@
         </div>
         
         <div class="right-panel picking-right">
+            <h1>Activity Tracker Log</h1>
+<div class="subtitle">Real-time compilation of used questions and sum totals.</div>
+
+<div class="log-box" id="activity-log">
+    <div style="color: #a4b0be; font-style: italic;">No questions logged yet...</div>
+</div>
+
+<h1>Category Breakdown Logs</h1>
+<div class="log-box" id="category-log">
+    <div style="color: #a4b0be; font-style: italic;">Waiting for data input...</div>
+</div>
+
+<h1>Session Statistics Tally</h1>
+<div class="stat-counter" id="stats-tally">
+    <div>Total Question Draws Given: <strong id="total-draws" style="color:#00ff66;">0</strong></div>
+    <div style="margin-top: 4px;">Total Question Picks Given: <strong id="total-picks" style="color:#00ff66;">0</strong></div>
+</div>
             <h1>Hider Hand (<span id="pick-hand-count">0</span>/<span id="pick-max-hand-count">5</span>)</h1>
             <div id="pick-hand" class="card-container"></div>
         </div>
@@ -438,6 +577,180 @@
             </div>
         </div>
     </div><script>
+        // 1. Core Data Declarations
+const questionsDatabase = [
+    { id: "q1", value: "Draw 1", draws: 1, picks: 1, cat: "Photos", name: "Basketball Net", desc: "Send a picture of a basketball net, any kind, it cannot be a personal one like a net in a driveway", isEndgame: false },
+    { id: "q2", value: "Draw 1", draws: 1, picks: 1, cat: "Photos", name: "Soccer Net", desc: "Send a picture of a soccer net, any size, it must have goal posts and a crossbar", isEndgame: false },
+    { id: "q3", value: "Draw 1", draws: 1, picks: 1, cat: "Photos", name: "Playground", desc: "Send a picture of a playground, every structure/toy must be included", isEndgame: false },
+    { id: "q4", value: "Draw 1", draws: 1, picks: 1, cat: "Photos (You)", name: "You", desc: "Send a picture of you from arms length away", isEndgame: true },
+    { id: "q5", value: "Draw 1", draws: 1, picks: 1, cat: "Photos (You)", name: "Picture Facing up", desc: "Send a picture looking straight up, you cannot obstruct the picture with your body", isEndgame: true },
+    { id: "q6", value: "Draw 1", draws: 1, picks: 1, cat: "Photos (You)", name: "Tallest Building", desc: "Send a picture of the tallest building you can see and reasonably estimate to be the tallest", isEndgame: true },
+    { id: "q7", value: "Draw 1", draws: 1, picks: 1, cat: "Precision", name: "Distance to Bus Stop", desc: "Provide the Walking Distance (in Minutes) from you to the closest bus stop", isEndgame: true },
+    { id: "q8", value: "Draw 1", draws: 1, picks: 1, cat: "Precision", name: "Distance to Gas Station", desc: "Provide the Walking Distance (in Minutes) from you to the closest Gas Station", isEndgame: true },
+    { id: "q9", value: "Draw 1", draws: 1, picks: 1, cat: "Precision", name: "Distance to Park", desc: "Provide the Walking Distance (in Minutes) from you to the closest Park, a Park counts as any green area on Google Maps, take the distance to the closest edge", isEndgame: true },
+    { id: "q10", value: "Draw 1", draws: 1, picks: 1, cat: "Precision", name: "People Passing by", desc: "start a 2 minute-timer, count the number of people that pass by you, every Car counts as 1 person, every Bus counts as 5, passing by counts by people crossing you on the nearest transportation median, e.g. sidewalk, road, hallway", isEndgame: true },
+    { id: "q11", value: "Draw 1", draws: 1, picks: 1, cat: "Oddball", name: "Sum of Soccer Nets + Basketball Nets", desc: "all Outdoor Soccer Nets + Basketball Nets, multi-goal basketball nets also count", isEndgame: false },
+    { id: "q12", value: "Draw 1", draws: 1, picks: 1, cat: "Photos (Bus Stop)", name: "Road from Bus Stop", desc: "must show the entire road visible from the stop, must be taken at waist height or above", isEndgame: false },
+    { id: "q13", value: "Draw 2 Pick 1", draws: 2, picks: 1, cat: "Photos", name: "5 Buildings", desc: "civil structures, must show entirety of the Building, that is visible", isEndgame: false },
+    { id: "q14", value: "Draw 2 Pick 1", draws: 2, picks: 1, cat: "Photos", name: "Shop that sells Food", desc: "must show entirety of the front of the Store, must sell an edible item", isEndgame: false },
+    { id: "q15", value: "Draw 2 Pick 1", draws: 2, picks: 1, cat: "Photos (Bus Stop)", name: "Bus Stop", desc: "must show the ground, MiWay sign, and shelter if there is one", isEndgame: false },
+    { id: "q16", value: "Draw 2 Pick 1", draws: 2, picks: 1, cat: "Photos (Bus Stop)", name: "Tallest Building from Bus Stop", desc: "that you can reasonably estimate, photo must include the entirety of the building visible", isEndgame: false },
+    { id: "q17", value: "Draw 2 Pick 1", draws: 2, picks: 1, cat: "Videos", name: "15-Second Voice Message", desc: "take voice message on the bus stop", isEndgame: false },
+    { id: "q18", value: "Draw 2 Pick 1", draws: 2, picks: 1, cat: "Oddball", name: "Sum of Parks in your Zone", desc: "if a slight sliver of a Park is in your Zone, it counts, any green area on Google Maps counts", isEndgame: false },
+    { id: "q19", value: "Draw 2 Pick 1", draws: 2, picks: 1, cat: "Oddball", name: "Odd or Even Departure", desc: "is the next Bus from your bus stop leaving at an odd or even time, use the time provided by Google Maps, regardless if the bus is early or late, (e.g. Bus usually comes at 11 but Google Maps is showing late by 1 min to 11:01, use that, answer Odd in this case)", isEndgame: false },
+    { id: "q20", value: "Draw 2 Pick 1", draws: 2, picks: 1, cat: "Oddball", name: "Speed Limit of our Roads", desc: "is the speed limit of the road your bus stop is on, higher, the same, or lower than the one we're on, use school-zone-specific speeds if applicable", isEndgame: false },
+    { id: "q21", value: "Draw 3 Pick 1", draws: 3, picks: 1, cat: "Radar", name: "250 Meter", desc: "250 Meter Radar evaluation check.", isEndgame: false },
+    { id: "q22", value: "Draw 3 Pick 1", draws: 3, picks: 1, cat: "Radar", name: "500 Meter", desc: "500 Meter Radar evaluation check.", isEndgame: false },
+    { id: "q23", value: "Draw 3 Pick 1", draws: 3, picks: 1, cat: "Radar", name: "1 Kilometer", desc: "1 Kilometer Radar evaluation check.", isEndgame: false },
+    { id: "q24", value: "Draw 3 Pick 1", draws: 3, picks: 1, cat: "Radar", name: "2 Kilometer", desc: "2 Kilometer Radar evaluation check.", isEndgame: false },
+    { id: "q25", value: "Draw 3 Pick 1", draws: 3, picks: 1, cat: "Matching", name: "Same Road as your Bus Stop", desc: "am I on the same road as your bus stop", isEndgame: false },
+    { id: "q26", value: "Draw 3 Pick 1", draws: 3, picks: 1, cat: "Matching", name: "Same School Level", desc: "is this school (provide photo) the same level (Elementary, Middle, Secondary) as the one closest to your bus stop (Catholic counts both as Elementary and Middle or just Secondary)", isEndgame: false },
+    { id: "q27", value: "Draw 3 Pick 1", draws: 3, picks: 1, cat: "Matching", name: "Same Religious Centre", desc: "is this the same religious centre (provide photo) to your bus stop (must be physically named)", isEndgame: false },
+    { id: "q28", value: "Draw 3 Pick 1", draws: 3, picks: 1, cat: "Measuring", name: "Closer to or Further from a Subway", desc: "are you closer to or further from a Subway than us (provide distance from Subway)", isEndgame: false },
+    { id: "q29", value: "Draw 3 Pick 1", draws: 3, picks: 1, cat: "Measuring", name: "Closer to or Further from a Tennis Court", desc: "are you closer to or further from a tennis court (public or private) than us (provide distance from tennis court)", isEndgame: false },
+    { id: "q30", value: "Draw 4 Pick 1", draws: 4, picks: 1, cat: "Videos", name: "Bystander of the Law", desc: "stay on video-call until you show us someone breaking the law", isEndgame: false },
+    { id: "q31", value: "Draw 4 Pick 1", draws: 4, picks: 1, cat: "Radar", name: "Custom Distance", desc: "distance chosen cannot be within 10% of any of the other Radar options", isEndgame: false }
+];
+
+let trackingState = {};
+let runningHistory = [];
+let cumulativeDraws = 0;
+let cumulativePicks = 0;
+
+const categoriesList = ["Photos", "Photos (You)", "Precision", "Oddball", "Photos (Bus Stop)", "Videos", "Radar", "Matching", "Measuring"];
+const valueColumns = ["Draw 1", "Draw 2 Pick 1", "Draw 3 Pick 1 / Draw 4 Pick 1"];
+
+// 2. DOM Generation Engine
+function initMatrixTables() {
+    const matrixBody = document.getElementById('matrix-body');
+    const endgameBody = document.getElementById('endgame-matrix-body');
+    if(!matrixBody) return; // Guard clause in case elements aren't loaded
+
+    questionsDatabase.forEach(q => { trackingState[q.id] = 0; });
+
+    categoriesList.forEach(cat => {
+        let hasStandard = questionsDatabase.some(q => q.cat === cat && !q.isEndgame);
+        if (hasStandard) {
+            let row = document.createElement('tr');
+            let catCell = document.createElement('td');
+            catCell.innerHTML = `<strong>${cat}</strong>`;
+            row.appendChild(catCell);
+            
+            valueColumns.forEach(vCol => {
+                let td = document.createElement('td');
+                let filtered = questionsDatabase.filter(q => {
+                    if (q.cat !== cat || q.isEndgame) return false;
+                    if (vCol === "Draw 1") return q.value === "Draw 1";
+                    if (vCol === "Draw 2 Pick 1") return q.value === "Draw 2 Pick 1";
+                    return (q.value === "Draw 3 Pick 1" || q.value === "Draw 4 Pick 1");
+                });
+                filtered.forEach(q => { td.appendChild(createQuestionCard(q)); });
+                row.appendChild(td);
+            });
+            matrixBody.appendChild(row);
+        }
+
+        let hasEndgame = questionsDatabase.some(q => q.cat === cat && q.isEndgame);
+        if (hasEndgame) {
+            let row = document.createElement('tr');
+            let catCell = document.createElement('td');
+            catCell.innerHTML = `<strong style="color: #ff7675;">${cat} <span style="font-size:10px;">[EG]</span></strong>`;
+            row.appendChild(catCell);
+            
+            let td = document.createElement('td');
+            let filtered = questionsDatabase.filter(q => q.cat === cat && q.isEndgame);
+            filtered.forEach(q => { td.appendChild(createQuestionCard(q)); });
+            row.appendChild(td);
+            endgameBody.appendChild(row);
+        }
+    });
+}
+
+function createQuestionCard(q) {
+    let div = document.createElement('div');
+    div.className = `question-item ${q.isEndgame ? 'endgame-q' : ''}`;
+    div.id = `node-${q.id}`;
+    div.onclick = (e) => {
+        if(e.target.tagName === 'BUTTON') return;
+        div.classList.toggle('expanded');
+    };
+    div.innerHTML = `
+        <span class="question-name">${q.name} <span style="color:#fbc531; font-size:10px;">(${q.value})</span></span>
+        <div class="desc-text">${q.desc}</div>
+        <div class="btn-row">
+            <button class="q-btn use-btn" onclick="useQuestion('${q.id}')">Use</button>
+            <button class="q-btn unask-btn" onclick="unaskQuestion('${q.id}')">Unask</button>
+        </div>
+    `;
+    return div;
+}
+
+// 3. Logic Action Processing Handles
+window.useQuestion = function(id) {
+    let q = questionsDatabase.find(item => item.id === id);
+    trackingState[id]++;
+    cumulativeDraws += q.draws;
+    cumulativePicks += q.picks;
+    
+    let targetNode = document.getElementById(`node-${id}`);
+    targetNode.classList.add('asked-once');
+    
+    runningHistory.push({ action: 'ASKED', ...q, timestamp: new Date().toLocaleTimeString() });
+    updateLogsView();
+}
+
+window.unaskQuestion = function(id) {
+    let q = questionsDatabase.find(item => item.id === id);
+    if (trackingState[id] > 0) {
+        trackingState[id]--;
+        cumulativeDraws -= q.draws;
+        cumulativePicks -= q.picks;
+        
+        let targetNode = document.getElementById(`node-${id}`);
+        if (trackingState[id] === 0) {
+            targetNode.classList.remove('asked-once');
+        }
+        
+        runningHistory.push({ action: 'UNASKED', ...q, timestamp: new Date().toLocaleTimeString() });
+        updateLogsView();
+    }
+}
+
+function updateLogsView() {
+    document.getElementById('total-draws').innerText = cumulativeDraws;
+    document.getElementById('total-picks').innerText = cumulativePicks;
+
+    const actLog = document.getElementById('activity-log');
+    if(runningHistory.length === 0) {
+        actLog.innerHTML = `<div style="color: #a4b0be; font-style: italic;">No questions logged yet...</div>`;
+    } else {
+        actLog.innerHTML = runningHistory.slice().reverse().map(item => {
+            let color = item.action === 'ASKED' ? '#4cd137' : '#718093';
+            return `<div class="log-entry">[${item.timestamp}] <strong style="color:${color}">${item.action}</strong>: ${item.name}</div>`;
+        }).join('');
+    }
+
+    const catLog = document.getElementById('category-log');
+    let distributionHtml = '';
+    categoriesList.forEach(cat => {
+        let catTotalDraws = 0, catTotalPicks = 0, activeCount = 0;
+        questionsDatabase.filter(q => q.cat === cat).forEach(q => {
+            if(trackingState[q.id] > 0) {
+                activeCount += trackingState[q.id];
+                catTotalDraws += (q.draws * trackingState[q.id]);
+                catTotalPicks += (q.picks * trackingState[q.id]);
+            }
+        });
+        if (activeCount > 0) {
+            distributionHtml += `
+                <div style="margin-bottom:8px; border-bottom:1px solid #485460; padding-bottom:4px;">
+                    <strong style="color:#fbc531;">${cat}</strong>: Asked ${activeCount} time(s)<br>
+                    <span style="color:#dcdde1; font-size:11px;">↳ Draws: ${catTotalDraws} | Picks: ${catTotalPicks}</span>
+                </div>`;
+        }
+    });
+    catLog.innerHTML = distributionHtml || `<div style="color: #a4b0be; font-style: italic;">Waiting for data input...</div>`;
+}
 // State Configuration Engine
 let deck = [];
 let hand = [];
@@ -1344,4 +1657,11 @@ function resetWholeGameTracker() {
 window.onload = () => {
     loadState();
 };
+        window.addEventListener('DOMContentLoaded', () => {
+    // Call the matrix tables generation function alongside any existing initializers
+    initMatrixTables();
+});
 </script></body></html>
+
+
+
