@@ -14,18 +14,15 @@
             overflow: hidden; 
         }
         
-        /* Layout Structure */
         .screen { display: flex; width: 100vw; height: 100vh; padding-top: 60px; }
         .left-panel { width: 50%; height: 100%; padding: 25px; border-right: 3px solid #718093; display: flex; flex-direction: column; justify-content: flex-start; overflow-y: auto; }
         .right-panel { width: 50%; height: 100%; padding: 25px; display: flex; flex-direction: column; justify-content: flex-start; overflow-y: auto; }
         
-        /* Center alignment adjustments for main actions */
         .centered-content { justify-content: center; align-items: center; text-align: center; }
 
         .picking-left { width: 60%; border-right: 3px solid #718093; }
         .picking-right { width: 40%; }
 
-        /* Start Screen Interface Styling */
         #start-screen {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
@@ -36,7 +33,6 @@
         }
         .start-logo { font-size: 42px; font-weight: bold; color: #fbc531; text-shadow: 0 4px 10px rgba(0,0,0,0.5); letter-spacing: 2px; }
 
-        /* Top Header Utilities */
         .top-navbar {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 60px;
@@ -46,11 +42,9 @@
         }
         .header-title { font-size: 16px; font-weight: bold; color: #fbc531; letter-spacing: 1px; display: flex; align-items: center; gap: 10px; }
         
-        /* Ledger Button */
         .ledger-trigger { font-size: 22px; cursor: pointer; background: none; border: none; padding: 5px; width: auto; transition: transform 0.2s; }
         .ledger-trigger:hover { transform: scale(1.2); }
 
-        /* Toggles Styling Area */
         .controls-cluster { display: flex; align-items: center; gap: 15px; }
         .toggle-container { display: flex; align-items: center; gap: 6px; font-weight: bold; font-size: 11px; color: #dcdde1; }
         .switch { position: relative; display: inline-block; width: 40px; height: 22px; }
@@ -60,7 +54,6 @@
         input:checked + .slider { background-color: #e84118; box-shadow: 0 0 8px #e84118; }
         input:checked + .slider:before { transform: translateX(18px); }
         
-        /* System Session Timer styling */
         .navbar-session-timer {
             font-family: 'Courier New', Courier, monospace;
             background: #1e272e;
@@ -75,7 +68,6 @@
         .warning-bar { background: #e84118; color: white; padding: 10px; font-size: 14px; font-weight: bold; border-radius: 6px; margin-bottom: 15px; display: none; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
         .info-bar { background: #27ae60; color: white; padding: 10px; font-size: 14px; font-weight: bold; border-radius: 6px; margin-bottom: 15px; text-align: center; }
 
-        /* Button Styling */
         .btn-grid { display: flex; flex-direction: column; gap: 12px; max-width: 380px; width: 100%; margin: 0 auto; }
         button { background: #353b48; color: white; border: 2px solid #718093; padding: 14px; font-size: 15px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-weight: bold; width: 100%; }
         button:hover { background: #57606f; border-color: #dcdde1; }
@@ -90,7 +82,6 @@
         .finish-btn { background: #e84118; border: none; margin-top: 20px; font-size: 16px; box-shadow: 0 4px 10px rgba(232,65,24,0.3); }
         .finish-btn:hover { background: #c23616; }
 
-        /* Card Mechanics */
         .card-container { display: flex; justify-content: center; gap: 12px; margin-top: 15px; flex-wrap: wrap; }
         
         .card { 
@@ -107,8 +98,8 @@
         .card:hover { transform: translateY(-4px); box-shadow: 0 8px 15px rgba(0,0,0,0.5); }
         .card.selected { border: 4px solid #4cd137; box-shadow: 0 0 18px #4cd137; }
         .card.selectable-discard { border: 4px solid #e84118; animation: pulse 1.5s infinite; }
-        
-        /* Selection and Discard Overlay Labels */
+        .card.duplicate-target { border: 4px solid #fbc531; animation: pulse 1.5s infinite; }
+
         .card-badge-overlay {
             position: absolute; top: 5px; left: 5px;
             background: #fbc531; color: black; border-radius: 4px;
@@ -116,18 +107,26 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
+        .inspect-btn {
+            position: absolute; bottom: 5px; right: 5px;
+            background: rgba(47, 54, 64, 0.85); color: #fbc531;
+            border: 1px solid #fbc531; border-radius: 50%;
+            width: 24px; height: 24px; font-size: 12px;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 12; cursor: pointer; transition: transform 0.2s;
+        }
+        .inspect-btn:hover { transform: scale(1.25); background: #fbc531; color: black; }
+
         @keyframes pulse {
             0% { box-shadow: 0 0 0 0 rgba(232, 65, 24, 0.7); }
             70% { box-shadow: 0 0 0 8px rgba(232, 65, 24, 0); }
             100% { box-shadow: 0 0 0 0 rgba(232, 65, 24, 0); }
         }
         
-        /* Card Interiors */
         .card-title { font-size: 10.5px; line-height: 1.25; word-wrap: break-word; width: 100%; flex-grow: 0; min-height: 42px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .card-icon-container { flex-grow: 1; display: flex; align-items: center; justify-content: center; width: 100%; }
         .card-icon { font-size: 32px; display: flex; align-items: center; justify-content: center; }
         
-        /* Digital Clock Display inside Card */
         .digital-clock {
             background: #222; color: #00ff66; font-family: 'Courier New', Courier, monospace;
             padding: 4px 8px; border-radius: 6px; font-size: 14px; border: 2px solid #444;
@@ -138,7 +137,6 @@
         .card.powerup { background: #f5f6fa; color: #1e272e; border-color: #27ae60; }
         .card.time { background: #fff; color: #2f3640; border-color: #fbc531; }
 
-        /* Card Back */
         .card.flipped { 
             background: linear-gradient(135deg, #2c3e50 0%, #0f171e 100%) !important;
             color: white !important; border: 4px solid #fbc531 !important; 
@@ -155,7 +153,6 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.5); position: relative;
         }
 
-        /* Overlays & Modals */
         .overlay { 
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
             background: rgba(0,0,0,0.85); display: none; 
@@ -186,7 +183,6 @@
         .modal-btn-row { display: flex; gap: 15px; justify-content: center; }
         .modal-btn-row button { max-width: 180px; }
 
-        /* Copy Container */
         .seeker-text-container {
             width: 100%; background: #1e272e; border: 2px solid #718093;
             border-radius: 8px; padding: 12px; font-size: 14px; font-family: monospace;
@@ -194,7 +190,6 @@
             margin-bottom: 15px; white-space: pre-wrap;
         }
 
-        /* Full Screen Ledger Styling */
         .ledger-fullscreen {
             width: 90vw !important; height: 90vh !important;
             max-width: 1400px !important; max-height: 950px !important;
@@ -206,7 +201,6 @@
         .ledger-list { flex-grow: 1; overflow-y: auto; text-align: left; font-family: monospace; font-size: 13px; }
         .ledger-list div { border-bottom: 1px dashed rgba(255,255,255,0.1); padding: 6px 0; }
 
-        /* Stats Display Grid */
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; text-align: left; font-size: 12.5px; font-family: monospace; background: #1e272e; padding: 10px; border-radius: 6px; }
         .stat-label { color: #a4b0be; }
         .stat-val { color: #4cd137; text-align: right; font-weight: bold; }
@@ -279,6 +273,7 @@
             <h1>Hider Hand (<span id="hand-count">0</span>/<span id="max-hand-count">5</span>)</h1>
             <div class="warning-bar" id="hand-limit-warning">WARNING: Hand limit reached! Play or discard cards to fit new items.</div>
             <div id="main-hand" class="card-container"></div>
+            <button id="manual-confirm-discard-btn" class="confirm-btn hidden" style="margin-top: 15px; background: #e84118;" onclick="confirmManualDiscards()">Confirm Selected Discard(s)</button>
         </div>
     </div>
 
@@ -318,6 +313,13 @@
             <h2 id="alert-title">Notification</h2>
             <p id="alert-text">Message details content...</p>
             <button class="confirm-btn" style="margin: 0 auto; max-width: 200px;" onclick="closeOverlay()">OK</button>
+        </div>
+
+        <div class="custom-modal hidden" id="overlay-randomise" onclick="event.stopPropagation()">
+            <h2>🎲 Randomise Question Number</h2>
+            <div id="randomise-num-box" style="font-size: 64px; font-weight: bold; color: #fbc531; font-family: monospace; margin: 15px 0;">--</div>
+            <p style="font-size: 16px; font-weight: bold; color: #4cd137;">Ask Tabish what this Number means</p>
+            <button class="confirm-btn" style="margin: 20px auto 0 auto; max-width: 200px;" onclick="closeOverlay()">Done</button>
         </div>
 
         <div class="custom-modal hidden" id="overlay-seeker-broadcast" onclick="event.stopPropagation()">
@@ -394,7 +396,6 @@
     </div>
 
     <script>
-    // State Configuration Engine
     let deck = [];
     let hand = [];
     let drawnPool = [];
@@ -403,19 +404,18 @@
     let currentHandLimit = 5;
     let isGlobalEndgameActive = false;
 
-    // Time Tracking State Variables
     let matchStartTimestamp = null;
     let liveTimerIntervalId = null;
     let computedTotalSessionSeconds = 0;
 
-    // Dynamic Discard Workflow Parameters
     let discardTargetCount = 0;
     let discardedCardsThisTurn = [];
     let isDiscardingActive = false;
     let forceHandTrimmingRoutineActive = false;
     let afterDiscardSuccessCallback = null;
 
-    // Global Ledger Statistics Database
+    let isDuplicatingActive = false;
+
     let globalHistory = {
         used: [], discarded: [], skipped: [],
         pickedCounts: { time: 0, powerup: 0, curse: 0 },
@@ -425,57 +425,84 @@
     };
 
     const cardDefinitions = [
-        { qty: 4, title: "2 Minute<br>Time Bonus", type: "time", value: 2, symbol: "⏱️", desc: "Hold this in your Hand until the End of the Game to gain 2 Minutes" },
-        { qty: 3, title: "5 Minute<br>Time Bonus", type: "time", value: 5, symbol: "⏱️", desc: "Hold this in your Hand until the End of the Game to gain 5 Minutes" },
-        { qty: 3, title: "7 Minute<br>Time Bonus", type: "time", value: 7, symbol: "⏱️", desc: "Hold this in your Hand until the End of the Game to gain 7 Minutes" },
-        { qty: 2, title: "10 Minute<br>Time Bonus", type: "time", value: 10, symbol: "⏱️", desc: "Hold this in your Hand until the End of the Game to gain 10 Minutes" },
-        { qty: 2, title: "12 Minute<br>Time Bonus", type: "time", value: 12, symbol: "⏱️", desc: "Hold this in your Hand until the End of the Game to gain 12 Minutes" },
-        { qty: 2, title: "Time Trap", type: "time", symbol: "🪤", seekerPov: "TIME TRAP TRIPPED!\nYou lose 3 Minutes from your clock.", desc: "If Seekers ask a question, you can activate this card. They lose 3 minutes from their clock counter." },
-        
-        // Powerups
-        { qty: 2, title: "Randomise", type: "powerup", symbol: "🎲", seekerPov: "RANDOMISE ACTIVATED!\nYour next question is being randomized.", desc: "Randomise a Seeker’s question parameters." },
-        { qty: 1, title: "Peek", type: "powerup", symbol: "👁️", desc: "Look at the top 3 cards of the deck and rearrange them in any order." },
-        { qty: 2, title: "Block", type: "powerup", symbol: "🚫", seekerPov: "BLOCK INCIDENT!\nYou cannot ask the question you just tried to ask.", desc: "Block a Seeker's question permanently." },
-        { qty: 2, title: "Discard 1<br>Draw 3<br>Pick 1", type: "powerup", symbol: "🔄", cast: "Discard 1 card", desc: "Draw 3 newly created assets and choose 1 to move into your hand layout." },
-        { qty: 1, title: "Discard 1<br>Draw 2", type: "powerup", symbol: "🎴", cast: "Discard 1 card", desc: "Immediately pull 2 fresh cards into your hand selection." },
-        { qty: 2, title: "Discard 1<br>Draw 1<br>Increase Hand Size by 1", type: "powerup", symbol: "➕", cast: "Discard 1 card", desc: "Draw 1 face-down card to choose from, and permanently expand your Hand Size limit by 1." },
-        { qty: 1, title: "Discard 2<br>Draw 3<br>Pick 2", type: "powerup", symbol: "🗂️", cast: "Discard 2 cards", desc: "Setup a custom draw pool choice module." },
-        { qty: 1, title: "Freeze", type: "powerup", symbol: "❄️", seekerPov: "FREEZE RUNNING!\nYou have been frozen for the next 5 minutes. Stay exactly where you are.", desc: "Freeze all Seekers in place for 5 minutes." },
-        { qty: 2, title: "Category Oracle", type: "powerup", symbol: "🔮", desc: "Predict next Category to try and multiply drawn questionnaire awards." },
-        
-        // Curses
-        { qty: 1, title: "Curse of the<br>Dead Phone", type: "curse", symbol: "📴", cast: "The Hider cannot use phone for 15 mins except for maps/comms", seekerPov: "CURSE OF THE DEAD PHONE!\nYour team cannot look at or use your phones for the next 25 minutes!", desc: "The Seekers lose phone privileges for 25 mins with narrow exceptions." },
-        { qty: 1, title: "Curse of the<br>Mobile Bus", type: "curse", symbol: "🚌", cast: "The Seekers must travel on a bus line for 2 stops away before proceeding", seekerPov: "CURSE OF THE MOBILE BUS!\nYour team must immediately locate the nearest active bus route, board it, and ride it for 2 continuous stops away before tracking resumes.", desc: "Forces Seekers to ride a bus line for 2 stops away before proceeding." },
-        { qty: 1, title: "Curse of the<br>Silent Treatment", type: "curse", symbol: "🤫", cast: "The Seekers can only speak in whispers for 10 minutes", seekerPov: "CURSE OF THE SILENT TREATMENT!\nYour team is bound by secrecy. You may only communicate via whispers for the next 10 minutes.", desc: "Seekers must communicate exclusively via whispers for 10 minutes." },
-        { qty: 1, title: "Curse of the<br>Blindfold", type: "curse", symbol: "🙈", cast: "One Seeker must be blindfolded while moving for 5 minutes", seekerPov: "CURSE OF THE BLINDFOLD!\nSelect one operative on your team to wear a blindfold during navigation actions for the next 5 minutes.", desc: "One Seeker must navigate blindfolded for 5 minutes." },
-        { qty: 1, title: "Curse of the<br>Lighthouse", type: "curse", symbol: "🚨", cast: "The Hider's live location is revealed continuously for 3 minutes", seekerPov: "CURSE OF THE LIGHTHOUSE!\nThe Hider's beacon flare is wide open. Live tracker pinging continuously for 3 minutes.", desc: "Hider live location stream opens up completely to Seekers for 3 minutes." }
+        // Time Cards (14 Total)
+        { qty: 4, title: "2 Minute<br>Time Bonus", type: "time", value: 2, symbol: "⏱️", desc: "Hold this in your Hand until the End of the Game to gain 2 Minutes." },
+        { qty: 3, title: "5 Minute<br>Time Bonus", type: "time", value: 5, symbol: "⏱️", desc: "Hold this in your Hand until the End of the Game to gain 5 Minutes." },
+        { qty: 3, title: "7 Minute<br>Time Bonus", type: "time", value: 7, symbol: "⏱️", desc: "Hold this in your Hand until the End of the Game to gain 7 Minutes." },
+        { qty: 2, title: "10 Minute<br>Time Bonus", type: "time", value: 10, symbol: "⏱️", desc: "Hold this in your Hand until the End of the Game to gain 10 Minutes." },
+        { qty: 2, title: "12 Minute<br>Time Bonus", type: "time", value: 12, symbol: "⏱️", desc: "Hold this in your Hand until the End of the Game to gain 12 Minutes." },
+
+        // Powerups & Traps (15 Total)
+        { qty: 2, title: "Time Trap", type: "powerup", symbol: "🪤", desc: "Place this at any Bus Stop on the Map and notify the Seekers of its location. Every 12 minutes it remains on the map, it gains 4 minutes in value. If the Seekers board a bus, pass by on a bus, or exit at this bus stop, the Hider is awarded the value of the Time Trap, and the Trap disappears." },
+        { qty: 2, title: "Randomise", type: "powerup", symbol: "🎲", desc: "Randomise a Seeker’s question. Use this card and it will randomly generate a number. The Seeker automatically asks the question associated with the number generated; you answer and get the reward. The Seeker can ask the original question again, but for double the cost regardless of what the random question was." },
+        { qty: 2, title: "Duplicate", type: "powerup", symbol: "📋", desc: "Duplicate a card in your hand. If it has a casting cost, costs are still paid separately." },
+        { qty: 2, title: "Veto", type: "powerup", symbol: "🚫", desc: "Block a Seeker's question. They cannot ask that question for the rest of the game, and you do not draw from this question." },
+        { qty: 2, title: "Discard 1<br>Draw 3<br>Pick 1", type: "powerup", symbol: "🔄", desc: "Discard 1 card to enter the picking interface with face-down cards to pick from." },
+        { qty: 2, title: "Discard 1<br>Draw 1<br>Increase Hand Size", type: "powerup", symbol: "➕", desc: "Discard 1 card to expand your Hand Size limit by 1, then draw 1 card." },
+        { qty: 1, title: "Discard 2<br>Draw 3<br>Pick 2", type: "powerup", symbol: "🗂️", desc: "Discard 2 cards to setup a custom draw pool choice module." },
+        { qty: 1, title: "Discard 1<br>Draw 2", type: "powerup", symbol: "🎴", desc: "Discard 1 card, then pull 2 fresh cards." },
+        { qty: 1, title: "Freeze", type: "powerup", symbol: "🥶", seekerPov: "🥶 FREEZE ACTIVATED!\nYou must stay in place for 5 minutes. If you are on transit, you may exit the vehicle, but you must remain immobile until the 5 minutes are up. If you receive this notification before boarding a bus but board anyway, you must immediately request a stop and exit.", desc: "Inform the Seekers: they must stay in place for 5 minutes. If on transit, they may get off, but are immobile until the 5 minutes are up. If they receive the notification for the freeze before boarding a bus but board regardless, they must immediately request a stop and get off." },
+
+        // Curses (11 Total)
+        { qty: 1, title: "Curse of the<br>Gifted Express", type: "curse", symbol: "🚌", cast: "Discard a Powerup card. Can only use while Seekers are on transit.", desc: "The Seekers must stay on their Bus until the end of the route or the last stop before it exits the Game Boundary." },
+        { qty: 1, title: "Curse of the<br>Itinerary", type: "curse", symbol: "📜", desc: "The Seekers must, before boarding their next bus, inform the Hider which stop they will get off at, and must get off at that stop unless a curse forces them otherwise." },
+        { qty: 1, title: "Curse of<br>Marco Muzammil", type: "curse", symbol: "🛝", cast: "Discard 15+ Minutes of Time Bonuses if used in the Endgame.", desc: "The Seekers must go to a playground and send a video of them going down a slide before asking another Question." },
+        { qty: 1, title: "Curse of the<br>Gamble", type: "curse", symbol: "🎰", cast: "Reveal a Card in your hand to the Seekers.", desc: "Predict the next Category the Seekers will ask a Question from (Photo (Zone)/Oddball, Video/Measuring, Radar, Matching, Precision, Photo (You), Photo (Bus Stop)). When the Seekers ask their next question, if you are correct, you Draw the Reward 3 times; if you are wrong, you draw nothing. Inform the Seekers you played this before they ask." },
+        { qty: 1, title: "Curse of the<br>Dead Phone", type: "curse", symbol: "📴", cast: "The Hider cannot use phone for 15 mins except maps/comms.", desc: "The Seekers cannot use their Phones for the next 25 Minutes except to ask Questions/communicate with the Hider." },
+        { qty: 1, title: "Curse of the<br>Mobile Bus", type: "curse", symbol: "🚍", cast: "The Seeker's next question on the Bus is free. Cannot be used in Endgame.", desc: "The Seekers must ask their next 3 questions while on Bus." },
+        { qty: 1, title: "Curse of the<br>Short Stop", type: "curse", symbol: "🛑", cast: "The Seekers must be on transit.", desc: "The Seekers must get off at the next stop and request a stop if not already requested." },
+        { qty: 1, title: "Curse of the<br>Drained Brain", type: "curse", symbol: "🧠", cast: "Discard a card.", desc: "Choose any 3 Questions; they cannot be asked for the rest of the Game. The Seeker’s next Question only Draws 1." },
+        { qty: 1, title: "Curse of the<br>Unguided Tourist", type: "curse", symbol: "🗺️", cast: "Take a picture of a place in your Zone.", desc: "Take a picture of a place/building/business and send it to the Seekers, then inform them of its Google Maps rating (must have 5 reviews minimum). The Seekers may not ask another Question until they have found a place with a higher rating." },
+        { qty: 1, title: "Curse of the<br>Nosey Looker", type: "curse", symbol: "👀", cast: "Do the photo tasks before sending the Question.", desc: "The Seekers must find, take a picture, and send 3 items (dog, sports ball, helmet wearer, improper litter thrown away, fast food chain) to the Hider before asking a Question." },
+        { qty: 1, title: "Curse of the<br>Nomad", type: "curse", symbol: "📍", cast: "Inform the Seeker of how far this image is from the Hider's Bus Stop.", desc: "Send a Google Streetview image within 300m of the Seekers. The Seeker must take a picture of what they believe to be the location and send it to confirm. The Seeker cannot ask any questions until cleared." }
     ];
 
     function checkCanAfford(card) {
-        if (!card.cast) return { affordable: true, mode: 'allowed' };
-        
-        const text = card.cast.toLowerCase();
-        
-        // If it explicitly demands a discard asset penalty
-        if (text.includes("discard")) {
-            // Count includes the card itself, so we need extra cards in hand to satisfy discard requirement
-            const match = text.match(/\d+/);
-            const needed = match ? parseInt(match[0], 10) : 1;
-            
-            if (hand.length - 1 >= needed) {
-                return { affordable: true, mode: 'force_discard', count: needed };
+        if (card.title.includes("Gifted Express")) {
+            const hasPowerup = hand.some((c, i) => c.type === 'powerup' && c.title !== card.title);
+            if (hasPowerup) {
+                return { affordable: true, mode: 'force_discard_powerup' };
             } else {
-                return { affordable: false, missingResource: `at least ${needed} other card(s) to discard` };
+                return { affordable: false, missingResource: "a Powerup card to discard" };
             }
         }
-        
-        // If it's a structural task, penalty trigger or environmental context (e.g. 'take a picture', 'cannot use phone')
-        // We warn the user but ALLOW them to play the card.
-        if (text.includes("picture") || text.includes("hider") || text.includes("seeker") || text.includes("must")) {
+
+        if (card.title.includes("Marco Muzammil")) {
+            if (isGlobalEndgameActive) {
+                let timeSum = 0;
+                hand.forEach(c => {
+                    if (c.type === 'time' && c.value) timeSum += c.value;
+                });
+                if (timeSum >= 15) {
+                    return { affordable: true, mode: 'force_discard_time_15' };
+                } else {
+                    return { affordable: false, missingResource: "at least 15+ minutes of Time Bonuses in hand during Endgame" };
+                }
+            } else {
+                return { affordable: true, mode: 'task_warning' };
+            }
+        }
+
+        if (card.title.includes("Drained Brain") || card.title.includes("Discard 1")) {
+            if (hand.length - 1 >= 1) {
+                return { affordable: true, mode: 'force_discard', count: 1 };
+            } else {
+                return { affordable: false, missingResource: "at least 1 other card to discard" };
+            }
+        }
+
+        if (card.title.includes("Discard 2")) {
+            if (hand.length - 1 >= 2) {
+                return { affordable: true, mode: 'force_discard', count: 2 };
+            } else {
+                return { affordable: false, missingResource: "at least 2 other cards to discard" };
+            }
+        }
+
+        if (card.cast) {
             return { affordable: true, mode: 'task_warning' };
         }
 
-        // Generic baseline fallback rule block
         return { affordable: true, mode: 'allowed' };
     }
 
@@ -585,6 +612,13 @@
         } else {
             warningBar.style.display = 'none';
         }
+
+        const confirmDiscardBtn = document.getElementById('manual-confirm-discard-btn');
+        if (isDiscardingActive && !document.getElementById('toggle-instapick').checked) {
+            confirmDiscardBtn.classList.remove('hidden');
+        } else {
+            confirmDiscardBtn.classList.add('hidden');
+        }
     }
 
     function createCardElement(card, index, isFromPool = false) {
@@ -596,7 +630,10 @@
             div.classList.add('flipped');
         }
 
-        div.onclick = () => handleCardClick(index, isFromPool, div);
+        div.onclick = (e) => {
+            if (e.target.classList.contains('inspect-btn')) return;
+            handleCardClick(index, isFromPool, div);
+        };
 
         const badge = document.createElement('div');
         badge.className = 'cat-badge';
@@ -632,6 +669,21 @@
         }
 
         div.appendChild(content);
+
+        const inspectBtn = document.createElement('div');
+        inspectBtn.className = 'inspect-btn';
+        inspectBtn.innerHTML = '🔍';
+        inspectBtn.title = 'Inspect Card Details';
+        inspectBtn.onclick = (e) => {
+            e.stopPropagation();
+            if (isFromPool) {
+                openInspectModalOnly(card);
+            } else {
+                openCardDetailsOverlay(index);
+            }
+        };
+        div.appendChild(inspectBtn);
+
         return div;
     }
 
@@ -668,13 +720,14 @@
                 
                 const bOverlay = document.createElement('div');
                 bOverlay.className = 'card-badge-overlay';
-                content = document.getElementById('pick-pool');
                 bOverlay.innerText = selectedIndices.length;
                 cardElement.appendChild(bOverlay);
                 resequenceSelectionBadges();
             }
         } else {
-            if (isDiscardingActive) {
+            if (isDuplicatingActive) {
+                handleDuplicateSelection(index);
+            } else if (isDiscardingActive) {
                 handleDiscardSelection(index, cardElement);
             } else {
                 openCardDetailsOverlay(index);
@@ -690,6 +743,15 @@
                 badge.innerText = countIndex + 1;
             }
         });
+    }
+
+    function handleDuplicateSelection(index) {
+        const cardToCopy = hand[index];
+        hand.push(JSON.parse(JSON.stringify(cardToCopy)));
+        isDuplicatingActive = false;
+        triggerAlertModal("Card Duplicated", `Successfully created a duplicate copy of ${cardToCopy.title.replace('<br>', ' ')} in your hand.`);
+        renderHandViews();
+        saveState();
     }
 
     function handleDiscardSelection(index, cardElement) {
@@ -712,29 +774,59 @@
             cardElement.appendChild(bOverlay);
         }
 
-        if (discardedCardsThisTurn.length === discardTargetCount) {
-            setTimeout(() => {
-                discardedCardsThisTurn.sort((a, b) => b - a);
-                discardedCardsThisTurn.forEach(idx => {
-                    const card = hand.splice(idx, 1)[0];
-                    globalHistory.discarded.push(card);
-                });
-                
-                isDiscardingActive = false;
-                discardedCardsThisTurn = [];
-                renderHandViews();
-                
-                if (afterDiscardSuccessCallback) {
-                    const cachedCallback = afterDiscardSuccessCallback;
-                    afterDiscardSuccessCallback = null;
-                    cachedCallback();
-                } else if (forceHandTrimmingRoutineActive) {
-                    forceHandTrimmingRoutineActive = false;
-                    triggerAlertModal("Hand Trimmed", "You trimmed your hand to comply with hand size limits.");
-                }
-                saveState();
-            }, 600);
+        if (document.getElementById('toggle-instapick').checked && discardedCardsThisTurn.length === discardTargetCount) {
+            confirmManualDiscards();
         }
+    }
+
+    function confirmManualDiscards() {
+        if (discardedCardsThisTurn.length !== discardTargetCount) {
+            triggerAlertModal("Discard Incomplete", `Please select exactly ${discardTargetCount} card(s) to discard.`);
+            return;
+        }
+
+        discardedCardsThisTurn.sort((a, b) => b - a);
+        discardedCardsThisTurn.forEach(idx => {
+            const card = hand.splice(idx, 1)[0];
+            globalHistory.discarded.push(card);
+        });
+        
+        isDiscardingActive = false;
+        discardedCardsThisTurn = [];
+        renderHandViews();
+        
+        if (afterDiscardSuccessCallback) {
+            const cachedCallback = afterDiscardSuccessCallback;
+            afterDiscardSuccessCallback = null;
+            cachedCallback();
+        } else if (forceHandTrimmingRoutineActive) {
+            forceHandTrimmingRoutineActive = false;
+            triggerAlertModal("Hand Trimmed", "You trimmed your hand to comply with hand size limits.");
+        }
+        saveState();
+    }
+
+    function openInspectModalOnly(card) {
+        document.getElementById('overlay-title').innerHTML = card.title;
+        document.getElementById('overlay-icon-container').innerHTML = `<div style="font-size:72px;">${card.symbol}</div>`;
+        document.getElementById('overlay-desc').innerHTML = card.desc;
+        
+        const castDiv = document.getElementById('overlay-cast');
+        if (card.cast) {
+            castDiv.style.display = 'block';
+            castDiv.innerHTML = `⚠️ CASTING REQUIREMENT: ${card.cast}`;
+        } else {
+            castDiv.style.display = 'none';
+        }
+
+        const bigCardNode = document.getElementById('overlay-card');
+        bigCardNode.className = `big-card ${card.type}`;
+        bigCardNode.classList.remove('hidden');
+
+        document.getElementById('overlay-play-btn').style.display = 'none';
+        document.getElementById('overlay-discard-btn').style.display = 'none';
+
+        document.getElementById('master-overlay').style.display = 'flex';
     }
 
     function openCardDetailsOverlay(index) {
@@ -756,14 +848,12 @@
         bigCardNode.classList.remove('hidden');
 
         const playBtn = document.getElementById('overlay-play-btn');
-        if (card.type === 'time') {
-            playBtn.style.display = 'none';
-        } else {
-            playBtn.style.display = 'block';
-            playBtn.onclick = () => { closeOverlay(); processCardActivationAttempt(index); };
-        }
+        playBtn.style.display = (card.type === 'time') ? 'none' : 'block';
+        playBtn.onclick = () => { closeOverlay(); processCardActivationAttempt(index); };
 
-        document.getElementById('overlay-discard-btn').onclick = () => {
+        const discardBtn = document.getElementById('overlay-discard-btn');
+        discardBtn.style.display = 'block';
+        discardBtn.onclick = () => {
             closeOverlay();
             triggerChoiceModal("Discard Card?", "Are you sure you want to discard this item permanently?", () => {
                 hand.splice(index, 1);
@@ -781,78 +871,93 @@
         const evaluation = checkCanAfford(card);
 
         if (!evaluation.affordable) {
-            // Card execution breaks completely due to lack of standard resources
             if (!document.getElementById('toggle-mutepopups').checked) {
-                triggerAlertModal("Insufficient Funds", `This card cannot be used because you do not have '${evaluation.missingResource}'`);
+                triggerAlertModal("Insufficient Funds", `This card cannot be used because you do not have ${evaluation.missingResource}.`);
             }
             return;
         }
 
-        // If it's a task warning (like taking a picture), show a notice first, then run usage immediately
         if (evaluation.mode === 'task_warning') {
-            triggerAlertModal("Warning Requirement Triggered", `Notice: Ensure you perform the manual tracking task: "${card.cast}"`);
             executeCardPlayRoutine(index);
             return;
         }
 
-        // If it explicitly requires an input discard deduction setup
-        if (evaluation.mode === 'force_discard') {
-            // Remove the active card from your hand first, so it doesn't discard itself
+        if (evaluation.mode === 'force_discard_powerup') {
             const cardToPlay = hand.splice(index, 1)[0];
-            
-            runMidwayDiscardInterdiction(evaluation.count, () => {
-                // Once the user picks the forced discards, process the secondary effects
-                globalHistory.used.push(cardToPlay);
-                globalHistory.totalUsedEver++;
-                globalHistory.usedCounts[cardToPlay.type]++;
-
-                if (cardToPlay.seekerPov) {
-                    triggerSeekerBroadcastOverlay(cardToPlay.seekerPov);
-                }
-
-                // Append corresponding system drawing sub-loops
-                if (cardToPlay.title.includes("Draw 3") && cardToPlay.title.includes("Pick 1")) {
-                    executeCustomDrawWorkflow(3, 1);
-                } else if (cardToPlay.title.includes("Draw 2") && cardToPlay.title.includes("Pick 1")) {
-                    executeCustomDrawWorkflow(2, 1);
-                } else if (cardToPlay.title.includes("Draw 4") && cardToPlay.title.includes("Pick 1")) {
-                    executeCustomDrawWorkflow(4, 1);
-                } else if (cardToPlay.title.includes("Discard 1<br>Draw 2")) {
-                    handleDrawClick(2, 2);
-                } else if (cardToPlay.title.includes("Discard 1<br>Draw 1")) {
-                    handleDrawClick(1, 1); currentHandLimit++;
-                } else if (cardToPlay.title.includes("Discard 2<br>Draw 3")) {
-                    executeCustomDrawWorkflow(3, 2);
-                }
-                renderHandViews();
-                saveState();
+            runMidwayDiscardInterdiction(1, () => {
+                finalizeCardUsage(cardToPlay);
             });
             return;
         }
 
-        // Baseline unconstrained execution hook
+        if (evaluation.mode === 'force_discard_time_15') {
+            const cardToPlay = hand.splice(index, 1)[0];
+            let accumulated = 0;
+            let timeIndices = [];
+            hand.forEach((c, idx) => {
+                if (c.type === 'time' && c.value && accumulated < 15) {
+                    accumulated += c.value;
+                    timeIndices.push(idx);
+                }
+            });
+            timeIndices.sort((a, b) => b - a);
+            timeIndices.forEach(idx => {
+                const discardedTime = hand.splice(idx, 1)[0];
+                globalHistory.discarded.push(discardedTime);
+            });
+            finalizeCardUsage(cardToPlay);
+            return;
+        }
+
+        if (evaluation.mode === 'force_discard') {
+            const cardToPlay = hand.splice(index, 1)[0];
+            
+            runMidwayDiscardInterdiction(evaluation.count, () => {
+                finalizeCardUsage(cardToPlay);
+            });
+            return;
+        }
+
         executeCardPlayRoutine(index);
     }
 
     function executeCardPlayRoutine(index) {
-        const card = hand.splice(index, 1)[0];
-        globalHistory.used.push(card);
-        globalHistory.totalUsedEver++;
-        globalHistory.usedCounts[card.type]++;
+        const cardToPlay = hand.splice(index, 1)[0];
+        finalizeCardUsage(cardToPlay);
+    }
 
-        if (card.seekerPov) {
-            triggerSeekerBroadcastOverlay(card.seekerPov);
-        } else {
-            triggerAlertModal("Card Triggered", `Successfully resolved effect for ${card.title.replace('<br>', ' ')}`);
+    function finalizeCardUsage(cardToPlay) {
+        globalHistory.used.push(cardToPlay);
+        globalHistory.totalUsedEver++;
+        globalHistory.usedCounts[cardToPlay.type]++;
+
+        if (cardToPlay.seekerPov) {
+            triggerSeekerBroadcastOverlay(cardToPlay.seekerPov);
         }
 
-        // Base automated action adjustments
-        if (card.title.includes("Draw 3") && card.title.includes("Pick 1")) {
+        if (cardToPlay.title.includes("Randomise")) {
+            const randNum = Math.floor(Math.random() * 31) + 1;
+            document.getElementById('randomise-num-box').innerText = randNum;
+            document.getElementById('overlay-randomise').classList.remove('hidden');
+            document.getElementById('overlay-card').classList.add('hidden');
+            document.getElementById('overlay-alert').classList.add('hidden');
+            document.getElementById('overlay-seeker-broadcast').classList.add('hidden');
+            document.getElementById('overlay-choice').classList.add('hidden');
+            document.getElementById('overlay-ledger').classList.add('hidden');
+            document.getElementById('overlay-endgame-summary').classList.add('hidden');
+            document.getElementById('master-overlay').style.display = 'flex';
+        } else if (cardToPlay.title.includes("Duplicate")) {
+            isDuplicatingActive = true;
+            triggerAlertModal("Select Card to Duplicate", "Click on any card in your hand to make a duplicate copy of it.");
+        } else if (cardToPlay.title.includes("Draw 3") && cardToPlay.title.includes("Pick 1")) {
             executeCustomDrawWorkflow(3, 1);
-        } else if (card.title.includes("Draw 2") && card.title.includes("Pick 1")) {
-            executeCustomDrawWorkflow(2, 1);
-        } else if (card.title.includes("Draw 4") && card.title.includes("Pick 1")) {
-            executeCustomDrawWorkflow(4, 1);
+        } else if (cardToPlay.title.includes("Draw 1") && cardToPlay.title.includes("Increase Hand Size")) {
+            currentHandLimit++;
+            executeCustomDrawWorkflow(1, 1);
+        } else if (cardToPlay.title.includes("Draw 3") && cardToPlay.title.includes("Pick 2")) {
+            executeCustomDrawWorkflow(3, 2);
+        } else if (cardToPlay.title.includes("Draw 2")) {
+            executeCustomDrawWorkflow(2, 2);
         }
 
         renderHandViews();
@@ -864,7 +969,7 @@
         discardedCardsThisTurn = [];
         isDiscardingActive = true;
         afterDiscardSuccessCallback = callback;
-        triggerAlertModal("Discard Required", `Select ${count} card(s) from your Hand container to satisfy the casting price.`);
+        triggerAlertModal("Discard Required", `Select ${count} card(s) from your Hand to discard.`);
         renderHandViews();
     }
 
@@ -874,7 +979,7 @@
 
     function handleDrawClick(drawCount, pickCount) {
         if (deck.length < drawCount) {
-            triggerAlertModal("Deck Depleted", "Not enough remaining item assets in main stack array to resolve transaction.");
+            triggerAlertModal("Deck Depleted", "Not enough remaining cards in deck.");
             return;
         }
 
@@ -888,7 +993,7 @@
             globalHistory.drawnCounts[card.type]++;
         }
 
-        document.getElementById('pick-instruction').innerText = `Draw ${drawCount}: Choose Exactly ${pickCount} Item(s)`;
+        document.getElementById('pick-instruction').innerText = `Draw ${drawCount}: Choose Exactly ${pickCount} Card(s)`;
         
         const poolCtr = document.getElementById('pick-pool');
         poolCtr.innerHTML = '';
@@ -924,7 +1029,7 @@
 
     function commitPickedCards() {
         if (document.getElementById('pick-pool').querySelector('.flipped')) {
-            triggerAlertModal("Action Denied", "Flip all card items face up before confirming assignment indices.");
+            triggerAlertModal("Action Denied", "Flip all cards face up before confirming selection.");
             return;
         }
         if (selectedIndices.length !== pickTargetCount) {
@@ -984,7 +1089,7 @@
             discardedCardsThisTurn = [];
             isDiscardingActive = true;
             forceHandTrimmingRoutineActive = true;
-            triggerAlertModal("Hand Size Overflow", `Your hand size exceeds the maximum capacity configuration. Select ${overflowAmt} item(s) to discard.`);
+            triggerAlertModal("Hand Size Overflow", `Your hand size exceeds maximum limit. Select ${overflowAmt} card(s) to discard.`);
             renderHandViews();
         }
         saveState();
@@ -998,6 +1103,7 @@
         
         document.getElementById('overlay-alert').classList.remove('hidden');
         document.getElementById('overlay-card').classList.add('hidden');
+        document.getElementById('overlay-randomise').classList.add('hidden');
         document.getElementById('overlay-seeker-broadcast').classList.add('hidden');
         document.getElementById('overlay-choice').classList.add('hidden');
         document.getElementById('overlay-ledger').classList.add('hidden');
@@ -1009,6 +1115,7 @@
         document.getElementById('seeker-text-box').innerText = msgText;
         document.getElementById('overlay-seeker-broadcast').classList.remove('hidden');
         document.getElementById('overlay-card').classList.add('hidden');
+        document.getElementById('overlay-randomise').classList.add('hidden');
         document.getElementById('overlay-alert').classList.add('hidden');
         document.getElementById('overlay-choice').classList.add('hidden');
         document.getElementById('overlay-ledger').classList.add('hidden');
@@ -1035,6 +1142,7 @@
 
         document.getElementById('overlay-choice').classList.remove('hidden');
         document.getElementById('overlay-card').classList.add('hidden');
+        document.getElementById('overlay-randomise').classList.add('hidden');
         document.getElementById('overlay-alert').classList.add('hidden');
         document.getElementById('overlay-seeker-broadcast').classList.add('hidden');
         document.getElementById('overlay-ledger').classList.add('hidden');
@@ -1089,6 +1197,7 @@
 
         document.getElementById('overlay-ledger').classList.remove('hidden');
         document.getElementById('overlay-card').classList.add('hidden');
+        document.getElementById('overlay-randomise').classList.add('hidden');
         document.getElementById('overlay-alert').classList.add('hidden');
         document.getElementById('overlay-seeker-broadcast').classList.add('hidden');
         document.getElementById('overlay-choice').classList.add('hidden');
@@ -1123,6 +1232,7 @@
         
         document.getElementById('overlay-endgame-summary').classList.remove('hidden');
         document.getElementById('overlay-card').classList.add('hidden');
+        document.getElementById('overlay-randomise').classList.add('hidden');
         document.getElementById('overlay-alert').classList.add('hidden');
         document.getElementById('overlay-seeker-broadcast').classList.add('hidden');
         document.getElementById('overlay-choice').classList.add('hidden');
@@ -1223,7 +1333,7 @@
             updateDeckCounter();
             renderHandViews();
         } catch (e) {
-            console.error("Failed to restore serialized layout state data attributes", e);
+            console.error("Failed to restore state", e);
         }
     }
 
