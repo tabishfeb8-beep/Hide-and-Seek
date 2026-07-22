@@ -98,7 +98,6 @@
         .card:hover { transform: translateY(-4px); box-shadow: 0 8px 15px rgba(0,0,0,0.5); }
         .card.selected { border: 4px solid #4cd137; box-shadow: 0 0 18px #4cd137; }
         .card.selectable-discard { border: 4px solid #e84118; animation: pulse 1.5s infinite; }
-        .card.duplicate-target { border: 4px solid #fbc531; animation: pulse 1.5s infinite; }
 
         .card-badge-overlay {
             position: absolute; top: 5px; left: 5px;
@@ -169,10 +168,19 @@
         .big-card.powerup { background: #f5f6fa; color: #1e272e; border: 5px solid #27ae60; }
         .big-card.time { background: #fff; color: #2f3640; border: 5px solid #fbc531; }
         .big-title { font-size: 22px; font-weight: bold; margin-bottom: 15px; }
-        .big-desc { font-size: 14px; margin-top: 15px; color: #2f3640; font-weight: normal; line-height: 1.4; text-align: left; background: rgba(0,0,0,0.05); padding: 15px; border-radius: 8px; width: 100%; flex-grow: 1; display: flex; align-items: center; }
+        .big-desc { font-size: 13.5px; margin-top: 15px; color: #2f3640; font-weight: normal; line-height: 1.45; text-align: left; background: rgba(0,0,0,0.05); padding: 15px; border-radius: 8px; width: 100%; flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
         .big-card.curse .big-desc { color: #dcdde1; background: rgba(255,255,255,0.05); }
         .big-cast { font-weight: bold; font-size: 13px; color: #e84118; margin-top: 12px; width: 100%; text-align: left; border-top: 1px solid rgba(113, 128, 147, 0.3); padding-top: 10px; }
         
+        .gamble-cat { padding: 2px 6px; border-radius: 4px; font-weight: bold; display: inline-block; margin: 2px 0; }
+        .cat-yellow { background: #fbc531; color: #000; }
+        .cat-blue { background: #00a8ff; color: #fff; }
+        .cat-green { background: #4cd137; color: #000; }
+        .cat-purple { background: #9c88ff; color: #fff; }
+        .cat-orange { background: #e1b12c; color: #000; }
+        .cat-red { background: #e84118; color: #fff; }
+        .cat-cyan { background: #00d2d3; color: #000; }
+
         .custom-modal {
             background: #2f3640; border: 3px solid #fbc531; border-radius: 16px;
             padding: 25px; max-width: 500px; width: 95%; text-align: center;
@@ -447,7 +455,7 @@
         { qty: 1, title: "Curse of the<br>Gifted Express", type: "curse", symbol: "🚌", cast: "Discard a Powerup card. Can only use while Seekers are on transit.", desc: "The Seekers must stay on their Bus until the end of the route or the last stop before it exits the Game Boundary." },
         { qty: 1, title: "Curse of the<br>Itinerary", type: "curse", symbol: "📜", desc: "The Seekers must, before boarding their next bus, inform the Hider which stop they will get off at, and must get off at that stop unless a curse forces them otherwise." },
         { qty: 1, title: "Curse of<br>Marco Muzammil", type: "curse", symbol: "🛝", cast: "Discard 15+ Minutes of Time Bonuses if used in the Endgame.", desc: "The Seekers must go to a playground and send a video of them going down a slide before asking another Question." },
-        { qty: 1, title: "Curse of the<br>Gamble", type: "curse", symbol: "🎰", cast: "Reveal a Card in your hand to the Seekers.", desc: "Predict the next Category the Seekers will ask a Question from (Photo (Zone)/Oddball, Video/Measuring, Radar, Matching, Precision, Photo (You), Photo (Bus Stop)). When the Seekers ask their next question, if you are correct, you Draw the Reward 3 times; if you are wrong, you draw nothing. Inform the Seekers you played this before they ask." },
+        { qty: 1, title: "Curse of the<br>Gamble", type: "curse", symbol: "🎰", cast: "Reveal a Card in your hand to the Seekers.", desc: 'Predict the next Category the Seekers will ask a Question from:<br><div style="margin-top: 6px; line-height: 1.6;"><span class="gamble-cat cat-yellow">Photo (Zone)/Oddball</span> <span class="gamble-cat cat-blue">Video/Measuring</span> <span class="gamble-cat cat-green">Radar</span> <span class="gamble-cat cat-purple">Matching</span> <span class="gamble-cat cat-orange">Precision</span> <span class="gamble-cat cat-red">Photo (You)</span> <span class="gamble-cat cat-cyan">Photo (Bus Stop)</span></div><br>When the Seekers ask their next question, if you are correct, you Draw the Reward 3 times; if you are wrong, you draw nothing. Inform the Seekers you played this before they ask.' },
         { qty: 1, title: "Curse of the<br>Dead Phone", type: "curse", symbol: "📴", cast: "The Hider cannot use phone for 15 mins except maps/comms.", desc: "The Seekers cannot use their Phones for the next 25 Minutes except to ask Questions/communicate with the Hider." },
         { qty: 1, title: "Curse of the<br>Mobile Bus", type: "curse", symbol: "🚍", cast: "The Seeker's next question on the Bus is free. Cannot be used in Endgame.", desc: "The Seekers must ask their next 3 questions while on Bus." },
         { qty: 1, title: "Curse of the<br>Short Stop", type: "curse", symbol: "🛑", cast: "The Seekers must be on transit.", desc: "The Seekers must get off at the next stop and request a stop if not already requested." },
@@ -457,9 +465,21 @@
         { qty: 1, title: "Curse of the<br>Nomad", type: "curse", symbol: "📍", cast: "Inform the Seeker of how far this image is from the Hider's Bus Stop.", desc: "Send a Google Streetview image within 300m of the Seekers. The Seeker must take a picture of what they believe to be the location and send it to confirm. The Seeker cannot ask any questions until cleared." }
     ];
 
-    function checkCanAfford(card) {
+    function checkCanAfford(card, cardIndex) {
+        if (card.title.includes("Mobile Bus") && isGlobalEndgameActive) {
+            return { affordable: false, missingResource: "activation (Curse of the Mobile Bus cannot be played during Endgame!)" };
+        }
+
+        if (card.title.includes("Duplicate")) {
+            const otherCardsInHand = hand.filter((c, i) => i !== cardIndex);
+            if (otherCardsInHand.length === 0) {
+                return { affordable: false, missingResource: "at least 1 other card in your hand to duplicate" };
+            }
+            return { affordable: true, mode: 'allowed' };
+        }
+
         if (card.title.includes("Gifted Express")) {
-            const hasPowerup = hand.some((c, i) => c.type === 'powerup' && c.title !== card.title);
+            const hasPowerup = hand.some((c, i) => i !== cardIndex && c.type === 'powerup');
             if (hasPowerup) {
                 return { affordable: true, mode: 'force_discard_powerup' };
             } else {
@@ -470,8 +490,8 @@
         if (card.title.includes("Marco Muzammil")) {
             if (isGlobalEndgameActive) {
                 let timeSum = 0;
-                hand.forEach(c => {
-                    if (c.type === 'time' && c.value) timeSum += c.value;
+                hand.forEach((c, i) => {
+                    if (i !== cardIndex && c.type === 'time' && c.value) timeSum += c.value;
                 });
                 if (timeSum >= 15) {
                     return { affordable: true, mode: 'force_discard_time_15' };
@@ -483,7 +503,7 @@
             }
         }
 
-        if (card.title.includes("Drained Brain") || card.title.includes("Discard 1")) {
+        if (card.title.includes("Drained Brain") || (card.title.includes("Discard 1") && card.type === "powerup")) {
             if (hand.length - 1 >= 1) {
                 return { affordable: true, mode: 'force_discard', count: 1 };
             } else {
@@ -491,16 +511,12 @@
             }
         }
 
-        if (card.title.includes("Discard 2")) {
+        if (card.title.includes("Discard 2") && card.type === "powerup") {
             if (hand.length - 1 >= 2) {
                 return { affordable: true, mode: 'force_discard', count: 2 };
             } else {
                 return { affordable: false, missingResource: "at least 2 other cards to discard" };
             }
-        }
-
-        if (card.cast) {
-            return { affordable: true, mode: 'task_warning' };
         }
 
         return { affordable: true, mode: 'allowed' };
@@ -515,6 +531,9 @@
         pickTargetCount = 0;
         currentHandLimit = 5;
         isGlobalEndgameActive = false;
+        isDiscardingActive = false;
+        discardedCardsThisTurn = [];
+        isDuplicatingActive = false;
         matchStartTimestamp = Date.now();
         computedTotalSessionSeconds = 0;
         
@@ -749,7 +768,7 @@
         const cardToCopy = hand[index];
         hand.push(JSON.parse(JSON.stringify(cardToCopy)));
         isDuplicatingActive = false;
-        triggerAlertModal("Card Duplicated", `Successfully created a duplicate copy of ${cardToCopy.title.replace('<br>', ' ')} in your hand.`);
+        triggerAlertModal("Card Duplicated", `Successfully created a duplicate copy of ${cardToCopy.title.replace(/<br>/g, ' ')} in your hand.`);
         renderHandViews();
         saveState();
     }
@@ -806,7 +825,18 @@
         saveState();
     }
 
+    function resetModalVisibilities() {
+        document.getElementById('overlay-card').classList.add('hidden');
+        document.getElementById('overlay-alert').classList.add('hidden');
+        document.getElementById('overlay-randomise').classList.add('hidden');
+        document.getElementById('overlay-seeker-broadcast').classList.add('hidden');
+        document.getElementById('overlay-choice').classList.add('hidden');
+        document.getElementById('overlay-ledger').classList.add('hidden');
+        document.getElementById('overlay-endgame-summary').classList.add('hidden');
+    }
+
     function openInspectModalOnly(card) {
+        resetModalVisibilities();
         document.getElementById('overlay-title').innerHTML = card.title;
         document.getElementById('overlay-icon-container').innerHTML = `<div style="font-size:72px;">${card.symbol}</div>`;
         document.getElementById('overlay-desc').innerHTML = card.desc;
@@ -830,6 +860,7 @@
     }
 
     function openCardDetailsOverlay(index) {
+        resetModalVisibilities();
         const card = hand[index];
         document.getElementById('overlay-title').innerHTML = card.title;
         document.getElementById('overlay-icon-container').innerHTML = `<div style="font-size:72px;">${card.symbol}</div>`;
@@ -868,11 +899,11 @@
 
     function processCardActivationAttempt(index) {
         const card = hand[index];
-        const evaluation = checkCanAfford(card);
+        const evaluation = checkCanAfford(card, index);
 
         if (!evaluation.affordable) {
             if (!document.getElementById('toggle-mutepopups').checked) {
-                triggerAlertModal("Insufficient Funds", `This card cannot be used because you do not have ${evaluation.missingResource}.`);
+                triggerAlertModal("Activation Blocked", `This card cannot be used because: ${evaluation.missingResource}.`);
             }
             return;
         }
@@ -938,17 +969,20 @@
         if (cardToPlay.title.includes("Randomise")) {
             const randNum = Math.floor(Math.random() * 31) + 1;
             document.getElementById('randomise-num-box').innerText = randNum;
+            resetModalVisibilities();
             document.getElementById('overlay-randomise').classList.remove('hidden');
-            document.getElementById('overlay-card').classList.add('hidden');
-            document.getElementById('overlay-alert').classList.add('hidden');
-            document.getElementById('overlay-seeker-broadcast').classList.add('hidden');
-            document.getElementById('overlay-choice').classList.add('hidden');
-            document.getElementById('overlay-ledger').classList.add('hidden');
-            document.getElementById('overlay-endgame-summary').classList.add('hidden');
             document.getElementById('master-overlay').style.display = 'flex';
         } else if (cardToPlay.title.includes("Duplicate")) {
-            isDuplicatingActive = true;
-            triggerAlertModal("Select Card to Duplicate", "Click on any card in your hand to make a duplicate copy of it.");
+            if (hand.length === 0) {
+                hand.push(cardToPlay);
+                globalHistory.used.pop();
+                globalHistory.totalUsedEver--;
+                globalHistory.usedCounts[cardToPlay.type]--;
+                triggerAlertModal("Duplicate Cancelled", "No other cards in hand to duplicate! Card returned to hand.");
+            } else {
+                isDuplicatingActive = true;
+                triggerAlertModal("Select Card to Duplicate", "Click on any other card in your hand to duplicate it.");
+            }
         } else if (cardToPlay.title.includes("Draw 3") && cardToPlay.title.includes("Pick 1")) {
             executeCustomDrawWorkflow(3, 1);
         } else if (cardToPlay.title.includes("Draw 1") && cardToPlay.title.includes("Increase Hand Size")) {
@@ -1098,28 +1132,18 @@
     function triggerAlertModal(title, text) {
         if (document.getElementById('toggle-mutepopups').checked) return;
         
+        resetModalVisibilities();
         document.getElementById('alert-title').innerText = title;
         document.getElementById('alert-text').innerText = text;
         
         document.getElementById('overlay-alert').classList.remove('hidden');
-        document.getElementById('overlay-card').classList.add('hidden');
-        document.getElementById('overlay-randomise').classList.add('hidden');
-        document.getElementById('overlay-seeker-broadcast').classList.add('hidden');
-        document.getElementById('overlay-choice').classList.add('hidden');
-        document.getElementById('overlay-ledger').classList.add('hidden');
-        document.getElementById('overlay-endgame-summary').classList.add('hidden');
         document.getElementById('master-overlay').style.display = 'flex';
     }
 
     function triggerSeekerBroadcastOverlay(msgText) {
+        resetModalVisibilities();
         document.getElementById('seeker-text-box').innerText = msgText;
         document.getElementById('overlay-seeker-broadcast').classList.remove('hidden');
-        document.getElementById('overlay-card').classList.add('hidden');
-        document.getElementById('overlay-randomise').classList.add('hidden');
-        document.getElementById('overlay-alert').classList.add('hidden');
-        document.getElementById('overlay-choice').classList.add('hidden');
-        document.getElementById('overlay-ledger').classList.add('hidden');
-        document.getElementById('overlay-endgame-summary').classList.add('hidden');
         document.getElementById('master-overlay').style.display = 'flex';
     }
 
@@ -1134,6 +1158,7 @@
     }
 
     function triggerChoiceModal(title, text, yesCallback, noCallback) {
+        resetModalVisibilities();
         document.getElementById('choice-title').innerText = title;
         document.getElementById('choice-text').innerText = text;
 
@@ -1141,12 +1166,6 @@
         document.getElementById('choice-btn-no').onclick = () => { closeOverlay(); if(noCallback) noCallback(); };
 
         document.getElementById('overlay-choice').classList.remove('hidden');
-        document.getElementById('overlay-card').classList.add('hidden');
-        document.getElementById('overlay-randomise').classList.add('hidden');
-        document.getElementById('overlay-alert').classList.add('hidden');
-        document.getElementById('overlay-seeker-broadcast').classList.add('hidden');
-        document.getElementById('overlay-ledger').classList.add('hidden');
-        document.getElementById('overlay-endgame-summary').classList.add('hidden');
         document.getElementById('master-overlay').style.display = 'flex';
     }
 
@@ -1160,7 +1179,7 @@
             }
             list.forEach((item, index) => {
                 const row = document.createElement('div');
-                row.innerHTML = `<b style="color:#fbc531;">#${index+1}</b> ${item.title.replace('<br>',' ')} <span style="color:#a4b0be; font-size:11px;">(${item.type.toUpperCase()})</span>`;
+                row.innerHTML = `<b style="color:#fbc531;">#${index+1}</b> ${item.title.replace(/<br>/g,' ')} <span style="color:#a4b0be; font-size:11px;">(${item.type.toUpperCase()})</span>`;
                 ctr.appendChild(row);
             });
         };
@@ -1195,13 +1214,8 @@
         const totalPicked = globalHistory.pickedCounts.time + globalHistory.pickedCounts.powerup + globalHistory.pickedCounts.curse;
         drawGrid('stats-used', globalHistory.usedCounts, totalPicked);
 
+        resetModalVisibilities();
         document.getElementById('overlay-ledger').classList.remove('hidden');
-        document.getElementById('overlay-card').classList.add('hidden');
-        document.getElementById('overlay-randomise').classList.add('hidden');
-        document.getElementById('overlay-alert').classList.add('hidden');
-        document.getElementById('overlay-seeker-broadcast').classList.add('hidden');
-        document.getElementById('overlay-choice').classList.add('hidden');
-        document.getElementById('overlay-endgame-summary').classList.add('hidden');
         document.getElementById('master-overlay').style.display = 'flex';
     }
 
@@ -1230,13 +1244,8 @@
         const totalSurvivedSecs = computedTotalSessionSeconds + (bonusMins * 60);
         document.getElementById('endgame-calculated-tally').innerText = formatSecondsToDigital(totalSurvivedSecs);
         
+        resetModalVisibilities();
         document.getElementById('overlay-endgame-summary').classList.remove('hidden');
-        document.getElementById('overlay-card').classList.add('hidden');
-        document.getElementById('overlay-randomise').classList.add('hidden');
-        document.getElementById('overlay-alert').classList.add('hidden');
-        document.getElementById('overlay-seeker-broadcast').classList.add('hidden');
-        document.getElementById('overlay-choice').classList.add('hidden');
-        document.getElementById('overlay-ledger').classList.add('hidden');
         document.getElementById('master-overlay').style.display = 'flex';
     }
 
@@ -1249,6 +1258,8 @@
 
     function closeOverlay() {
         document.getElementById('master-overlay').style.display = 'none';
+        document.getElementById('randomise-num-box').innerText = '--';
+        resetModalVisibilities();
     }
 
     function saveState() {
